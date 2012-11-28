@@ -65,3 +65,14 @@ a:hover {
 #titlebar h1 {
 	margin-bottom: 0;
 }
+
+#navbar ul {
+	margin: 0;
+	padding: 0;
+}
+
+#navbar ul li {
+	display: inline;
+	margin-right: 2em;
+	margin-left: 0;
+}

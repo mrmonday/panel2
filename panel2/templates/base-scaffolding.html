@@ -12,5 +12,13 @@
 		<h1>TortoiseLabs</h1>
 		<div id="logo"></div>
 	</div>
+	{% if user %}
+	<div id="navbar">
+		<ul>
+			<li><a href="/dns/zones">DNS Zones</a></li>
+			<li><a href="/vps/list">VPS Instances</a></li>
+		</ul>
+	</div>
+	{% endif %}
 
 {% endblock body %}
