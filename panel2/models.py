@@ -29,7 +29,7 @@ class User(db.Model):
     def __init__(self, username, password, email):
         self.username = username
         self.email = email
-        self.assign_password(password)
+        self.assign_password(password.encode('utf-8'))
 
     def __repr__(self):
         return "<User '%s'>%s" % (self.username, (" {admin}" if self.is_admin is True else ""))
@@ -39,7 +39,7 @@ class User(db.Model):
 
     def validate_password(self, password):
         "Validate password against the user's password."
-        if self._get_pbkdf2_hash(password) == self.password:
+        if self._get_pbkdf2_hash(password.encode('utf-8')) == self.password:
             return True
         return False
 
