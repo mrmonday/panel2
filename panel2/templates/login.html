@@ -1,7 +1,18 @@
 {% extends "base-empty.html" %}
-hy
 {% block title %} Login {% endblock %}
 
 {% block body %}
-hi!
+
+<div id="loginbox">
+	<form method="POST" action="/login">
+		<label for="username">Username:</label>
+		<input type="text" name="username">
+
+		<label for="password">Password:</label>
+		<input type="password" name="password">
+
+		<input type="submit" value="Log In">
+	</form>
+</div>
+
 {% endblock %}
