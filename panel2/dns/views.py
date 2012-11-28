@@ -30,3 +30,12 @@ def edit_record(zone, record):
         return redirect(url_for('.view_zone', zone=request_obj.id))
 
     return render_template('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
+
+@dns.route('/zone/new', methods=['GET', 'POST'])
+def new_domain():
+    if request.method == 'POST':
+        user = get_session_user()
+        domain = Domain(user, request.form['domain_name'])
+        return redirect(url_for('.view_zone', zone=domain.id))
+
+    return render_template('dns/new-domain.html')
