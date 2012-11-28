@@ -18,4 +18,6 @@ import panel2.views
 import panel2.sessionviews
 
 # plugins!
-import panel2.dns
+from panel2.dns import dns
+
+app.register_blueprint(dns)
