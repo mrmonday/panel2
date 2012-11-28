@@ -1,31 +1,41 @@
 {% extends "base-empty.html" %}
+{% block title %} Welcome {% endblock %}
 
 {% block body %}
 
-	<div id="titlebar">
-		{% if user %}
-		<div id="account">
-			<img id="gravatar" src="{{ user.email | gravatar }}" alt="[gravatar]">
-			<strong>{{ user.username }}</strong> &mdash; <a href="/logout">log out</a>
-		</div>
-		{% else %}
-		<div id="account">
-			<a href="/login">log in</a> &mdash; <a href="/create">create account</a>
-		</div>
-		{% endif %}
-		<h1>TortoiseLabs</h1>
-		<div id="logo"></div>
-	</div>
-	{% if user %}
-	<div id="navbar">
-		<ul>
-			<li><a href="/dns/zones">DNS Zones</a></li>
-			<li><a href="/vps/list">VPS Instances</a></li>
-		</ul>
-	</div>
-	{% endif %}
+	<header class="header">
+		<div class="row">
+			<div class="span3">
+				<h2>TortoiseLabs</h2>
+			</div>
+			<div class="menu span9 pull-right">
+				<ul class="menu-list">
+					{% if user %}
+					<li class="menu-item">
+						<a href="/dns/zones">My DNS Zones</a></li>
+					</li>
 
-	<div id="content">
+					<li class="menu-item">
+						<a href="/vps/list">My Servers</a></li>
+					</li>
+
+					<li class="menu-item">
+						<a href="/tickets/list">My Tickets</a></li>
+					</li>
+					{% endif %}
+					<li class="menu-item login-item">
+						{% if user %}
+						<a class="btn btn-inverse btn-mini" href="/logout">Logout ({{ user.username }})</a>
+						{% else %}
+						<a class="btn btn-inverse btn-mini" href="/login">Login</a>
+						{% endif %}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+
+	<div class="container">
 	{% block content %}{% endblock %}
 	</div>
 

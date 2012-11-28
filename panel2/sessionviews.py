@@ -64,4 +64,4 @@ def user_information_from_session():
 
 @app.template_filter('gravatar')
 def user_gravatar_url(email):
-    return "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?s=18"
+    return "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?s=24"
