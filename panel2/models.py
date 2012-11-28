@@ -5,6 +5,8 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
+from flask import session
+
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
 from panel2.utils import CommitableMixIn
@@ -49,3 +51,9 @@ class User(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+def get_session_user():
+    if session.has_key('uid'):
+        return User.query.filter_by(id=session['uid']).first()
+
+    return None

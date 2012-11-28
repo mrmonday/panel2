@@ -9,7 +9,7 @@ import sys
 import hashlib
 
 from panel2 import app
-from panel2.models import User
+from panel2.models import User, get_session_user
 from flask import session, redirect, url_for, escape, request, render_template
 from sqlalchemy.exc import IntegrityError
 
@@ -56,8 +56,8 @@ def create():
 @app.context_processor
 def user_information_from_session():
     """A decorated function to give the templates a user object if we're logged in."""
-    if session.has_key('uid'):
-        _user = User.query.filter_by(id=session['uid']).first()
+    _user = get_session_user()
+    if _user is not None:
         return dict(user=_user)
 
     return dict()
