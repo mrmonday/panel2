@@ -21,9 +21,7 @@ def validate_login(username, password):
 def login():
     if request.method == 'POST':
         user = validate_login(request.form['username'], request.form['password'])
-        if user is None:
-            return redirect(url_for('login'))
-        else:
+        if user is not None:
             session['uid'] = user.id
             return redirect(url_for('index'))
 
