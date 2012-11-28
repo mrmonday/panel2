@@ -1,0 +1,36 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}{{ zone.name }} - DNS Zones{% endblock %}
+
+{% block content %}
+
+<h2>{{ zone.name }}</h2>
+
+<table class="table table-striped">
+	<tr>
+		<th>Name</th>
+		<th>Type</th>
+		<th>Priority</th>
+		<th>TTL</th>
+		<th>Content</th>
+		<th>
+			<span class="pull-right">Options</span>
+		</th>
+	</tr>
+	{% for record in zone.records %}
+	<tr>
+		<td>{{ record.name }}</td>
+		<td>{{ record.type }}</td>
+		<td>{{ record.prio }}</td>
+		<td>{{ record.ttl }}</td>
+		<td>{{ record.content }}</td>
+		<td>
+			<div class="btn-group pull-right">
+				<a href="{{ url_for('.edit_record', zone=zone.id, record=record.id) }}" class="btn btn-primary">Edit</a>
+				<a href="#" class="btn btn-danger">Delete</a>
+			</div>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}
