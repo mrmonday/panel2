@@ -1,48 +1,69 @@
 {% extends "base-empty.html" %}
 {% block title %} Login {% endblock %}
+{% block head %}
+{{ super() }}
 
+<style type="text/css"><!--
+	body {
+		background: #eee;
+		padding-top: 40px;
+		padding-bottom: 40px;
+	}
+
+	#signin {
+		max-width: 300px;
+		padding: 19px 29px 29px;
+		margin: 0 auto 20px;
+		background-color: #fff;
+		border: 1px solid #e5e5e5;
+
+		-webkit-border-radius: 5px;
+		   -moz-border-radius: 5px;
+			border-radius: 5px;
+
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+			box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	}
+
+	#signin h2 {
+		margin-bottom: 10px;
+	}
+
+	#signin input[type="text"],
+	#signin input[type="password"] {
+		font-size: 16px;
+		height: auto;
+		margin-bottom: 15px;
+		padding: 7px 9px;
+	}
+
+	.error {
+		-webkit-border-radius: 5px;
+		   -moz-border-radius: 5px;
+			border-radius: 5px;
+		margin-bottom: 15px;
+		background-color: #fee;
+		padding: 7px 9px;
+	}
+
+//--></style>
+
+{% endblock %}
 {% block body %}
 
-<div id="loginbox">
-	<form method="POST" action="/login">
-		<table>
-			<tr>
-				<th colspan="2">Log In</th>
-			</tr>
-			{% if error %}
-			<tr class="error">
-				<td colspan="2">{{ error }}</td>
-			</tr>
-			{% endif %}
-			<tr>
-				<td>
-					<label for="username">Username:</label>
-				</td>
-				<td>
-					<input type="text" name="username">
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<label for="password">Password:</label>
-				</td>
-
-				<td>
-					<input type="password" name="password">
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<a href="/create">Create Account</a>
-				</td>
-
-				<td>
-					<input type="submit" value="Log In">
-				</td>
-			</tr>
-		</table>
+<div class="container">
+	<form id="signin" method="POST" action="/login">
+		<h2>Please log in</h2>
+		{% if error %}
+		<div class="error">
+			{{ error }}
+		</div>
+		{% endif %}
+		<input type="text" class="input-block-level" placeholder="Username" name="username">
+		<input type="password" class="input-block-level" placeholder="Password" name="password">
+		<button class="btn btn-large btn-primary" type="submit">Log in</button>
+		<a href="/create" class="btn btn-large">Create account</a>
 	</form>
 </div>
 

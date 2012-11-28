@@ -3,13 +3,15 @@
 	<head>
 		{% block head %}
 		<title>{% block title %}{% endblock title %} - TortoiseLabs Manager</title>
-		<link rel="stylesheet" type="text/css" href="/static/style.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
 		{% endblock head %}
 	</head>
 
 	<body>
-		<div id="container">
-			{% block body %}{% endblock body %}
+		{% block body %}
+		<div class="page-content-wrapper">
+			{% block content %}{% endblock content %}
 		</div>
+		{% endblock body %}
 	</body>
 </html>
