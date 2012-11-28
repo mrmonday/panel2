@@ -5,7 +5,7 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
-from flask import render_template, Markup, redirect, url_for
+from flask import render_template, Markup, redirect, url_for, request
 from panel2.models import User, get_session_user
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
