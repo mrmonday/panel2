@@ -6,7 +6,11 @@ All rights reserved.
 """
 
 from panel2 import app
+from flask import render_template, session
 
 @app.route('/')
 def index():
-    return 'lulz'
+    if session.has_key("uid"):
+        return render_template('frontpage.html')
+
+    return render_template('login.html')

@@ -7,7 +7,7 @@ All rights reserved.
 
 from panel2 import db
 
-class CommitableMixIn:
+class CommitableMixIn(object):
     def commit(self):
         db.session.add(self)
         db.commit()

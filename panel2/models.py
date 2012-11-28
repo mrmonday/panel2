@@ -7,6 +7,7 @@ All rights reserved.
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
+from panel2.utils import CommitableMixIn
 
 import hashlib, os
 
