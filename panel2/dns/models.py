@@ -10,6 +10,8 @@ from panel2 import app, db
 import time
 
 class Domain(db.Model):
+    __tablename__ = 'domains'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True)
     master = db.Column(db.String(128))
@@ -34,6 +36,8 @@ class Domain(db.Model):
         return Record(name, type, prio, content, ttl, self.id)
 
 class Record(db.Model):
+    __tablename__ = 'records'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type = db.Column(db.String(20))
@@ -41,7 +45,7 @@ class Record(db.Model):
     ttl = db.Column(db.Integer)
     content = db.Column(db.String(255))
     change_date = db.Column(db.Integer)
-    domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
+    domain_id = db.Column(db.Integer, db.ForeignKey('domains.id'))
     domain = db.relationship('Domain', backref='records')
 
     def __init__(self, name, type, prio, content, ttl, domain_id):
@@ -58,3 +62,24 @@ class Record(db.Model):
 
     def __repr__(self):
         return "<Record: '%s' -> '%s' (%s)>" % (self.name, self.content, self.type)
+
+class Supermaster(db.Model):
+    """A class which reflects the PowerDNS supermasters table.  Presently
+       unused, but we need this model to ensure it is in the schema, otherwise
+       PowerDNS may crash."""
+    __tablename__ = 'supermasters'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nameserver = db.Column(db.String(255), nullable=False)
+    account = db.Column(db.String(40))
+
+    def __init__(self, nameserver, account):
+        self.nameserver = nameserver
+        self.account = account
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Supermaster: '%s'>" % self.nameserver
+
