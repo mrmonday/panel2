@@ -81,6 +81,9 @@ class Record(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def subdomain(self):
+        return self.name.split(self.domain.name)[0]
+
 class Supermaster(db.Model):
     """A class which reflects the PowerDNS supermasters table.  Presently
        unused, but we need this model to ensure it is in the schema, otherwise
