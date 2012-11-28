@@ -1,0 +1,36 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}{{ zone.name }} - DNS Zones{% endblock %}
+
+{% block content %}
+
+<h2>{{ zone.name }} -- {{ record.name }}</h2>
+
+<form method="POST">
+	<table class="table table-striped">
+	<tr>
+		<th>Name</th>
+		<td><input type="text" name="subdomain" value="{{ record.subdomain() }}">.{{ zone.name }}</td>
+	</tr>
+	<tr>
+		<th>Type</th>
+		<td>{{ record.type }}</td>
+	</tr>
+	<tr>
+		<th>TTL</th>
+		<td>{{ record.ttl }}</td>
+	</tr>
+	<tr>
+		<th>Priority</th>
+		<td>{{ record.prio }}</td>
+	</tr>
+	<tr>
+		<th>Content</th>
+		<td><input type="text" name="content" value="{{ record.content }}"></td>
+	</tr>
+	<tr>
+		<th></th>
+		<td><button class="btn btn-primary" type="submit">Update</button></td>
+	</tr>
+</form>
+
+{% endblock %}
