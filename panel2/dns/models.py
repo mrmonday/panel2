@@ -29,6 +29,10 @@ class Domain(db.Model):
         db.session.add(self)
         db.session.commit()
 
+        self.add_record(self.name, 'dns.tortois.es ' + user.email + ' 0', 'SOA')
+        self.add_record(self.name, 'ns1.tortois.es', 'NS')
+        self.add_record(self.name, 'ns2.tortois.es', 'NS')
+
     def __repr__(self):
         return "<Domain: '%s'>" % (self.name)
 
@@ -62,6 +66,20 @@ class Record(db.Model):
 
     def __repr__(self):
         return "<Record: '%s' -> '%s' (%s)>" % (self.name, self.content, self.type)
+
+    def update_name(self, name):
+        self.name = name
+        self.change_date = int(time.time())
+
+        db.session.add(self)
+        db.session.commit()
+
+    def update_content(self, content):
+        self.content = content
+        self.change_date = int(time.time())
+
+        db.session.add(self)
+        db.session.commit()
 
 class Supermaster(db.Model):
     """A class which reflects the PowerDNS supermasters table.  Presently
