@@ -16,3 +16,6 @@ db = SQLAlchemy(app)
 import panel2.models
 import panel2.views
 import panel2.sessionviews
+
+# plugins!
+import panel2.dns
