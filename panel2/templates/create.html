@@ -1,0 +1,55 @@
+{% extends "base-empty.html" %}
+{% block title %} Create Account {% endblock %}
+
+{% block body %}
+
+<div id="loginbox">
+	<form method="POST" action="/create">
+		<table>
+			<tr>
+				<th colspan="2">Create Account</th>
+			</tr>
+			{% if error %}
+			<tr class="error">
+				<td colspan="2">{{ error }}</td>
+			</tr>
+			{% endif %}
+			<tr>
+				<td>
+					<label for="username">Username:</label>
+				</td>
+				<td>
+					<input type="text" name="username">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="password">Password:</label>
+				</td>
+
+				<td>
+					<input type="password" name="password">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="email">E-Mail:</label>
+				</td>
+
+				<td>
+					<input type="email" name="email">
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="Create Account">
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+
+{% endblock %}
