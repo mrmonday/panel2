@@ -8,6 +8,10 @@
 			<img id="gravatar" src="{{ user.email | gravatar }}" alt="[gravatar]">
 			<strong>{{ user.username }}</strong> &mdash; <a href="/logout">log out</a>
 		</div>
+		{% else %}
+		<div id="account">
+			<a href="/login">log in</a> &mdash; <a href="/create">create account</a>
+		</div>
 		{% endif %}
 		<h1>TortoiseLabs</h1>
 		<div id="logo"></div>
