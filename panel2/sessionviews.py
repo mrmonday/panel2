@@ -5,9 +5,12 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
+import sys
+
 from panel2 import app
 from panel2.models import User
 from flask import session, redirect, url_for, escape, request, render_template
+from sqlalchemy.exc import IntegrityError
 
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
@@ -24,6 +27,9 @@ def login():
         if user is not None:
             session['uid'] = user.id
             return redirect(url_for('index'))
+        else:
+            session.pop('uid', None)
+            return render_template('login.html', error='Invalid username or password')
 
     return render_template('login.html')
 
@@ -31,3 +37,17 @@ def login():
 def logout():
     session.pop('uid', None)
     return redirect(url_for('index'))
+
+@app.route('/create', methods=['GET', 'POST'])
+def create():
+    if request.method == 'POST':
+        try:
+            user = User(request.form['username'], request.form['password'], request.form['email'])
+        except IntegrityError:
+            return render_template('create.html', error='Username is already taken')
+            
+        if user is not None:
+            session['uid'] = user.id
+            return redirect(url_for('index'))
+
+    return render_template('create.html')

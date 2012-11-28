@@ -5,13 +5,44 @@
 
 <div id="loginbox">
 	<form method="POST" action="/login">
-		<label for="username">Username:</label>
-		<input type="text" name="username">
+		<table>
+			<tr>
+				<th colspan="2">Log In</th>
+			</tr>
+			{% if error %}
+			<tr class="error">
+				<td colspan="2">{{ error }}</td>
+			</tr>
+			{% endif %}
+			<tr>
+				<td>
+					<label for="username">Username:</label>
+				</td>
+				<td>
+					<input type="text" name="username">
+				</td>
+			</tr>
 
-		<label for="password">Password:</label>
-		<input type="password" name="password">
+			<tr>
+				<td>
+					<label for="password">Password:</label>
+				</td>
 
-		<input type="submit" value="Log In">
+				<td>
+					<input type="password" name="password">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<a href="/create">Create Account</a>
+				</td>
+
+				<td>
+					<input type="submit" value="Log In">
+				</td>
+			</tr>
+		</table>
 	</form>
 </div>
 
