@@ -25,7 +25,7 @@ def view_zone(zone):
 def edit_record(zone, record):
     record_obj = Record.query.filter_by(domain_id=zone, id=record).first()
     if request.method == 'POST':
-        record_obj.set_name(request.form['name'])
+        record_obj.set_name(request.form['subdomain'] + '.' + record_obj.domain.name)
         record_obj.set_content(request.form['content'])
         return redirect(url_for('.view_zone', zone=request_obj.id))
 
