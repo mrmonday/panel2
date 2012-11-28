@@ -30,21 +30,26 @@ class Domain(db.Model):
     def __repr__(self):
         return "<Domain: '%s'>" % (self.name)
 
+    def add_record(self, name, content, type='A', prio=0, ttl=300):
+        return Record(name, type, prio, content, ttl, self.id)
+
 class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255))
     type = db.Column(db.String(20))
     prio = db.Column(db.Integer)
+    ttl = db.Column(db.Integer)
     content = db.Column(db.String(255))
     change_date = db.Column(db.Integer)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
     domain = db.relationship('Domain', backref='records')
 
-    def __init__(self, name, type, prio, content, domain_id):
+    def __init__(self, name, type, prio, content, ttl, domain_id):
         self.name = name
         self.type = type
         self.prio = prio
         self.content = content
+        self.ttl = ttl
         self.domain_id = domain_id
         self.change_date = int(time.time())
 
