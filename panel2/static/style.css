@@ -1,0 +1,67 @@
+body {
+	background: #000;
+	color: #999;
+	font-family: sans-serif;
+}
+
+#container {
+	margin: auto;
+	width: 80%;
+}
+
+#loginbox {
+	border: 1px #222 solid;
+	margin: 35%;
+	margin-top: 30%;
+}
+
+#loginbox table {
+	width: 100%;
+	background: #252525;
+}
+
+#loginbox tr th {
+	background: #333;
+}
+
+#loginbox input[type=text], input[type=password], input[type=email] {
+	width: 95%;
+}
+
+#loginbox input[type=submit] {
+	float: right;
+}
+
+#loginbox .error {
+	background: #600;
+	text-align: center;
+}
+
+#account {
+	float: right;
+	font-size: 75%;
+	line-height: 1.5em;
+	vertical-align: middle;
+}
+
+#gravatar {
+	float: left;
+	padding-right: 0.4em;
+}
+
+a {
+	color: #999;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#titlebar {
+	border-bottom: 1px #777 solid;
+}
+
+#titlebar h1 {
+	margin-bottom: 0;
+}
