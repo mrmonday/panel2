@@ -6,6 +6,7 @@ All rights reserved.
 """
 
 import sys
+import hashlib
 
 from panel2 import app
 from panel2.models import User
@@ -51,3 +52,16 @@ def create():
             return redirect(url_for('index'))
 
     return render_template('create.html')
+
+@app.context_processor
+def user_information_from_session():
+    """A decorated function to give the templates a user object if we're logged in."""
+    if session.has_key('uid'):
+        _user = User.query.filter_by(id=session['uid']).first()
+        return dict(user=_user)
+
+    return dict()
+
+@app.template_filter('gravatar')
+def user_gravatar_url(email):
+    return "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?s=18"
