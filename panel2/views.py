@@ -14,3 +14,8 @@ def index():
         return render_template('frontpage.html')
 
     return render_template('login.html')
+
+@app.errorhandler(403)
+def error_forbidden():
+    return render_template('error-forbidden.html')
+
