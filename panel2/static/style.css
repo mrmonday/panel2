@@ -18,13 +18,23 @@
 	line-height: 4em;
 }
 
-#gravatar {
-	float: left;
-	margin-top: 1.1em;
+.gravatar {
 	border-radius: 5px;
-	border: 1px #444 solid;
+	box-shadow: 0.5px 0.5px #999;
 }
 
 .table tr td {
 	vertical-align: middle;
+}
+
+.ticket-reply-source {
+	text-align: right;
+}
+
+.ticket-reply-textarea {
+	height: 7em;
+}
+
+.ticket-row {
+	margin-bottom: 1em;
 }

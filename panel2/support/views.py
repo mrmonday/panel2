@@ -44,3 +44,14 @@ def list_all():
 
     return render_template('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
                            open_tickets_count=open_tickets.count(), closed_tickets_count=closed_tickets.count())
+
+@support.route('/ticket/<ticket_id>', methods=['GET', 'POST'])
+@login_required
+def view(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first_or_404()
+    if user_can_access_ticket(ticket) is not True:
+        abort(403)
+    if request.method == 'POST':
+        ticket.add_reply(get_session_user(), request.form['message'])
+
+    return render_template('support/ticketview.html', ticket=ticket)
