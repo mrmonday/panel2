@@ -6,7 +6,7 @@ All rights reserved.
 """
 
 from functools import wraps
-from flask import session, redirect, url_for
+from flask import session, redirect, url_for, abort
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
@@ -64,5 +64,16 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if get_session_user() is None:
             return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user = get_session_user()
+        if user is None:
+            return redirect(url_for('login'))
+        if user.is_admin is not True:
+            abort(403)
         return f(*args, **kwargs)
     return decorated_function

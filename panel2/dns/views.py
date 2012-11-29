@@ -6,7 +6,7 @@ All rights reserved.
 """
 
 from flask import render_template, Markup, redirect, url_for, request, abort
-from panel2.models import User, get_session_user, login_required
+from panel2.models import User, get_session_user, login_required, admin_required
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
@@ -29,7 +29,7 @@ def list():
     return render_template('dns/zones.html', zones=user.domains)
 
 @dns.route('/zones/all')
-@login_required
+@admin_required
 def list_all():
     return render_template('dns/zones.html', zones=Domain.query)
 
