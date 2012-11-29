@@ -34,8 +34,8 @@ def edit_record(zone_id, record_id):
         abort(403)
     record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first()
     if request.method == 'POST':
-        record_obj.set_name(record_obj.domain.full_name(request.form['subdomain']))
-        record_obj.set_content(request.form['content'])
+        record_obj.update_name(record_obj.domain.full_name(request.form['subdomain']))
+        record_obj.update_content(request.form['content'])
         return redirect(url_for('.view_domain', zone_id=request_obj.id))
 
     return render_template('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
