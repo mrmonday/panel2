@@ -5,7 +5,8 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
-from flask import session
+from functools import wraps
+from flask import session, redirect, url_for
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
@@ -57,3 +58,11 @@ def get_session_user():
         return User.query.filter_by(id=session['uid']).first()
 
     return None
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if get_session_user() is None:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
