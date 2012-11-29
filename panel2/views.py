@@ -19,3 +19,9 @@ def index():
 def error_forbidden(e):
     return render_template('error-forbidden.html'), 403
 
+@app.template_filter('truncate')
+def truncate(data):
+    if len(data) < 51:
+        return data
+
+    return data[0:50] + '...'
