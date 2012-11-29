@@ -9,6 +9,7 @@ from flask import render_template, Markup, redirect, url_for, request, abort
 from panel2.models import User, get_session_user, login_required
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
+from panel2.dns.axfr import do_axfr
 from panel2 import db
 
 @dns.route('/')
@@ -94,3 +95,18 @@ def delete_domain(zone_id):
     db.session.commit()
 
     return redirect(url_for('.list'))
+
+@dns.route('/zone/<zone_id>/axfr-import', methods=['GET', 'POST'])
+@login_required
+def import_domain(zone_id):
+    domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(403)
+    if request.method == 'POST':
+        def record_callback(pname, qtype, ttl, prio, content):
+            domain.add_record(pname, content, qtype, prio, ttl)
+
+        do_axfr(request.form['nameserver'], domain.name, record_callback)
+        return redirect(url_for('.view_domain', zone_id=domain.id))
+
+    return render_template('dns/import-records.html', zone=domain)
