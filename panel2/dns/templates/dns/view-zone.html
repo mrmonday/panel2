@@ -29,7 +29,7 @@
 		<td>{{ record.type }}</td>
 		<td>{{ record.prio }}</td>
 		<td>{{ record.ttl }}</td>
-		<td>{{ record.content }}</td>
+		<td>{{ record.content | truncate }}</td>
 		<td>
 			<div class="btn-group pull-right">
 				<a href="{{ url_for('.edit_record', zone_id=zone.id, record_id=record.id) }}" class="btn btn-primary">Edit</a>
