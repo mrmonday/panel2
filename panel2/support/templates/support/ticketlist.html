@@ -32,7 +32,7 @@
 		<td class="span1">{{ ticket.user.username }}</td>
 		<td class="span2">
 			<div class="btn-group pull-right">
-				<a href="#" class="btn btn-primary">View</a>
+				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
 				<a href="#" class="btn">Close</a>
 			</div>
 		</td>
@@ -58,7 +58,7 @@
 		<td class="span1">{{ ticket.user.username }}</td>
 		<td class="span2">
 			<div class="btn-group pull-right">
-				<a href="#" class="btn btn-primary">View</a>
+				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
 			</div>
 		</td>
 	</tr>
