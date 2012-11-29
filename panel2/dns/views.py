@@ -12,6 +12,13 @@ from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
 from panel2 import db
 
+def user_can_access_domain(domain, user=get_session_user()):
+    if user.is_admin is True:
+        return True
+    if domain.user != user:
+        return False
+    return True
+
 @dns.route('/')
 @dns.route('/zones')
 @login_required
@@ -23,7 +30,7 @@ def list():
 @login_required
 def view_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
     return render_template('dns/view-zone.html', zone=domain)
 
@@ -31,7 +38,7 @@ def view_domain(zone_id):
 @login_required
 def edit_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
     record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first()
     if request.method == 'POST':
@@ -55,7 +62,7 @@ def new_domain():
 @login_required
 def new_record(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
     if request.method == 'POST':
         domain.add_record(domain.full_name(request.form['subdomain']),
@@ -69,7 +76,7 @@ def new_record(zone_id):
 @login_required
 def delete_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
     Record.query.filter_by(domain_id=domain.id, id=record_id).delete()
     db.session.commit()
@@ -80,7 +87,7 @@ def delete_record(zone_id, record_id):
 @login_required
 def delete_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
 
     # Surprise, surprise!  The SQLAlchemy documentation lies.
@@ -100,7 +107,7 @@ def delete_domain(zone_id):
 @login_required
 def import_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
-    if domain.user != get_session_user():
+    if user_can_access_domain(domain):
         abort(403)
     if request.method == 'POST':
         def record_callback(pname, qtype, ttl, prio, content):
