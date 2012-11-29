@@ -3,19 +3,34 @@
 
 {% block content %}
 
-<h2>DNS Zones <a href="{{ url_for('.new_domain') }}" class="btn btn-success pull-right">New Zone</a></h2>
+<h2>
+	DNS Zones
+	<div class="btn-group pull-right">
+		<a href="{{ url_for('.new_domain') }}" class="btn btn-success">New Zone</a>
+	{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Zones</a>
+		<a href="{{ url_for('.list') }}" class="btn">View Your Zones</a>
+	{% endif %}
+	</div>
+</h2>
 
 <table class="table table-striped">
 	<tr>
 		<th>Zone</th>
+		<th>
+			<span class="pull-right">Creator</span>
+		</th>
 		<th>
 			<span class="pull-right">Options</span>
 		</th>
 	</tr>
 	{% for zone in zones %}
 	<tr>
-		<td>{{ zone.name }}</td>
-		<td>
+		<td class="span9">{{ zone.name }}</td>
+		<td class="span1">
+			<span class="pull-right">{{ zone.user.username }}</span>
+		</td>
+		<td class="span2">
 			<div class="btn-group pull-right">
 				<a href="{{ url_for('.view_domain', zone_id=zone.id) }}" class="btn btn-primary">View</a>
 				<a href="{{ url_for('.delete_domain', zone_id=zone.id) }}" class="btn btn-danger">Delete</a>

@@ -28,6 +28,11 @@ def list():
     user = get_session_user()
     return render_template('dns/zones.html', zones=user.domains)
 
+@dns.route('/zones/all')
+@login_required
+def list_all():
+    return render_template('dns/zones.html', zones=Domain.query)
+
 @dns.route('/zone/<zone_id>')
 @login_required
 def view_domain(zone_id):
