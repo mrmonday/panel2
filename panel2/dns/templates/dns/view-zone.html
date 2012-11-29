@@ -7,7 +7,7 @@
 	{{ zone.name }}
 	<div class="btn-group pull-right">
 		<a href="{{ url_for('.new_record', zone_id=zone.id) }}" class="btn btn-success">New Record</a>
-		<a href="#" class="btn btn-danger">Delete Zone</a>
+		<a href="{{ url_for('.delete_domain', zone_id=zone.id) }}" class="btn btn-danger">Delete Zone</a>
 	</div>
 </h2>
 
@@ -31,8 +31,8 @@
 		<td>{{ record.content }}</td>
 		<td>
 			<div class="btn-group pull-right">
-				<a href="{{ url_for('.edit_record', zone=zone.id, record=record.id) }}" class="btn btn-primary">Edit</a>
-				<a href="#" class="btn btn-danger">Delete</a>
+				<a href="{{ url_for('.edit_record', zone_id=zone.id, record_id=record.id) }}" class="btn btn-primary">Edit</a>
+				<a href="{{ url_for('.delete_record', zone_id=zone.id, record_id=record.id) }}" class="btn btn-danger">Delete</a>
 			</div>
 		</td>
 	</tr>
