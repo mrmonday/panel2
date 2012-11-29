@@ -39,6 +39,12 @@ class Domain(db.Model):
     def add_record(self, name, content, type='A', prio=0, ttl=300):
         return Record(name, type, prio, content, ttl, self.id)
 
+    def full_name(self, subdomain):
+        if subdomain != '':
+            return subdomain + '.' + self.name
+
+        return self.name
+
 class Record(db.Model):
     __tablename__ = 'records'
 

@@ -1,3 +1,5 @@
 #!/bin/sh
 
-/usr/bin/env uwsgi --plugin-dir /usr/lib/uwsgi --plugin python --http-socket 0.0.0.0:5000 -w panel2:app
+echo "HOME is ${HOME}"
+(sleep 2; chmod 777 ${HOME}/panel2-uwsgi.sock) &
+/usr/bin/env uwsgi --plugin-dir /usr/lib/uwsgi --plugin python -s ${HOME}/panel2-uwsgi.sock -w panel2:app

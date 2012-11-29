@@ -5,7 +5,7 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
-from flask import render_template, Markup, redirect, url_for, request
+from flask import render_template, Markup, redirect, url_for, request, abort
 from panel2.models import User, get_session_user
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
@@ -20,13 +20,18 @@ def list():
 @dns.route('/zone/<zone_id>')
 def view_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(503)
     return render_template('dns/view-zone.html', zone=domain)
 
 @dns.route('/zone/<zone_id>/record/<record_id>', methods=['GET', 'POST'])
 def edit_record(zone_id, record_id):
-    record_obj = Record.query.filter_by(domain_id=zone_id, id=record_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(503)
+    record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first()
     if request.method == 'POST':
-        record_obj.set_name(request.form['subdomain'] + '.' + record_obj.domain.name)
+        record_obj.set_name(record_obj.domain.full_name(request.form['subdomain']))
         record_obj.set_content(request.form['content'])
         return redirect(url_for('.view_domain', zone_id=request_obj.id))
 
@@ -44,8 +49,10 @@ def new_domain():
 @dns.route('/zone/<zone_id>/record/new', methods=['GET', 'POST'])
 def new_record(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(503)
     if request.method == 'POST':
-        domain.add_record(request.form['subdomain'] + '.' + domain.name,
+        domain.add_record(domain.full_name(request.form['subdomain']),
                           request.form['content'], request.form['type'],
                           request.form['prio'], request.form['ttl'])
         return redirect(url_for('.view_domain', zone_id=domain.id))
@@ -54,7 +61,10 @@ def new_record(zone_id):
 
 @dns.route('/zone/<zone_id>/record/<record_id>/delete')
 def delete_record(zone_id, record_id):
-    Record.query.filter_by(domain_id=zone_id, id=record_id).delete()
+    domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(503)
+    Record.query.filter_by(domain_id=domain.id, id=record_id).delete()
     db.session.commit()
 
     return redirect(url_for('.view_domain', zone_id=zone_id))
@@ -62,6 +72,8 @@ def delete_record(zone_id, record_id):
 @dns.route('/zone/<zone_id>/delete')
 def delete_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
+    if domain.user != get_session_user():
+        abort(503)
 
     # Surprise, surprise!  The SQLAlchemy documentation lies.
     # Remove all dependent records in a separate transaction before
