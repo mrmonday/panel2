@@ -21,14 +21,14 @@ def list():
 def view_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
-        abort(503)
+        abort(403)
     return render_template('dns/view-zone.html', zone=domain)
 
 @dns.route('/zone/<zone_id>/record/<record_id>', methods=['GET', 'POST'])
 def edit_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
-        abort(503)
+        abort(403)
     record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first()
     if request.method == 'POST':
         record_obj.set_name(record_obj.domain.full_name(request.form['subdomain']))
@@ -50,7 +50,7 @@ def new_domain():
 def new_record(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
-        abort(503)
+        abort(403)
     if request.method == 'POST':
         domain.add_record(domain.full_name(request.form['subdomain']),
                           request.form['content'], request.form['type'],
@@ -63,7 +63,7 @@ def new_record(zone_id):
 def delete_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
-        abort(503)
+        abort(403)
     Record.query.filter_by(domain_id=domain.id, id=record_id).delete()
     db.session.commit()
 
@@ -73,7 +73,7 @@ def delete_record(zone_id, record_id):
 def delete_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
-        abort(503)
+        abort(403)
 
     # Surprise, surprise!  The SQLAlchemy documentation lies.
     # Remove all dependent records in a separate transaction before
