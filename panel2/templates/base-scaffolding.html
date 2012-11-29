@@ -12,7 +12,7 @@
 				<ul class="menu-list">
 					{% if user %}
 					<li class="menu-item">
-						<a href="/dns/zones">My DNS Zones</a></li>
+						<a href="{{ url_for('dns.list') }}">My DNS Zones</a></li>
 					</li>
 
 					<li class="menu-item">
@@ -20,7 +20,7 @@
 					</li>
 
 					<li class="menu-item">
-						<a href="/tickets/list">My Tickets</a></li>
+						<a href="/support/tickets/list">My Tickets</a></li>
 					</li>
 					{% endif %}
 					<li class="menu-item login-item">

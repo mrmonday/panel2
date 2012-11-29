@@ -19,5 +19,7 @@ import panel2.sessionviews
 
 # plugins!
 from panel2.dns import dns
+from panel2.support import support
 
 app.register_blueprint(dns, url_prefix='/dns')
+app.register_blueprint(support, url_prefix='/support')
