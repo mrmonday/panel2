@@ -6,18 +6,20 @@ All rights reserved.
 """
 
 from flask import render_template, Markup, redirect, url_for, request, abort
-from panel2.models import User, get_session_user
+from panel2.models import User, get_session_user, login_required
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
 from panel2 import db
 
 @dns.route('/')
 @dns.route('/zones')
+@login_required
 def list():
     user = get_session_user()
     return render_template('dns/zones.html', zones=user.domains)
 
 @dns.route('/zone/<zone_id>')
+@login_required
 def view_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
@@ -25,6 +27,7 @@ def view_domain(zone_id):
     return render_template('dns/view-zone.html', zone=domain)
 
 @dns.route('/zone/<zone_id>/record/<record_id>', methods=['GET', 'POST'])
+@login_required
 def edit_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
@@ -38,6 +41,7 @@ def edit_record(zone_id, record_id):
     return render_template('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
 
 @dns.route('/zone/new', methods=['GET', 'POST'])
+@login_required
 def new_domain():
     if request.method == 'POST':
         user = get_session_user()
@@ -47,6 +51,7 @@ def new_domain():
     return render_template('dns/new-domain.html')
 
 @dns.route('/zone/<zone_id>/record/new', methods=['GET', 'POST'])
+@login_required
 def new_record(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
@@ -60,6 +65,7 @@ def new_record(zone_id):
     return render_template('dns/new-record.html', zone=domain)
 
 @dns.route('/zone/<zone_id>/record/<record_id>/delete')
+@login_required
 def delete_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
@@ -70,6 +76,7 @@ def delete_record(zone_id, record_id):
     return redirect(url_for('.view_domain', zone_id=zone_id))
 
 @dns.route('/zone/<zone_id>/delete')
+@login_required
 def delete_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if domain.user != get_session_user():
