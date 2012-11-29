@@ -36,7 +36,7 @@ def edit_record(zone_id, record_id):
     if request.method == 'POST':
         record_obj.update_name(record_obj.domain.full_name(request.form['subdomain']))
         record_obj.update_content(request.form['content'])
-        return redirect(url_for('.view_domain', zone_id=request_obj.id))
+        return redirect(url_for('.view_domain', zone_id=record_obj.id))
 
     return render_template('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
 
