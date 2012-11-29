@@ -14,6 +14,8 @@
 	</div>
 </h2>
 
+<h3>Open Tickets ({{ open_tickets_count }})</h3>
+
 <table class="table table-striped">
 	<tr>
 		<th>ID</th>
@@ -23,7 +25,35 @@
 			<span class="pull-right">Options</span>
 		</th>
 	</tr>
-	{% for ticket in tickets %}
+	{% for ticket in open_tickets %}
+	<tr>
+		<td class="span1">{{ ticket.id }}</td>
+		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span1">
+			<span class="pull-right">{{ ticket.user.username }}</span>
+		</td>
+		<td class="span2">
+			<div class="btn-group pull-right">
+				<a href="#" class="btn btn-primary">View</a>
+				<a href="#" class="btn btn-danger">Delete</a>
+			</div>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<h3>Closed Tickets ({{ closed_tickets_count }})</h3>
+
+<table class="table table-striped">
+	<tr>
+		<th>ID</th>
+		<th>Subject</th>
+		<th>Creator</th>
+		<th>
+			<span class="pull-right">Options</span>
+		</th>
+	</tr>
+	{% for ticket in closed_tickets %}
 	<tr>
 		<td class="span1">{{ ticket.id }}</td>
 		<td class="span8">{{ ticket.subject }}</td>

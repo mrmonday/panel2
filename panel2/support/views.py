@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+"""
+Copyright (c) 2012, 2013  TortoiseLabs, LLC.
+
+All rights reserved.
+"""
+
+from flask import render_template, Markup, redirect, url_for, request, abort
+from panel2.models import User, get_session_user, login_required, admin_required
+from panel2.support.models import Ticket, Reply
+from panel2.support import support
+from panel2 import db
+
+def user_can_access_ticket(ticket, user=None):
+    if user is None:
+        user = get_session_user()
+    if user.is_admin is True:
+        return True
+    if ticket.user != user:
+        return False
+    return True
+
+@support.route('/')
+@support.route('/tickets')
+@login_required
+def list():
+    user = get_session_user()
+    open_tickets = []
+    closed_tickets = []
+    for ticket in user.tickets:
+        if ticket.is_open is not True:
+            closed_tickets.append(ticket)
+        else:
+            open_tickets.append(ticket)
+
+    return render_template('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
+                           open_tickets_count=len(open_tickets), closed_tickets_count=len(closed_tickets))
+
+@support.route('/tickets/all')
+@admin_required
+def list_all():
+    open_tickets = Ticket.query.filter_by(is_open=True)
+    closed_tickets = Ticket.query.filter_by(is_open=False)
+
+    return render_template('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
+                           open_tickets_count=open_tickets.count(), closed_tickets_count=closed_tickets.count())
