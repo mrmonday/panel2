@@ -1,0 +1,43 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+
+<h2>
+	Tickets
+	<div class="btn-group pull-right">
+		<a href="#" class="btn btn-success">New Ticket</a>
+		{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Tickets</a>
+		<a href="{{ url_for('.list') }}" class="btn">View Your Tickets</a>
+		{% endif %}
+	</div>
+</h2>
+
+<table class="table table-striped">
+	<tr>
+		<th>ID</th>
+		<th>Subject</th>
+		<th>Creator</th>
+		<th>
+			<span class="pull-right">Options</span>
+		</th>
+	</tr>
+	{% for ticket in tickets %}
+	<tr>
+		<td class="span1">{{ ticket.id }}</td>
+		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span1">
+			<span class="pull-right">{{ ticket.user.username }}</span>
+		</td>
+		<td class="span2">
+			<div class="btn-group pull-right">
+				<a href="#" class="btn btn-primary">View</a>
+				<a href="#" class="btn btn-danger">Delete</a>
+			</div>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}
