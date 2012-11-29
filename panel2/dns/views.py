@@ -12,7 +12,9 @@ from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
 from panel2 import db
 
-def user_can_access_domain(domain, user=get_session_user()):
+def user_can_access_domain(domain, user=None):
+    if user is None:
+        user = get_session_user()
     if user.is_admin is True:
         return True
     if domain.user != user:
