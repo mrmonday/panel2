@@ -1,0 +1,70 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+
+<h2>
+	Tickets
+	<div class="btn-group pull-right">
+		<a href="#" class="btn btn-success">New Ticket</a>
+		{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Tickets</a>
+		{% endif %}
+		<a href="{{ url_for('.list') }}" class="btn">View Your Tickets</a>
+	</div>
+</h2>
+
+<h3>#{{ ticket.id }} - {{ ticket.subject }}</h3>
+
+<table class="table table-striped">
+	<tr>
+		<th>Status</th>
+		<th>Opened</th>
+		<th>Closed</th>
+		<th>
+			<span class="pull-right">Department</span>
+		</th>
+	</tr>
+	<tr>
+		<td class="span1">{{ "OPEN" if ticket.is_open else "CLOSED" }}</td>
+		<td class="span3">{{ ticket.opened_at | time_ago }}</td>
+		<td class="span3">{{ ticket.closed_at | time_ago if ticket.closed_at != None else "" }}</td>
+		<td class="span5">
+			<span class="pull-right">{{ ticket.department }}</span>
+		</td>
+	</tr>
+</table>
+
+<h3>Replies</h3>
+
+{% for reply in ticket.replies %}
+<div class="row ticket-row">
+	<div class="span2">
+		<div class="pull-right ticket-reply-source">
+			<img src="{{ reply.from_user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
+			<strong>{{ reply.from_user.username }}</strong><br>
+			{{ reply.replied_at | time_ago }}
+		</div>
+	</div>
+	<div class="span10">
+		{{ reply.message }}
+	</div>
+</div>
+{% endfor %}
+
+<form method="POST">
+<div class="row ticket-row">
+	<div class="span2">
+		<div class="pull-right ticket-reply-source">
+			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
+			<strong>{{ user.username }}</strong>
+		</div>
+	</div>
+	<div class="span10">
+		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span10"></textarea><br>
+		<button type="submit" class="btn btn-primary pull-right">Add Reply</button>
+	</div>
+</div>
+</form>
+
+{% endblock %}
