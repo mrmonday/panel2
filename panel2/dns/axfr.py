@@ -18,7 +18,7 @@ def do_axfr(nameserver, domain, callback=print_record):
     for name, node in zone.nodes.items():
         pname = ''
         if str(name) == '@':
-            pname = ''
+            pname = domain
         else:
             pname = str(name) + '.' + domain
 
