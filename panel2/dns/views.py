@@ -9,6 +9,7 @@ from flask import render_template, Markup, redirect, url_for, request
 from panel2.models import User, get_session_user
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
+from panel2 import db
 
 @dns.route('/')
 @dns.route('/zones')
@@ -39,3 +40,21 @@ def new_domain():
         return redirect(url_for('.view_zone', zone=domain.id))
 
     return render_template('dns/new-domain.html')
+
+@dns.route('/zone/<zone_id>/record/new', methods=['GET', 'POST'])
+def new_record(zone_id):
+    domain = Domain.query.filter_by(id=zone_id).first()
+    if request.method == 'POST':
+        domain.add_record(request.form['subdomain'] + '.' + domain.name,
+                          request.form['content'], request.form['type'],
+                          request.form['prio'], request.form['ttl'])
+        return redirect(url_for('.view_zone', zone=domain.id))
+
+    return render_template('dns/new-record.html', zone=domain)
+
+@dns.route('/zone/<zone_id>/record/<record_id>/delete')
+def delete_record(zone_id, record_id):
+    Record.query.filter_by(domain_id=zone_id, id=record_id).delete()
+    db.session.commit()
+
+    return redirect(url_for('.view_zone', zone=zone_id))

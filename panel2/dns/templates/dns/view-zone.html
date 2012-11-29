@@ -3,7 +3,13 @@
 
 {% block content %}
 
-<h2>{{ zone.name }}</h2>
+<h2>
+	{{ zone.name }}
+	<div class="btn-group pull-right">
+		<a href="{{ url_for('.new_record', zone_id=zone.id) }}" class="btn btn-success">New Record</a>
+		<a href="#" class="btn btn-danger">Delete Zone</a>
+	</div>
+</h2>
 
 <table class="table table-striped">
 	<tr>
