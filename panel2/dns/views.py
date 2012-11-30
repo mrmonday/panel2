@@ -60,7 +60,10 @@ def edit_record(zone_id, record_id):
 def new_domain():
     if request.method == 'POST':
         user = get_session_user()
-        domain = Domain(user, request.form['domain_name'])
+        domain_name = request.form['domain_name']
+        if domain_name.count('.') == 0:
+            abort(404)
+        domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
     return render_template('dns/new-domain.html')
