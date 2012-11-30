@@ -48,6 +48,8 @@ def do_axfr(nameserver, domain, callback=print_record):
                         content = domain + '.'
                     if content.endswith('.') is False:
                         content = content + '.' + domain + '.'
+                elif 'strings' in rdata.__slots__:
+                    content = rdata.strings
                 else:
                     print "unhandled: %s" % rdata.__slots__
                     continue
