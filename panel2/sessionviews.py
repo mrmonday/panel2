@@ -43,8 +43,17 @@ def logout():
 def create():
     if request.method == 'POST':
         try:
-            user = User(request.form['username'], request.form['password'], request.form['email'])
-        except IntegrityError:
+            username = request.form['username'].strip().rstrip()
+            password = request.form['password'].strip().rstrip()
+            email = request.form['email'].strip().rstrip()
+            if len(username) == 0:
+                return render_template('create.html', error='No username provided') 
+            if len(password) == 0:
+                return render_template('create.html', error='No password provided') 
+            if len(email) == 0:
+                return render_template('create.html', error='No email provided') 
+            user = User(username, password, email)
+        except:
             return render_template('create.html', error='Username is already taken')
             
         if user is not None:
