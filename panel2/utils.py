@@ -15,3 +15,8 @@ class CommitableMixIn(object):
 def strip_unprintable(s, printable="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \n"):
     return filter(lambda x: x in printable, s)
 
+def is_valid_email(email):
+    s = strip_unprintable(email)
+    if '@' not in s:
+        return False
+    return True
