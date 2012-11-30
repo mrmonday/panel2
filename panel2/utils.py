@@ -12,3 +12,6 @@ class CommitableMixIn(object):
         db.session.add(self)
         db.commit()
 
+def strip_unprintable(s, printable="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \n"):
+    return filter(lambda x: x in printable, s)
+
