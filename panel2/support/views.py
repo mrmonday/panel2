@@ -70,7 +70,15 @@ def close(ticket_id):
 @login_required
 def new():
     if request.method == 'POST':
-        ticket = Ticket(get_session_user(), request.form['subject'], request.form['message'])
+        subject = strip_unprintable(request.form['subject'])
+        message = strip_unprintable(request.form['message'])
+
+        if len(subject) == 0:
+            abort(500)
+        if len(message) == 0:
+            abort(500)
+
+        ticket = Ticket(get_session_user(), subject, message)
         return redirect(url_for('.view', ticket_id=ticket.id))
 
     return render_template('support/ticketnew.html')
