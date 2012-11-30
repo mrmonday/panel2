@@ -62,7 +62,10 @@
 	</div>
 	<div class="span10">
 		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span10"></textarea><br>
-		<button type="submit" class="btn btn-primary pull-right">Add Reply</button>
+		<div class="btn-group pull-right">
+			<button type="submit" class="btn btn-primary">Add Reply</button>
+			<a href="{{ url_for('.close', ticket_id=ticket.id) }}" class="btn">Close Ticket</a>
+		</div>
 	</div>
 </div>
 </form>

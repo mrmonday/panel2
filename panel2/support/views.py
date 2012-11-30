@@ -55,3 +55,13 @@ def view(ticket_id):
         ticket.add_reply(get_session_user(), request.form['message'])
 
     return render_template('support/ticketview.html', ticket=ticket)
+
+@support.route('/ticket/<ticket_id>/close')
+@login_required
+def close(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first_or_404()
+    if user_can_access_ticket(ticket) is not True:
+        abort(403)
+    ticket.close()
+
+    return redirect(url_for('.list'))
