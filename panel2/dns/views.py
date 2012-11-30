@@ -12,6 +12,15 @@ from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
 from panel2 import db
 
+def sanity_check(name, check_dots=True):
+    stripped_name = name.strip().rstrip().strip('.').rstrip('.')
+    if len(stripped_name) == 0:
+        return False
+    if check_dots is True and name.count('.') == 0:
+        return False
+
+    return True
+
 def user_can_access_domain(domain, user=None):
     if user is None:
         user = get_session_user()
@@ -61,7 +70,7 @@ def new_domain():
     if request.method == 'POST':
         user = get_session_user()
         domain_name = request.form['domain_name']
-        if domain_name.count('.') == 0:
+        if sanity_check(domain_name) is not True:
             abort(404)
         domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
@@ -75,8 +84,14 @@ def new_record(zone_id):
     if user_can_access_domain(domain) is False:
         abort(403)
     if request.method == 'POST':
-        domain.add_record(domain.full_name(request.form['subdomain']),
-                          request.form['content'], request.form['type'],
+        full_name = domain.full_name(request.form['subdomain'])
+        if sanity_check(full_name) is not True:
+            abort(404)
+        content = request.form['content']
+        if sanity_check(content, False) is not True:
+            abort(404)
+        domain.add_record(full_name,
+                          content, request.form['type'],
                           request.form['prio'], request.form['ttl'])
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
@@ -123,7 +138,9 @@ def import_domain(zone_id):
         def record_callback(pname, qtype, ttl, prio, content):
             domain.add_record(pname, content, qtype, prio, ttl)
 
-        do_axfr(request.form['nameserver'], domain.name, record_callback)
+        if len(request.form['nameserver']) != 0:
+            do_axfr(request.form['nameserver'], domain.name, record_callback)
+
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
     return render_template('dns/import-records.html', zone=domain)
