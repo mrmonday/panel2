@@ -65,3 +65,12 @@ def close(ticket_id):
     ticket.close()
 
     return redirect(url_for('.list'))
+
+@support.route('/ticket/new', methods=['GET', 'POST'])
+@login_required
+def new():
+    if request.method == 'POST':
+        ticket = Ticket(get_session_user(), request.form['subject'], request.form['message'])
+        return redirect(url_for('.view', ticket_id=ticket.id))
+
+    return render_template('support/ticketnew.html')

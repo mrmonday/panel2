@@ -1,0 +1,37 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+
+<h2>
+	Tickets
+	<div class="btn-group pull-right">
+		<a href="{{ url_for('.new') }}" class="btn btn-success">New Ticket</a>
+		{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Tickets</a>
+		{% endif %}
+		<a href="{{ url_for('.list') }}" class="btn">View Your Tickets</a>
+	</div>
+</h2>
+
+<form method="POST">
+<h3>New Ticket</h3>
+
+<div class="row ticket-row">
+	<div class="span2">
+		<div class="pull-right ticket-reply-source">
+			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
+			<strong>{{ user.username }}</strong>
+		</div>
+	</div>
+	<div class="span10">
+		<input type="text" name="subject" placeholder="Subject" class="span10">
+		<textarea name="message" placeholder="Message" class="ticket-reply-textarea span10"></textarea><br>
+		<div class="btn-group pull-right">
+			<button type="submit" class="btn btn-primary">Create Ticket</button>
+		</div>
+	</div>
+</div>
+</form>
+
+{% endblock %}
