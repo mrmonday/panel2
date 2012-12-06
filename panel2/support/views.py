@@ -53,7 +53,9 @@ def view(ticket_id):
     if user_can_access_ticket(ticket) is not True:
         abort(403)
     if request.method == 'POST':
-        ticket.add_reply(get_session_user(), request.form['message'])
+        reply = strip_unprintable(request.form['message'])
+        ticket.add_reply(get_session_user(), reply)
+        return redirect(url_for('.view', ticket_id=ticket_id))
 
     return render_template('support/ticketview.html', ticket=ticket)
 
