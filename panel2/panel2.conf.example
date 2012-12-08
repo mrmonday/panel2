@@ -1,2 +1,3 @@
 SECRET_KEY = 'loldongs'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+NOREPLY_MAIL = 'noreply@domain.com'
