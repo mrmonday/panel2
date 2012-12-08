@@ -8,12 +8,14 @@ All rights reserved.
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.mail import Mail
+from flask.ext.sslify import SSLify
 
 app = Flask(__name__)
 app.config.from_pyfile('panel2.conf')
 
 db = SQLAlchemy(app)
 mail = Mail(app)
+ssl = SSLify(app)
 
 import panel2.models
 import panel2.views
