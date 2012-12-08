@@ -12,14 +12,13 @@ from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
 from panel2 import db
 
-def sanity_check(name, check_dots=True):
-    stripped_name = name.strip().rstrip().strip('.').rstrip('.')
-    if len(stripped_name) == 0:
-        return False
-    if check_dots is True and name.count('.') == 0:
-        return False
-
-    return True
+def is_valid_host(host):
+    '''IDN compatible domain validator'''
+    host = host.encode('idna').lower()
+    if not hasattr(is_valid_host, '_re'):
+        import re
+        is_valid_host._re = re.compile(r'^([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15}$')
+    return bool(is_valid_host._re.match(host))
 
 def user_can_access_domain(domain, user=None):
     if user is None:
@@ -70,7 +69,7 @@ def new_domain():
     if request.method == 'POST':
         user = get_session_user()
         domain_name = request.form['domain_name']
-        if sanity_check(domain_name) is not True:
+        if is_valid_host(domain_name) is not True:
             abort(404)
         domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
@@ -85,10 +84,10 @@ def new_record(zone_id):
         abort(403)
     if request.method == 'POST':
         full_name = domain.full_name(request.form['subdomain'])
-        if sanity_check(full_name) is not True:
+        if is_valid_host(full_name) is not True:
             abort(404)
         content = request.form['content']
-        if sanity_check(content, False) is not True:
+        if is_valid_host(content, False) is not True:
             abort(404)
         domain.add_record(full_name,
                           content, request.form['type'],
