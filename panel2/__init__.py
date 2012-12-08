@@ -18,6 +18,7 @@ mail = Mail(app)
 import panel2.models
 import panel2.views
 import panel2.sessionviews
+import panel2.auth_hooks
 
 # plugins!
 from panel2.dns import dns
