@@ -1,0 +1,7 @@
+{% extends "email/base-message.txt" %}
+{% block message %}
+There was a failed authentication request from {{ request.environ['REMOTE_ADDR'] }}.
+
+If you feel that this is in error, you should change your password at your
+earliest convenience and check for any form of account compromise.
+{% endblock %}
