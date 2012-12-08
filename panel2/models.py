@@ -13,6 +13,9 @@ from panel2.pbkdf2 import pbkdf2_hex
 from panel2.utils import CommitableMixIn
 
 import hashlib, os
+import blinker
+
+createuser_signal = blinker.Signal('A signal which is fired when a user is created')
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +36,8 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.assign_password(password.encode('utf-8'))
+
+        createuser_signal.send(app, user=self)
 
     def __repr__(self):
         return "<User '%s'>%s" % (self.username, (" {admin}" if self.is_admin is True else ""))
