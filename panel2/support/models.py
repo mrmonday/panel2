@@ -42,9 +42,9 @@ class Ticket(db.Model):
         db.session.add(self)
         db.session.commit()
 
-        self.add_reply(self.user, message, False)
+        reply = self.add_reply(self.user, message, False)
 
-        ticket_create_signal.send(app, ticket=self)
+        ticket_create_signal.send(app, ticket=self, reply=reply)
 
     def __repr__(self):
         return "<Ticket: %d - '%s'>" % (self.id, self.subject)
