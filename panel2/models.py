@@ -6,11 +6,11 @@ All rights reserved.
 """
 
 from functools import wraps
-from flask import session, redirect, url_for, abort
+from flask import session, redirect, url_for, abort, render_template
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
-from panel2.utils import CommitableMixIn
+from panel2.utils import send_simple_email
 
 import hashlib, os
 import blinker
@@ -57,6 +57,10 @@ class User(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def send_email(self, subject, template):
+        message = render_template(template, user=self)
+        send_simple_email(recipient=self.email, subject=subject, message=message)
 
 def get_session_user():
     if session.has_key('uid'):
