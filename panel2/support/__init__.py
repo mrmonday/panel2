@@ -11,3 +11,4 @@ support = Blueprint('support', __name__, template_folder='templates')
 
 import panel2.support.models
 import panel2.support.views
+import panel2.support.email_hooks
