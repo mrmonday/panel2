@@ -14,7 +14,7 @@ from panel2.models import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable
 from panel2.support.models import Ticket, Reply
 from panel2.support import support
-from panel2 import db
+from panel2 import app, db
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
