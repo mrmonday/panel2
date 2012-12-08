@@ -7,11 +7,6 @@ All rights reserved.
 
 from panel2 import db, mail, app
 
-class CommitableMixIn(object):
-    def commit(self):
-        db.session.add(self)
-        db.commit()
-
 def strip_unprintable(s, printable="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \n"):
     return filter(lambda x: x in printable, s)
 
