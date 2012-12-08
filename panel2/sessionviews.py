@@ -7,6 +7,7 @@ All rights reserved.
 
 import sys
 import hashlib
+import blinker
 
 from panel2 import app
 from panel2.models import User, get_session_user
@@ -14,20 +15,34 @@ from panel2.utils import is_email_valid
 from flask import session, redirect, url_for, escape, request, render_template
 from sqlalchemy.exc import IntegrityError
 
+login_signal = blinker.Signal('A signal sent when the user logs in')
+logout_signal = blinker.Signal('A signal sent when the user logs out')
+
+@login_signal.connect_via(blinker.ANY)
+def handle_session_login(*args, **kwargs):
+    user = kwargs.pop('user', None)
+    session['uid'] = user.id
+
+@logout_signal.connect_via(blinker.ANY)
+def handle_session_logout(*args, **kwargs):
+    session.pop('uid', None)
+
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
     if u is None:
-        return None
+        return False
     if u.validate_password(password) is False:
-        return None
-    return u
+        return False
+
+    # Password validation was successful, fire the login event.
+    login_signal.send(app, user=u, session=session)
+    return True
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = validate_login(request.form['username'], request.form['password'])
-        if user is not None:
-            session['uid'] = user.id
+        if user is not False:
             return redirect(url_for('index'))
         else:
             session.pop('uid', None)
@@ -37,7 +52,10 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('uid', None)
+    _user = get_session_user()
+    if _user is not None:
+        logout_signal.send(app, user=_user, session=session)
+
     return redirect(url_for('index'))
 
 @app.route('/create', methods=['GET', 'POST'])
