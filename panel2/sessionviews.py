@@ -17,6 +17,7 @@ from sqlalchemy.exc import IntegrityError
 
 login_signal = blinker.Signal('A signal sent when the user logs in')
 logout_signal = blinker.Signal('A signal sent when the user logs out')
+authfail_signal = blinker.Signal('A signal sent when the user fails authentication')
 
 @login_signal.connect_via(blinker.ANY)
 def handle_session_login(*args, **kwargs):
@@ -30,12 +31,14 @@ def handle_session_logout(*args, **kwargs):
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
     if u is None:
+        authfail_signal.send(app, user=u, reason='Invalid username')
         return False
     if u.validate_password(password) is False:
+        authfail_signal.send(app, user=u, reason='Invalid password')
         return False
 
     # Password validation was successful, fire the login event.
-    login_signal.send(app, user=u, session=session)
+    login_signal.send(app, user=u)
     return True
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -54,7 +57,7 @@ def login():
 def logout():
     _user = get_session_user()
     if _user is not None:
-        logout_signal.send(app, user=_user, session=session)
+        logout_signal.send(app, user=_user)
 
     return redirect(url_for('index'))
 
