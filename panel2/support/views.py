@@ -5,12 +5,27 @@ Copyright (c) 2012, 2013  TortoiseLabs, LLC.
 All rights reserved.
 """
 
+import re
+
 from flask import render_template, Markup, redirect, url_for, request, abort
+from jinja2 import evalcontextfilter, escape
+
 from panel2.models import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable
 from panel2.support.models import Ticket, Reply
 from panel2.support import support
 from panel2 import db
+
+_paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
+
+@app.template_filter()
+@evalcontextfilter
+def nl2br(eval_ctx, value):
+    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n') \
+        for p in _paragraph_re.split(escape(value)))
+    if eval_ctx.autoescape:
+        result = Markup(result)
+    return result
 
 def user_can_access_ticket(ticket, user=None):
     if user is None:
