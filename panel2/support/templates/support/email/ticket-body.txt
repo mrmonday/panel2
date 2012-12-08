@@ -1,0 +1,11 @@
+{% extends "email/base-message.txt" %}
+{% block message %}{{ reply.from_user.username }} added a message to ticket {{ ticket.id }}:
+
+{{ reply.message }}
+
+======
+ID: {{ ticket.id }}
+Status: {{ "OPEN" if ticket.is_open else "CLOSED" }}
+Opened: {{ ticket.opened_at | time_ago }}
+Department: {{ ticket.department }}
+{% endblock %}
