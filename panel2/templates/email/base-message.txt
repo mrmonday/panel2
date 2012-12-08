@@ -1,11 +1,9 @@
 {% block greeting %}
-{{ user.name }},
+{{ user.username }},
 {% endblock %}
-
 {% block message %}{% endblock message %}
-
 {% block footer %}
 -- 
 This message was sent to {{ user.email }} because they have an account with
-us.  If this is in error, please e-mail {{ config['CONTACT_EMAIL'] }}.
+us.  If this is in error, please e-mail us at {{ config['CONTACT_MAIL'] }}.
 {% endblock %}
