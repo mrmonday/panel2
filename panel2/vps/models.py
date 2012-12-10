@@ -68,7 +68,7 @@ class XenVPS(Service):
 
     name = db.Column(db.String(255))
 
-    def __init__(self, memory, swap, disk, price, node):
+    def __init__(self, memory, swap, disk, price, node, user):
         self.memory = memory
         self.swap = swap
         self.disk = disk
@@ -76,6 +76,9 @@ class XenVPS(Service):
 
         self.node_id = node.id
         self.node = node
+
+        self.user_id = user.id
+        self.user = user
 
         db.session.add(self)
         db.session.commit()
