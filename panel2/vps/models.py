@@ -68,7 +68,9 @@ class XenVPS(Service):
 
     name = db.Column(db.String(255))
 
-    def __init__(self, memory, swap, disk, price, node, user):
+    def __init__(self, name, memory, swap, disk, price, node, user):
+        self.name = name
+
         self.memory = memory
         self.swap = swap
         self.disk = disk
