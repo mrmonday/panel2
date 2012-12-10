@@ -1,0 +1,15 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<h2>
+	Tickets
+	<div class="btn-group pull-right">
+		<a href="{{ url_for('.new') }}" class="btn btn-success">New Ticket</a>
+		{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Tickets</a>
+		{% endif %}
+		<a href="{{ url_for('.list') }}" class="btn">View Your Tickets</a>
+	</div>
+</h2>
+{% endblock %}
