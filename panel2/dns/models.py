@@ -53,6 +53,10 @@ class Domain(db.Model):
 
         return self.name
 
+    def _serialize(self):
+        recordset = [record._serialize() for record in self.records]
+        return dict(records=recordset, user=self.user.username, name=self.name, id=self.id)
+
 class Record(db.Model):
     __tablename__ = 'records'
 
@@ -97,6 +101,9 @@ class Record(db.Model):
 
     def subdomain(self):
         return self.name.rstrip(self.domain.name).rstrip('.')
+
+    def _serialize(self):
+        return dict(name=self.name, type=self.type, prio=self.prio, content=self.content, ttl=self.ttl, id=self.id)
 
 class Supermaster(db.Model):
     """A class which reflects the PowerDNS supermasters table.  Presently
