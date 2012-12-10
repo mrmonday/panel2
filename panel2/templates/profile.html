@@ -23,4 +23,22 @@
 	<button class="pull-right btn btn-primary" type="submit">Change Password</button>
 </form>
 
+<div class="pushdown"></div>
+
+<h3>Change E-Mail Address</h3>
+
+<form action="{{ url_for('.profile_change_email') }}" method="POST">
+	<p>
+		It is important to keep your e-mail address up to date so that you can receive important notifications from us.
+		Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
+		address on file for the account.
+	</p>
+	<div class="row">
+		<div class="span12">
+			<input type="text" placeholder="E-Mail Address" value="{{ user.email }}" name="new_email" class="span12">
+		</div>
+	</div>
+	<button class="pull-right btn btn-primary" type="submit">Change E-Mail Address</button>
+</form>
+
 {% endblock %}
