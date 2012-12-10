@@ -27,12 +27,12 @@ login_signal = blinker.Signal('A signal sent when the user logs in')
 logout_signal = blinker.Signal('A signal sent when the user logs out')
 authfail_signal = blinker.Signal('A signal sent when the user fails authentication')
 
-@login_signal.connect_via(blinker.ANY)
+@login_signal.connect_via(app)
 def handle_session_login(*args, **kwargs):
     user = kwargs.pop('user', None)
     session['uid'] = user.id
 
-@logout_signal.connect_via(blinker.ANY)
+@logout_signal.connect_via(app)
 def handle_session_logout(*args, **kwargs):
     session.pop('uid', None)
 
