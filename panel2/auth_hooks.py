@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app
-from panel2.sessionviews import login_signal, authfail_signal
+from panel2.session import login_signal, authfail_signal
 from flask import request
 
 @login_signal.connect_via(app)

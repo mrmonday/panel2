@@ -16,7 +16,7 @@ from the use of this software.
 from flask import render_template
 
 from panel2 import app, db
-from panel2.models import User
+from panel2.user import User
 from panel2.support.models import Ticket, Reply, ticket_create_signal, ticket_reply_signal
 
 @ticket_create_signal.connect_via(app)

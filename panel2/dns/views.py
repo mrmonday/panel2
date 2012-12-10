@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from flask import render_template, Markup, redirect, url_for, request, abort, flash
-from panel2.models import User, get_session_user, login_required, admin_required
+from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns

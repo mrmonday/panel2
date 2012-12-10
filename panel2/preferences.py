@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app
-from panel2.models import get_session_user
+from panel2.user import get_session_user
 
 from flask import render_template, redirect, url_for, flash, request
 

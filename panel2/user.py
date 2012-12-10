@@ -26,6 +26,7 @@ import blinker
 createuser_signal = blinker.Signal('A signal which is fired when a user is created')
 
 class User(db.Model):
+    extend_existing=True
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))

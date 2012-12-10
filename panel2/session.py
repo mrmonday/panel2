@@ -18,7 +18,7 @@ import hashlib
 import blinker
 
 from panel2 import app
-from panel2.models import User, get_session_user
+from panel2.user import User, get_session_user
 from panel2.utils import is_email_valid
 from flask import session, redirect, url_for, escape, request, render_template
 from sqlalchemy.exc import IntegrityError
