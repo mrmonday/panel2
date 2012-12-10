@@ -1,2 +1,11 @@
 {% extends "base-scaffolding.html" %}
+{% block content %}
 
+<h2>
+	Servers
+	<span class="pull-right btn-group">
+		<a href="{{ url_for('.list') }}" class="btn">Server List</a>
+	</span>
+</h2>
+
+{% endblock %}
