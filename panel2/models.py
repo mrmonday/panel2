@@ -66,6 +66,12 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def assign_email(self, new_email):
+        self.email = new_email
+
+        db.session.add(self)
+        db.session.commit()
+
     def send_email(self, subject, template, **kwargs):
         message = render_template(template, user=self, **kwargs)
         send_simple_email(recipient=self.email, subject=subject, message=message)
