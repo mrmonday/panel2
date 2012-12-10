@@ -54,3 +54,7 @@ h1 .btn, h2 .btn, h3 .btn {
 .pushdown {
 	padding-bottom: 1em;
 }
+
+.alert {
+	margin: 0;
+}
