@@ -16,3 +16,6 @@ from the use of this software.
 from flask import Blueprint
 
 vps = Blueprint('vps', __name__, template_folder='templates')
+
+import panel2.vps.models
+
