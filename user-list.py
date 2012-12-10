@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from panel2 import db
-from panel2.models import User
+from panel2.user import User
 
 import sys
 
