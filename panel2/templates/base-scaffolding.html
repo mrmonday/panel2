@@ -22,6 +22,10 @@
 					<li class="menu-item">
 						<a href="{{ url_for('support.list') }}">My Tickets</a>
 					</li>
+
+					<li class="menu-item">
+						<a href="{{ url_for('.profile_index') }}">My Account</a>
+					</li>
 					{% endif %}
 					<li class="menu-item login-item">
 						{% if user %}

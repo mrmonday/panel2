@@ -29,6 +29,7 @@ import panel2.models
 import panel2.views
 import panel2.sessionviews
 import panel2.auth_hooks
+import panel2.preferences
 
 # plugins!
 from panel2.dns import dns
