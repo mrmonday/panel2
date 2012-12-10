@@ -1,9 +1,10 @@
-{% extends "base-scaffolding.html" %}
+{% extends "dns/base.html" %}
 {% block title %}New DNS Zone - DNS Zones{% endblock %}
 
 {% block content %}
+{{ super() }}
 
-<h2>New DNS Zone</h2>
+<h3>New DNS Zone</h3>
 
 <p>Once the zone is created, set your DNS servers to <strong>ns1.tortois.es</strong> and
    <strong>ns2.tortois.es</strong> respectively.</p>

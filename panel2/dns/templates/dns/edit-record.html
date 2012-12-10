@@ -1,9 +1,9 @@
-{% extends "base-scaffolding.html" %}
+{% extends "dns/base.html" %}
 {% block title %}{{ zone.name }} - DNS Zones{% endblock %}
 
 {% block content %}
 
-<h2>{{ zone.name }} -- {{ record.name }}</h2>
+<h3>{{ zone.name }} -- {{ record.name }}</h3>
 
 <form method="POST">
 	<table class="table table-striped">

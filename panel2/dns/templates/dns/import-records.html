@@ -1,9 +1,10 @@
-{% extends "base-scaffolding.html" %}
+{% extends "dns/base.html" %}
 {% block title %}Import - {{ zone.name }} - DNS Zones{% endblock %}
 
 {% block content %}
+{{ super() }}
 
-<h2>Import Records - {{ zone.name }}</h2>
+<h3>Import Records - {{ zone.name }}</h3>
 
 <p>Using this tool, you can import the records for {{ zone.name }} from another server which supports
    AXFR transfers.  Specify the nameserver's IP below to continue.</p>
