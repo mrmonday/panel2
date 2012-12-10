@@ -13,3 +13,11 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+from flask import render_template, redirect, url_for
+from panel2.vps import vps
+
+@vps.route('/')
+@vps.route('/list')
+def list():
+    return render_template('vps/list.html')
+

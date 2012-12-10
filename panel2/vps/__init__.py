@@ -18,4 +18,4 @@ from flask import Blueprint
 vps = Blueprint('vps', __name__, template_folder='templates')
 
 import panel2.vps.models
-
+import panel2.vps.views
