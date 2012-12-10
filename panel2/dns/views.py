@@ -13,8 +13,9 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, Markup, redirect, url_for, request, abort
+from flask import render_template, Markup, redirect, url_for, request, abort, flash
 from panel2.models import User, get_session_user, login_required, admin_required
+from panel2.utils import strip_unprintable
 from panel2.dns.models import Domain, Record
 from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
@@ -78,7 +79,12 @@ def new_domain():
         user = get_session_user()
         domain_name = request.form['domain_name']
         if is_valid_host(domain_name) is not True:
-            abort(404)
+            flash('Domain %s is invalid' % domain_name, 'error')
+            return redirect(url_for('.new_domain'))
+        if Domain.query.filter_by(name=domain_name).first() is not None:
+            flash('Domain %s already exists' % domain_name, 'error')
+            return redirect(url_for('.new_domain'))
+
         domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
@@ -93,10 +99,9 @@ def new_record(zone_id):
     if request.method == 'POST':
         full_name = domain.full_name(request.form['subdomain'])
         if is_valid_host(full_name) is not True:
-            abort(404)
-        content = request.form['content']
-        if is_valid_host(content, False) is not True:
-            abort(404)
+            flash('Subdomain %s is invalid' % full_name, 'error')
+            return redirect(url_for('.new_record', zone_id=zone_id))
+        content = strip_unprintable(request.form['content'])
         domain.add_record(full_name,
                           content, request.form['type'],
                           request.form['prio'], request.form['ttl'])
