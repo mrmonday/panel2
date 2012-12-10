@@ -35,6 +35,8 @@ import panel2.service
 # plugins!
 from panel2.dns import dns
 from panel2.support import support
+from panel2.vps import vps
 
 app.register_blueprint(dns, url_prefix='/dns')
 app.register_blueprint(support, url_prefix='/support')
+app.register_blueprint(vps, url_prefix='/vps')
