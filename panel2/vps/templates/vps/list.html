@@ -23,7 +23,7 @@
 	<td>{{ service.name }}</td>
 	<td>{{ service.memory }} MB</td>
 	<td>{{ service.disk }} GB</td>
-	<td>&mdash;</td>
+	<td>{{ service.ips[0].ip }}</td>
 	<td>{{ service.node.name }}</td>
 	<td>{{ service.node.region.name }}</td>
 	<td>

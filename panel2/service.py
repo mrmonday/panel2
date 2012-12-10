@@ -53,7 +53,7 @@ class IPAddress(db.Model):
     user = db.relationship('User', backref='ips')
 
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
-    service = db.relationship('Service', backref='services')
+    service = db.relationship('Service', backref='ips')
 
     def __init__(self, ip, user=None, service=None):
         self.ip = ip
