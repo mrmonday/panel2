@@ -30,6 +30,7 @@ import panel2.views
 import panel2.session
 import panel2.auth_hooks
 import panel2.preferences
+import panel2.service
 
 # plugins!
 from panel2.dns import dns
