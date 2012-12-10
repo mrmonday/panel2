@@ -14,14 +14,14 @@ from the use of this software.
 """
 
 from panel2 import app
-from flask import render_template, session
+from flask import render_template, session, redirect, url_for
 
 @app.route('/')
 def index():
     if session.has_key("uid"):
         return render_template('frontpage.html')
 
-    return render_template('login.html')
+    return redirect(url_for('login'))
 
 @app.errorhandler(403)
 def error_forbidden(e):
