@@ -18,7 +18,7 @@
 </tr>
 
 {% for service in user.services %}
-{% if service.type == 'xenvps' %}
+{% if service.is_entitled is True and service.type == 'xenvps' %}
 <tr>
 	<td>{{ service.name }}</td>
 	<td>{{ service.memory }} MB</td>
