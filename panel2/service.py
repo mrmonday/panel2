@@ -23,6 +23,7 @@ class Service(db.Model):
     type = db.Column(db.String(50))
     expiry = db.Column(db.Integer)
     price = db.Column(db.Float)
+    is_entitled = db.Column(db.Boolean, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='services')
@@ -43,6 +44,12 @@ class Service(db.Model):
 
     def attach_ip(self, ip):
         return IPAddressRef(ip, self.user, self)
+
+    def entitle(self):
+        self.is_entitled = True
+
+        db.session.add(self)
+        db.session.commit()
 
 class IPAddress(db.Model):
     __tablename__ = 'ips'
