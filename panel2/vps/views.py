@@ -18,6 +18,7 @@ from panel2.vps import vps
 
 @vps.route('/')
 @vps.route('/list')
+@login_required
 def list():
     return render_template('vps/list.html')
 
