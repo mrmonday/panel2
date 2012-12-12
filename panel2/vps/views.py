@@ -15,6 +15,7 @@ from the use of this software.
 
 from flask import render_template, redirect, url_for
 from panel2.vps import vps
+from panel2.user import login_required
 
 @vps.route('/')
 @vps.route('/list')
