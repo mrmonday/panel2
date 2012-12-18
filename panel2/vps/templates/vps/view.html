@@ -4,32 +4,36 @@
 {% block content %}
 {{ super() }}
 
+<h3>
+	{{ service.name }}
+	<span class="pull-right btn-group">
+		<a href="#" class="btn">Start</a>
+		<a href="#" class="btn">Shutdown</a>
+		<a href="#" class="btn">Forceful Shutdown</a>
+		<a href="#" class="btn">Powercycle</a>
+	</span>
+</h3>
+
 <table class="table table-striped">
 <tr>
 	<th class="span2">VPS</th>
 	<th class="span1">Memory</th>
+	<th class="span1">Swap</th>
 	<th class="span1">Disk</th>
 	<th class="span2">Primary IP</th>
-	<th class="span1">Host</th>
+	<th class="span2">Host</th>
 	<th class="span3">Location</th>
-	<th class="span2">
-		<span class="pull-right">Options</span>
-	</th>
 </tr>
 
 {% if service.is_entitled and service.type == 'xenvps' %}
 <tr>
 	<td>{{ service.name }}</td>
 	<td>{{ service.memory }} MB</td>
+	<td>{{ service.swap }} MB</td>
 	<td>{{ service.disk }} GB</td>
 	<td>{{ service.ips[0].ip }}</td>
 	<td>{{ service.node.name }}</td>
 	<td>{{ service.node.region.name }}</td>
-	<td>
-		<span class="pull-right btn-group">
-			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-primary">View</a>
-		</span>
-	</td>
 </tr>
 {% endif %}     
 
