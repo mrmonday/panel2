@@ -13,7 +13,9 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, redirect, url_for, abort, flash, jsonify
+import json
+
+from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
 from panel2.user import login_required, get_session_user
@@ -85,3 +87,17 @@ def powercycle(vps):
 def cpustats(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     return jsonify(vps.get_cpu_stats(start=3600))
+
+@vps.route('/<vps>/netstats')
+def netstats(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    response = make_response(json.dumps(vps.get_net_stats(start=3600)))
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
+@vps.route('/<vps>/vbdstats')
+def vbdstats(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    response = make_response(json.dumps(vps.get_vbd_stats(start=3600)))
+    response.headers['Content-Type'] = 'application/json'
+    return response

@@ -126,7 +126,72 @@ class XenVPS(Service):
         set = []
         for i in data:
             if i[0] is None: continue
-            set.append([begin_ts, i[0] / 10])
+            set.append([begin_ts * 1000, i[0] / 10])
             begin_ts += step
 
-        return {'label': 'CPU: ' + self.name, 'data': set, 'color': "#336633"}
+        return {'label': 'CPU usage (%)', 'data': set, 'color': "#336633"}
+
+    def get_net_stats(self, start=600, step=60):
+        now = int(time.time())
+        start_ts = now - (now % step)
+        negated = -start
+        path = self._make_path('net')
+
+	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
+
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts * 1000, i[0]])
+            begin_ts += step
+
+        rxbytes = {'label': 'Bytes received', 'data': set, 'color': "#336633"}
+
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts * 1000, i[1]])
+            begin_ts += step
+
+        txbytes = {'label': 'Bytes sent', 'data': set, 'color': "#333366"}
+
+        return [rxbytes, txbytes]
+
+    def get_vbd_stats(self, start=600, step=60):
+        now = int(time.time())
+        start_ts = now - (now % step)
+        negated = -start
+        path = self._make_path('vbd')
+
+	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
+
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts * 1000, i[0]])
+            begin_ts += step
+
+        rxbytes = {'label': 'Read requests', 'data': set, 'color': "#336633"}
+
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts * 1000, i[1]])
+            begin_ts += step
+
+        txbytes = {'label': 'Write requests', 'data': set, 'color': "#333366"}
+
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts * 1000, i[2]])
+            begin_ts += step
+
+        oobytes = {'label': 'Rescheduled requests', 'data': set, 'color': "#663333"}
+
+        return [rxbytes, txbytes, oobytes]

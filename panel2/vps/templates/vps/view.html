@@ -8,9 +8,9 @@
 	{{ service.name }}
 	<span class="pull-right btn-group">
 		<a href="{{ url_for('.create', vps=service.id) }}" class="btn">Start</a>
-		<a href="{{ url_for('.shutdown', vps=service.id) }}"" class="btn">Shutdown</a>
-		<a href="{{ url_for('.destroy', vps=service.id) }}"" class="btn">Forceful Shutdown</a>
-		<a href="{{ url_for('.powercycle', vps=service.id) }}"" class="btn">Powercycle</a>
+		<a href="{{ url_for('.shutdown', vps=service.id) }}" class="btn">Shutdown</a>
+		<a href="{{ url_for('.destroy', vps=service.id) }}" class="btn">Forceful Shutdown</a>
+		<a href="{{ url_for('.powercycle', vps=service.id) }}" class="btn">Powercycle</a>
 	</span>
 </h3>
 
@@ -40,39 +40,78 @@
 </table>
 
 <h3>
-	CPU Usage (Percent)
+	Graphs
 	<span class="pull-right btn-group">
-		<a href="#" class="btn">CPU</a>
+		<button id="cpugraphbtn" class="btn">CPU</button>
+		<button id="netgraphbtn" class="btn">Network</button>
+		<button id="vbdgraphbtn" class="btn">VBD (Block)</button>
 	</span>
 </h3>
 
-<div id="placeholder" class="span12" style="height: 300px"></div>
+<div id="placeholder" style="width: 100%; height: 300px"></div>
 
 <script type="text/javascript">
 $(function() {
-    var options = {
-        legend: { show: false },
-        lines: { show: true, fill: true },
-	points: { show: false },
-	grid: { show: true },
-	xaxis: { tickDecimals: 0, tickSize: 60, mode: "time", timeformat: "%Y/%m/%d" },
-        yaxis: { min: 0 }
+    function cpu_data_received(newdata) {
+        var placeholder = $("#placeholder");
+        var options = {
+            lines: { show: true, fill: true },
+    	    points: { show: false },
+   	    grid: { show: true, borderColor: null, borderWidth: 0 },
+	    xaxis: { mode: "time", timeformat: "%H:%M", timezone: "browser" },
+            yaxis: { min: 0, label: "CPU usage (%)" }
+        }
+
+        $.plot(placeholder, [newdata], options);
     }
 
-    var data = [];
-    var placeholder = $("#placeholder");
+    function net_data_received(newdata) {
+        var placeholder = $("#placeholder");
+        var options = {
+            series: { stack: true },
+            legend: { show: true },
+            lines: { show: true, fill: true, stack: true },
+    	    points: { show: false },
+   	    grid: { show: true, borderColor: null, borderWidth: 0 },
+	    xaxis: { mode: "time", timeformat: "%H:%M", timezone: "browser" },
+            yaxis: { min: 0, label: "CPU usage (%)" }
+        }
 
-//    $.plot(placeholder, data, options);
-
-    function data_received(newdata) {
-        $.plot(placeholder, [newdata], options);
+        $.plot(placeholder, newdata, options);
     }
 
     $.ajax({
         url: '/vps/{{ service.id }}/cpustats',
         type: 'GET',
         dataType: 'json',
-        success: data_received
+        success: cpu_data_received
+    });
+
+    $("#cpugraphbtn").click(function() {
+        $.ajax({
+            url: '/vps/{{ service.id }}/cpustats',
+            type: 'GET',
+            dataType: 'json',
+            success: cpu_data_received
+        });
+    });
+
+    $("#netgraphbtn").click(function() {
+        $.ajax({
+            url: '/vps/{{ service.id }}/netstats',
+            type: 'GET',
+            dataType: 'json',
+            success: net_data_received
+        });
+    });
+
+    $("#vbdgraphbtn").click(function() {
+        $.ajax({
+            url: '/vps/{{ service.id }}/vbdstats',
+            type: 'GET',
+            dataType: 'json',
+            success: net_data_received
+        });
     });
 });
 </script>
