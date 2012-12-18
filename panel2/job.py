@@ -67,3 +67,7 @@ class QueueingProxy(rpc_client.ServerProxy):
     def _call(self, name, **kwargs):
         envelope = rpc_message.encode(self._secret, name, iterations=self._iterations, **kwargs) + '\r\n'
         return Job(envelope, self._host, self._port)
+
+    def __del__(self):
+        pass
+
