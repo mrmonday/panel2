@@ -33,12 +33,32 @@ def make_cpu_rrd(path):
                    'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
                    'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
 
+def make_net_rrd(path):
+    rrdtool.create(str(path), '--step', '60',
+                   'DS:rxbytes:COUNTER:666:0:125000000',
+                   'DS:txbytes:COUNTER:666:0:125000000',
+                   'DS:rxpkts:COUNTER:666:0:125000000',
+                   'DS:txpkts:COUNTER:666:0:125000000',
+                   'RRA:LAST:0.5:1:15000',
+                   'RRA:MIN:0.5:60:1000', 'RRA:MIN:0.5:1440:1000',
+                   'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
+                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
+
 def update_cpu_usage(nodename, vpsinfo):
     path = make_path(nodename, vpsinfo['name'], 'cpu')
     if not os.access(path, os.F_OK):
         make_cpu_rrd(path)
     cputime_msec = int(float(vpsinfo['cputime_sec'])*1000)
     rrdtool.update(str(path), '%s:%d' % (now, cputime_msec))
+
+def update_net_usage(nodename, vpsinfo):
+    if vpsinfo['netif'] is None:
+        return
+    path = make_path(nodename, vpsinfo['name'], 'net')
+    if not os.access(path, os.F_OK):
+        make_net_rrd(path)
+    netif = vpsinfo['netif']
+    rrdtool.update(str(path), str("%s:%s:%s:%s:%s" % (now, netif['trans_bytes'], netif['recv_bytes'], netif['trans_packets'], netif['recv_packets'])))
 
 nodes = Node.query.all()
 for node in nodes:
@@ -47,3 +67,4 @@ for node in nodes:
 
     for vps in dl.keys():
         update_cpu_usage(node.name, dl[vps])
+        update_net_usage(node.name, dl[vps])
