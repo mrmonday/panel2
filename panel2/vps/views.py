@@ -13,10 +13,19 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, abort, flash
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
-from panel2.user import login_required
+from panel2.user import login_required, get_session_user
+
+def can_access_vps(vps, user=None):
+    if user is None:
+        user = get_session_user()
+    if user.is_admin is True:
+        return True
+    if vps.user != user:
+        return False
+    return True
 
 @vps.route('/')
 @vps.route('/list')
@@ -27,5 +36,47 @@ def list():
 @vps.route('/<vps>')
 def view(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
     return render_template('vps/view.html', service=vps)
 
+@vps.route('/<vps>/create')
+def create(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    job = vps.create()
+    flash('Your request has been queued.  Job ID: {}'.format(job.id))
+    return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/shutdown')
+def shutdown(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    job = vps.shutdown()
+    flash('Your request has been queued.  Job ID: {}'.format(job.id))
+    return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/destroy')
+def destroy(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    job = vps.destroy()
+    flash('Your request has been queued.  Job ID: {}'.format(job.id))
+    return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/powercycle')
+def powercycle(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    job = vps.destroy()
+    job = vps.create()
+    flash('Your request has been queued.  Job ID: {}'.format(job.id))
+    return redirect(url_for('.view', vps=vps.id))

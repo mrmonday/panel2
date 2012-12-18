@@ -7,10 +7,10 @@
 <h3>
 	{{ service.name }}
 	<span class="pull-right btn-group">
-		<a href="#" class="btn">Start</a>
-		<a href="#" class="btn">Shutdown</a>
-		<a href="#" class="btn">Forceful Shutdown</a>
-		<a href="#" class="btn">Powercycle</a>
+		<a href="{{ url_for('.create', vps=service.id) }}" class="btn">Start</a>
+		<a href="{{ url_for('.shutdown', vps=service.id) }}"" class="btn">Shutdown</a>
+		<a href="{{ url_for('.destroy', vps=service.id) }}"" class="btn">Forceful Shutdown</a>
+		<a href="{{ url_for('.powercycle', vps=service.id) }}"" class="btn">Powercycle</a>
 	</span>
 </h3>
 
