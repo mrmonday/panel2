@@ -18,6 +18,7 @@ import time
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    refid = db.Column(db.Integer)
     start_ts = db.Column(db.Integer)
     entry_ts = db.Column(db.Integer)
     end_ts = db.Column(db.Integer)
@@ -26,11 +27,12 @@ class Job(db.Model):
     request_envelope = db.Column(db.Text)
     response_envelope = db.Column(db.Text)
 
-    def __init__(self, request_envelope, target_ip, target_port=5959):
+    def __init__(self, request_envelope, target_ip, target_port=5959, refid=None):
         self.request_envelope = request_envelope
         self.target_ip = target_ip
         self.target_port = target_port
         self.entry_ts = int(time.time())
+        self.refid = refid
 
         db.session.add(self)
         db.session.commit()
@@ -64,10 +66,13 @@ class Job(db.Model):
 from ediarpc import rpc_message, rpc_client
 
 class QueueingProxy(rpc_client.ServerProxy):
+    def __init__(self, **kwargs):
+        super(QueueingProxy, self).__init__(**kwargs)
+        self._refid = kwargs.pop('refid', None)
+
     def _call(self, name, **kwargs):
         envelope = rpc_message.encode(self._secret, name, iterations=self._iterations, **kwargs) + '\r\n'
-        return Job(envelope, self._host, self._port)
+        return Job(envelope, self._host, self._port, self._refid)
 
     def __del__(self):
         pass
-
