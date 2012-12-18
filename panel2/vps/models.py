@@ -15,6 +15,7 @@ from the use of this software.
 
 from panel2 import app, db
 from panel2.service import Service
+from panel2.job import QueueingProxy
 
 class Region(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,6 +53,9 @@ class Node(db.Model):
 
     def __repr__(self):
         return "<Node: '%s' [%s]>" % (self.name, self.ipaddr)
+
+    def api(self):
+        return QueueingProxy((self.ipaddr, 5959), self.secret, iterations=15)
 
 class XenVPS(Service):
     __tablename__ = 'xenvps'
