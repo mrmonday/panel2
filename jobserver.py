@@ -20,6 +20,9 @@ import socket
 
 def wait(timeout=5):
     while True:
+        # Synchronize ORM with database state, otherwise query will be
+        # cached.
+        db.session.commit()
         lst = Job.query.filter_by(start_ts=None).all()
         if len(lst) == 0:
             sleep(timeout)
@@ -29,7 +32,7 @@ def wait(timeout=5):
 def run(job):
     job.checkout()
 
-    sock = socket.create_connection(job.target_ip, job.target_port)
+    sock = socket.create_connection((job.target_ip, int(job.target_port)))
     def read_loop(sock):
         data = []
         end = '}\r\n'
