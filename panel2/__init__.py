@@ -32,6 +32,7 @@ import panel2.auth_hooks
 import panel2.preferences
 import panel2.service
 import panel2.filters
+import panel2.job
 
 # plugins!
 from panel2.dns import dns
