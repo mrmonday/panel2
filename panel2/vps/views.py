@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, redirect, url_for, abort, flash
+from flask import render_template, redirect, url_for, abort, flash, jsonify
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
 from panel2.user import login_required, get_session_user
@@ -80,3 +80,8 @@ def powercycle(vps):
     job = vps.create()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
     return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/cpustats')
+def cpustats(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    return jsonify(vps.get_cpu_stats(start=3600))

@@ -39,4 +39,42 @@
 
 </table>
 
+<h3>
+	CPU Usage (Percent)
+	<span class="pull-right btn-group">
+		<a href="#" class="btn">CPU</a>
+	</span>
+</h3>
+
+<div id="placeholder" class="span12" style="height: 300px"></div>
+
+<script type="text/javascript">
+$(function() {
+    var options = {
+        legend: { show: false },
+        lines: { show: true, fill: true },
+	points: { show: false },
+	grid: { show: true },
+	xaxis: { tickDecimals: 0, tickSize: 60, mode: "time", timeformat: "%Y/%m/%d" },
+        yaxis: { min: 0 }
+    }
+
+    var data = [];
+    var placeholder = $("#placeholder");
+
+//    $.plot(placeholder, data, options);
+
+    function data_received(newdata) {
+        $.plot(placeholder, [newdata], options);
+    }
+
+    $.ajax({
+        url: '/vps/{{ service.id }}/cpustats',
+        type: 'GET',
+        dataType: 'json',
+        success: data_received
+    });
+});
+</script>
+
 {% endblock %}

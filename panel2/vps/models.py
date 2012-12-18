@@ -13,9 +13,14 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+import time
+import rrdtool
+
 from panel2 import app, db
 from panel2.service import Service
 from panel2.job import QueueingProxy
+
+from collections import OrderedDict
 
 class Region(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,3 +112,21 @@ class XenVPS(Service):
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)
 
+    def _make_path(self, type):
+        return app.config['RRDPATH'] + '/' + self.node.name + '-' + self.name + '-' + type + '.rrd'
+
+    def get_cpu_stats(self, start=600, step=60):
+        now = int(time.time())
+        start_ts = now - (now % step)
+        negated = -start
+        path = self._make_path('cpu')
+
+	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
+	begin_ts = start_ts - start
+        set = []
+        for i in data:
+            if i[0] is None: continue
+            set.append([begin_ts, i[0] / 10])
+            begin_ts += step
+
+        return {'label': 'CPU: ' + self.name, 'data': set, 'color': "#336633"}
