@@ -66,8 +66,8 @@ class Job(db.Model):
 from ediarpc import rpc_message, rpc_client
 
 class QueueingProxy(rpc_client.ServerProxy):
-    def __init__(self, **kwargs):
-        super(QueueingProxy, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(QueueingProxy, self).__init__(*args, **kwargs)
         self._refid = kwargs.pop('refid', None)
 
     def _call(self, name, **kwargs):
