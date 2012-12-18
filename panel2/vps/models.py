@@ -54,8 +54,8 @@ class Node(db.Model):
     def __repr__(self):
         return "<Node: '%s' [%s]>" % (self.name, self.ipaddr)
 
-    def api(self):
-        return QueueingProxy(self.ipaddr, 5959, self.secret, iterations=15, refid=self.id)
+    def api(self, constructor=QueueingProxy):
+        return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=self.id)
 
 class XenVPS(Service):
     __tablename__ = 'xenvps'
