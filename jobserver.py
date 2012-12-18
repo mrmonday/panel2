@@ -53,6 +53,7 @@ def run(job):
     sock.sendall(job.request_envelope)
     response = read_loop(sock)
     job.checkin(response)
+    sock.close()
 
 def main():
     while True:
