@@ -1,5 +1,5 @@
 {% extends "vps/base.html" %}
-{% block title %}Server List{% endblock %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
 
 {% block content %}
 {{ super() }}
@@ -17,7 +17,6 @@
 	</th>
 </tr>
 
-{% for service in user.services %}
 {% if service.is_entitled and service.type == 'xenvps' %}
 <tr>
 	<td>{{ service.name }}</td>
@@ -33,7 +32,6 @@
 	</td>
 </tr>
 {% endif %}     
-{% endfor %}
 
 </table>
 

@@ -15,6 +15,7 @@ from the use of this software.
 
 from flask import render_template, redirect, url_for
 from panel2.vps import vps
+from panel2.vps.models import XenVPS
 from panel2.user import login_required
 
 @vps.route('/')
@@ -22,4 +23,9 @@ from panel2.user import login_required
 @login_required
 def list():
     return render_template('vps/list.html')
+
+@vps.route('/<vps>')
+def view(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    return render_template('vps/view.html', service=vps)
 
