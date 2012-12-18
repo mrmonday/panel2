@@ -44,6 +44,16 @@ def make_net_rrd(path):
                    'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
                    'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
 
+def make_vbd_rrd(path):
+    rrdtool.create(str(path), '--step', '60',
+                   'DS:rdreq:COUNTER:666:0:125000000',
+                   'DS:wrreq:COUNTER:666:0:125000000',
+                   'DS:ooreq:COUNTER:666:0:125000000',
+                   'RRA:LAST:0.5:1:15000',
+                   'RRA:MIN:0.5:60:1000', 'RRA:MIN:0.5:1440:1000',
+                   'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
+                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
+
 def update_cpu_usage(nodename, vpsinfo):
     path = make_path(nodename, vpsinfo['name'], 'cpu')
     if not os.access(path, os.F_OK):
@@ -60,6 +70,15 @@ def update_net_usage(nodename, vpsinfo):
     netif = vpsinfo['netif']
     rrdtool.update(str(path), str("%s:%s:%s:%s:%s" % (now, netif['trans_bytes'], netif['recv_bytes'], netif['trans_packets'], netif['recv_packets'])))
 
+def update_vbd_usage(nodename, vpsinfo):
+    if vpsinfo['blkif'].has_key('rd_req') is False:
+        return
+    path = make_path(nodename, vpsinfo['name'], 'vbd')
+    if not os.access(path, os.F_OK):
+        make_vbd_rrd(path)
+    blkif = vpsinfo['blkif']
+    rrdtool.update(str(path), str("%s:%s:%s:%s" % (now, blkif['rd_req'], blkif['wr_req'], blkif['oo_req'])))
+
 nodes = Node.query.all()
 for node in nodes:
     api = node.api(ServerProxy)
@@ -68,3 +87,4 @@ for node in nodes:
     for vps in dl.keys():
         update_cpu_usage(node.name, dl[vps])
         update_net_usage(node.name, dl[vps])
+        update_vbd_usage(node.name, dl[vps])
