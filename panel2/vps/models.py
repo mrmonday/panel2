@@ -89,6 +89,21 @@ class XenVPS(Service):
         db.session.add(self)
         db.session.commit()
 
+    def create(self):
+        self.node.api().create(domname=self.name, memory=self.memory)
+
+    def shutdown(self):
+        self.node.api().shutdown(domname=self.name)
+
+    def destroy(self):
+        self.node.api().destroy(domname=self.name)
+
+    def pause(self):
+        self.node.api().pause(domname=self.name)
+
+    def unpause(self):
+        self.node.api().unpause(domname=self.name)
+
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)
 
