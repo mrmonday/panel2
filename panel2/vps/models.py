@@ -17,7 +17,7 @@ import time
 import rrdtool
 
 from panel2 import app, db
-from panel2.service import Service
+from panel2.service import Service, IPRange
 from panel2.job import QueueingProxy
 
 from collections import OrderedDict
@@ -61,6 +61,19 @@ class Node(db.Model):
 
     def api(self, constructor=QueueingProxy):
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=self.id)
+
+class NodeIPRange(IPRange):
+    __mapper_args__ = {'polymorphic_identity': 'node'}
+    node_id = db.Column(db.Integer, db.ForeignKey('node.id'))
+    node = db.relationship('Node', backref='ipranges')
+
+    def __init__(self, network, node):
+        self.node = node
+        self.node_id = node.id
+        self.network = network
+
+        db.session.add(self)
+        db.session.commit()
 
 class XenVPS(Service):
     __tablename__ = 'xenvps'

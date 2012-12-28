@@ -14,6 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app, db
+import ipaddress
 
 class Service(db.Model):
     __tablename__ = 'services'
@@ -56,14 +57,19 @@ class IPAddress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(255))
 
+    ipnet_id = db.Column(db.Integer, db.ForeignKey('ip_range.id'))
+    ipnet = db.relationship('IPRange', backref='assigned_ips')
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='ips')
 
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     service = db.relationship('Service', backref='ips')
 
-    def __init__(self, ip, user=None, service=None):
+    def __init__(self, ip, user=None, service=None, ipnet=None):
         self.ip = ip
+        self.ipnet = ipnet
+        self.ipnet_id = ipnet.id
 
         if user is not None:
             self.update_user(user)
@@ -106,7 +112,7 @@ class IPAddress(db.Model):
         db.session.add(self)
         db.session.commit()
 
-def IPAddressRef(ip, user=None, service=None):
+def IPAddressRef(ip, ipnet=None, user=None, service=None):
     '''A wrapper around the IPAddress constructor which handles lookup as well as
        creation of IP address records.'''
     ip_obj = IPAddress.query.filter_by(ip=ip).first()
@@ -117,4 +123,44 @@ def IPAddressRef(ip, user=None, service=None):
             ip_obj.update_service(service)
         return ip_obj
 
-    return IPAddress(ip, user, service)
+    return IPAddress(ip, user, service, ipnet)
+
+class IPRange(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
+    network = db.Column(db.String(255))
+
+    __mapper_args__ = {'polymorphic_on': type}
+
+    def __repr__(self):
+        return "<IPRange: {}>".format(self.network)
+
+    def ipnet(self):
+        return ipaddress.ip_network(self.network)
+
+    def is_ipv6(self):
+        return self.ipnet().version == 6
+
+    def gateway(self):
+        return str(self.ipnet().network_address + 1)
+
+    def broadcast(self):
+        return str(self.ipnet().broadcast_address)
+
+    def available_ips(self):
+        iplist = []
+        for host in self.ipnet().iterhosts():
+            if str(host) == self.gateway():
+                continue
+            ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
+            if ip_obj is None:
+                iplist.append(str(host))
+            elif ip_obj.service is None:
+                iplist.append(str(host))
+        return iplist
+
+    def assign_first_available(self, user=None, service=None):
+        iplist = self.available_ips()
+        if len(iplist) < 1:
+            return None
+        return IPAddressRef(iplist[0], self, user, service)
