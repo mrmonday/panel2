@@ -95,7 +95,7 @@ class XenVPS(Service):
         db.session.commit()
 
     def create(self):
-        return self.node.api().create(domname=self.name, memory=self.memory)
+        return self.node.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
 
     def shutdown(self):
         return self.node.api().shutdown(domname=self.name)
