@@ -25,5 +25,6 @@ def send_login_notice(*args, **kwargs):
 @authfail_signal.connect_via(app)
 def send_authfail_notice(*args, **kwargs):
     user = kwargs.pop('user', None)
-    user.send_email('Authentication failed for %s from %s' % (user.username, request.environ['REMOTE_ADDR']), 'email/authfail-message.txt')
+    if user is not None:
+        user.send_email('Authentication failed for %s from %s' % (user.username, request.environ['REMOTE_ADDR']), 'email/authfail-message.txt')
 
