@@ -61,7 +61,7 @@ class User(db.Model):
 
     def assign_password(self, new_password):
         self.salt = os.urandom(16).encode('hex')
-        self.password = self._get_pbkdf2_hash(new_password)
+        self.password = self._get_pbkdf2_hash(new_password.encode('utf-8'))
 
         db.session.add(self)
         db.session.commit()
