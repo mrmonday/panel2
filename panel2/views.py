@@ -19,7 +19,9 @@ from flask import render_template, session, redirect, url_for
 @app.route('/')
 def index():
     if session.has_key("uid"):
-        return render_template('frontpage.html')
+        # For right now, lets just redirect to VPS.
+        # return render_template('frontpage.html')
+        return redirect(url_for('vps.list'))
 
     return redirect(url_for('login'))
 
