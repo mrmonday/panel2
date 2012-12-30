@@ -18,7 +18,7 @@ import json
 from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
-from panel2.user import login_required, get_session_user
+from panel2.user import login_required, admin_required, get_session_user
 
 def can_access_vps(vps, user=None):
     if user is None:
@@ -34,6 +34,12 @@ def can_access_vps(vps, user=None):
 @login_required
 def list():
     return render_template('vps/list.html')
+
+@vps.route('/list/all')
+@login_required
+@admin_required
+def list_all():
+    return render_template('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
 
 @vps.route('/<vps>')
 def view(vps):

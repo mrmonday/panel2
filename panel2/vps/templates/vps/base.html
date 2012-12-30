@@ -4,7 +4,10 @@
 <h2>
 	Servers
 	<span class="pull-right btn-group">
-		<a href="{{ url_for('.list') }}" class="btn">Server List</a>
+		<a href="{{ url_for('.list') }}" class="btn">Servers</a>
+		{% if user.is_admin %}
+			<a href="{{ url_for('.list_all') }}" class="btn btn-danger">All Servers</a>
+		{% endif %}
 	</span>
 </h2>
 
