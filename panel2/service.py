@@ -31,7 +31,7 @@ class Service(db.Model):
 
     __mapper_args__ = {'polymorphic_on': type}
 
-    def __del__(self):
+    def delete(self):
         for ip in self.ips:
             ip.service_id = None
             ip.service = None
@@ -42,15 +42,13 @@ class Service(db.Model):
             db.session.add(ip)
 
         db.session.delete(self)
-        db.session.commit()        
+        db.session.commit()
+        del self
 
     def create(self):
         pass
 
     def suspend(self):
-        pass
-
-    def destroy(self):
         pass
 
     def invoice(self, invoice):

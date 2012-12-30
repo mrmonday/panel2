@@ -48,6 +48,15 @@ def view(vps):
         abort(403)
     return render_template('vps/view.html', service=vps)
 
+@vps.route('/<vps>/delete')
+def adm_delete(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.delete()
+    flash('Your VPS has been deleted.')
+    return redirect(url_for('.list'))
+
 @vps.route('/<vps>/create')
 def create(vps):
     vps = XenVPS.query.filter_by(id=vps).first()

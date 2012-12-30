@@ -107,6 +107,10 @@ class XenVPS(Service):
         db.session.add(self)
         db.session.commit()
 
+    def delete(self):
+        self.node.api().vps_destroy(domname=self.name)
+        Service.delete(self)
+
     def create(self):
         return self.node.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
 

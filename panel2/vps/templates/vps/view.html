@@ -4,6 +4,20 @@
 {% block content %}
 {{ super() }}
 
+<div id="admDelete" class="modal hide fade" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Are you sure?</h3>
+	</div>
+	<div class="modal-body">
+		<p>If you continue, your VPS will be permanently deleted.  We will not have any way to recover the data!</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<a href="{{ url_for('.adm_delete', vps=service.id) }}" class="btn btn-danger">Delete</a>
+	</div>
+</div>
+
 <h3>
 	{{ service.name }}
 	<span class="pull-right btn-group">
@@ -11,6 +25,7 @@
 		<a href="{{ url_for('.shutdown', vps=service.id) }}" class="btn">Shutdown</a>
 		<a href="{{ url_for('.destroy', vps=service.id) }}" class="btn">Forceful Shutdown</a>
 		<a href="{{ url_for('.powercycle', vps=service.id) }}" class="btn">Powercycle</a>
+		<a href="#admDelete" role="button" data-toggle="modal" class="btn btn-warning">Delete</a>
 	</span>
 </h3>
 
