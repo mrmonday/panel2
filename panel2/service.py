@@ -41,7 +41,8 @@ class Service(db.Model):
 
             db.session.add(ip)
 
-        db.session.commit()
+        db.session.delete(self)
+        db.session.commit()        
 
     def create(self):
         pass
