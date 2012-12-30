@@ -31,6 +31,18 @@ class Service(db.Model):
 
     __mapper_args__ = {'polymorphic_on': type}
 
+    def __del__(self):
+        for ip in self.ips:
+            ip.service_id = None
+            ip.service = None
+
+            ip.user_id = None
+            ip.user = None
+
+            db.session.add(ip)
+
+        db.session.commit()
+
     def create(self):
         pass
 
