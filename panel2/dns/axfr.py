@@ -62,7 +62,11 @@ def do_axfr(nameserver, domain, callback=print_record):
                     print "unhandled: %s" % rdata.__slots__
                     continue
 
-                final_content = content.rstrip('.')
+                if not isinstance(content, list):
+                    final_content = content.rstrip('.')
+                else:
+                    final_content = [it.rstrip('.') for it in content]
+
                 callback(pname, qtype, ttl, preference, final_content)
 
 if __name__ == '__main__':
