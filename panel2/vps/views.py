@@ -46,7 +46,7 @@ def view(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view.html', service=vps)
+    return render_template('vps/view-graphs.html', service=vps)
 
 @vps.route('/<vps>/delete')
 def adm_delete(vps):

@@ -1,63 +1,8 @@
-{% extends "vps/base.html" %}
+{% extends "vps/view-base.html" %}
 {% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Graphs' %}
 
-{% block content %}
-{{ super() }}
-
-<div id="admDelete" class="modal hide fade" tabindex="-1" role="dialog">
-	<div class="modal-header">
-		<li><a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Are you sure?</h3>
-	</div>
-	<div class="modal-body">
-		<p>If you continue, your VPS will be permanently deleted.  We will not have any way to recover the data!</p>
-	</div>
-	<div class="modal-footer">
-		<li><a href="#"  class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<a href="{{ url_for('.adm_delete', vps=service.id) }}" class="btn btn-danger">Delete</a>
-	</div>
-</div>
-
-<h3>
-	{{ service.name }}
-	<span class="pull-right btn-group">
-		<a href="{{ url_for('.create', vps=service.id) }}" class="btn">Start</a>
-		<a href="{{ url_for('.shutdown', vps=service.id) }}" class="btn">Shutdown</a>
-		<a href="{{ url_for('.destroy', vps=service.id) }}" class="btn">Forceful Shutdown</a>
-		<a href="{{ url_for('.powercycle', vps=service.id) }}" class="btn">Powercycle</a>
-		<a href="#admDelete" role="button" data-toggle="modal" class="btn btn-warning">Delete</a>
-	</span>
-</h3>
-
-<table class="table table-striped">
-<tr>
-	<th class="span2">VPS</th>
-	<th class="span1">Memory</th>
-	<th class="span1">Swap</th>
-	<th class="span1">Disk</th>
-	<th class="span2">Primary IP</th>
-	<th class="span2">Host</th>
-	<th class="span3">Location</th>
-</tr>
-
-{% if service.is_entitled and service.type == 'xenvps' %}
-<tr>
-	<td>{{ service.name }}</td>
-	<td>{{ service.memory }} MB</td>
-	<td>{{ service.swap }} MB</td>
-	<td>{{ service.disk }} GB</td>
-	<td>{{ service.ips[0].ip }}</td>
-	<td>{{ service.node.name }}</td>
-	<td>{{ service.node.region.name }}</td>
-</tr>
-{% endif %}     
-
-</table>
-
-<h3>
-	Graphs
-</h3>
-
+{% block subcontent %}
 <div class="row">
 <div class="span6">
 <ul class="nav nav-pills">
@@ -245,5 +190,4 @@ $(function() {
     update();
 });
 </script>
-
 {% endblock %}
