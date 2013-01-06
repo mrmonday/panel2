@@ -65,7 +65,7 @@ def do_axfr(nameserver, domain, callback=print_record):
                 if not isinstance(content, list):
                     final_content = content.rstrip('.')
                 else:
-                    final_content = [it.rstrip('.') for it in content]
+                    final_content = " ".join([it.rstrip('.') for it in content])
 
                 callback(pname, qtype, ttl, preference, final_content)
 
