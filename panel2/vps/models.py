@@ -134,12 +134,23 @@ class XenVPS(Service):
 
     def get_cpu_stats(self, start=600, step=60):
         now = int(time.time())
-        start_ts = now - (now % step)
-        negated = -start
         path = self._make_path('cpu')
 
-	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
-	begin_ts = start_ts - start
+        if step != 60:
+            cf = 'AVERAGE'
+            step = 1440
+        else:
+            cf = 'LAST'
+            step = 60
+
+        start_ts = now - (now % step)
+        negated = -(start - (start % step))
+
+        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+	data = rdata[2]
+
+        step = rdata[0][2]
+	begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -150,13 +161,23 @@ class XenVPS(Service):
 
     def get_net_stats(self, start=600, step=60):
         now = int(time.time())
-        start_ts = now - (now % step)
-        negated = -start
         path = self._make_path('net')
 
-	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
+        if step != 60:
+            cf = 'AVERAGE'
+            step = 1440
+        else:
+            cf = 'LAST'
+            step = 60
 
-	begin_ts = start_ts - start
+        start_ts = now - (now % step)
+        negated = -(start - (start % step))
+
+        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+	data = rdata[2]
+        step = rdata[0][2]
+
+	begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -165,7 +186,7 @@ class XenVPS(Service):
 
         rxbytes = {'label': 'Bytes received', 'data': set, 'color': "#336633"}
 
-	begin_ts = start_ts - start
+	begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -178,13 +199,23 @@ class XenVPS(Service):
 
     def get_vbd_stats(self, start=600, step=60):
         now = int(time.time())
-        start_ts = now - (now % step)
-        negated = -start
         path = self._make_path('vbd')
 
-	data = rrdtool.fetch(str(path), 'LAST', '-s', str(negated), '-e', str(start_ts))[2]
+        if step != 60:
+            cf = 'AVERAGE'
+            step = 1440
+        else:
+            cf = 'LAST'
+            step = 60
 
-	begin_ts = start_ts - start
+        start_ts = now - (now % step)
+        negated = -(start - (start % step))
+
+        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+	data = rdata[2]
+        step = rdata[0][2]
+
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -193,7 +224,7 @@ class XenVPS(Service):
 
         rxbytes = {'label': 'Read requests', 'data': set, 'color': "#336633"}
 
-	begin_ts = start_ts - start
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -202,7 +233,7 @@ class XenVPS(Service):
 
         txbytes = {'label': 'Write requests', 'data': set, 'color': "#333366"}
 
-	begin_ts = start_ts - start
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue

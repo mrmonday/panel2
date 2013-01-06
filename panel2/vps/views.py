@@ -98,21 +98,21 @@ def powercycle(vps):
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
     return redirect(url_for('.view', vps=vps.id))
 
-@vps.route('/<vps>/cpustats')
-def cpustats(vps):
+@vps.route('/<vps>/cpustats/<start>/<step>')
+def cpustats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
-    return jsonify(vps.get_cpu_stats(start=3600))
+    return jsonify(vps.get_cpu_stats(start=int(start), step=int(step)))
 
-@vps.route('/<vps>/netstats')
-def netstats(vps):
+@vps.route('/<vps>/netstats/<start>/<step>')
+def netstats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
-    response = make_response(json.dumps(vps.get_net_stats(start=3600)))
+    response = make_response(json.dumps(vps.get_net_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
 
-@vps.route('/<vps>/vbdstats')
-def vbdstats(vps):
+@vps.route('/<vps>/vbdstats/<start>/<step>')
+def vbdstats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
-    response = make_response(json.dumps(vps.get_vbd_stats(start=3600)))
+    response = make_response(json.dumps(vps.get_vbd_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response

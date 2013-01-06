@@ -6,14 +6,14 @@
 
 <div id="admDelete" class="modal hide fade" tabindex="-1" role="dialog">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<li><a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		<h3>Are you sure?</h3>
 	</div>
 	<div class="modal-body">
 		<p>If you continue, your VPS will be permanently deleted.  We will not have any way to recover the data!</p>
 	</div>
 	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<li><a href="#"  class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		<a href="{{ url_for('.adm_delete', vps=service.id) }}" class="btn btn-danger">Delete</a>
 	</div>
 </div>
@@ -56,31 +56,51 @@
 
 <h3>
 	Graphs
-	<span class="pull-right btn-group">
-		<button id="cpugraphbtn" class="btn">CPU</button>
-		<button id="netgraphbtn" class="btn">Network</button>
-		<button id="vbdgraphbtn" class="btn">VBD (Block)</button>
-	</span>
 </h3>
+
+<div class="row">
+<div class="span6">
+<ul class="nav nav-pills">
+	<li class="active"><a href="#" id="hourlybtn">Hourly</a></li>
+	<li><a href="#" id="dailybtn">Daily</a></li>
+	<li><a href="#" id="weeklybtn">Weekly</a></li>
+	<!-- <li><a href="#" id="monthlybtn">Monthly</a></li> -->
+</div>
+<div class="span6">
+<span class="pull-right">
+<ul class="nav nav-pills">
+	<li class="active"><a href="#" id="cpugraphbtn">CPU</a>
+	<li><a href="#" id="netgraphbtn">Network</a>
+	<li><a href="#" id="vbdgraphbtn">VBD (Block)</a>
+</ul>
+</span>
+</div>
+</div>
 
 <div id="placeholder" style="width: 100%; height: 300px"></div>
 
 <script type="text/javascript">
 $(function() {
-    function cpu_data_received(newdata) {
+    var __tmf = "%H:%M";
+    var __start = 0;
+    var __step = 0;
+    var __baseuri = "";
+    var __callback = null;
+
+    function cpu_data_received(newdata, tmf) {
         var placeholder = $("#placeholder");
         var options = {
             lines: { show: true, fill: true },
     	    points: { show: false },
    	    grid: { show: true, borderColor: null, borderWidth: 0 },
-	    xaxis: { mode: "time", timeformat: "%H:%M", timezone: "browser" },
-            yaxis: { min: 0, label: "CPU usage (%)" }
+	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
+            yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) { return num.toFixed(2) + "%"; } }
         }
 
         $.plot(placeholder, [newdata], options);
     }
 
-    function net_data_received(newdata) {
+    function net_data_received(newdata, tmf) {
         var placeholder = $("#placeholder");
         var options = {
             series: { stack: true },
@@ -88,46 +108,141 @@ $(function() {
             lines: { show: true, fill: true, stack: true },
     	    points: { show: false },
    	    grid: { show: true, borderColor: null, borderWidth: 0 },
-	    xaxis: { mode: "time", timeformat: "%H:%M", timezone: "browser" },
-            yaxis: { min: 0, label: "CPU usage (%)" }
+	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
+            yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) {
+                    if (num <= 1) { return num.toFixed(2); }
+                    var suffix = ['', 'K', 'M', 'G'];
+                    var i = parseInt(Math.floor(Math.log(num) / Math.log(1000)));
+                    num /= Math.pow(1024, i);
+                    return num.toFixed(2) + suffix[i];
+                }
+            }
         }
 
         $.plot(placeholder, newdata, options);
     }
 
-    $.ajax({
-        url: '/vps/{{ service.id }}/cpustats',
-        type: 'GET',
-        dataType: 'json',
-        success: cpu_data_received
-    });
+    function set_period(start, step) {
+        __start = start;
+        __step = step;
+        if (start >= (86400 * 5)) {
+            __tmf = "%b %d";
+        } else if (start > 3600) { 
+            __tmf = "%m/%d/%y %H:%M";
+        } else {
+            __tmf = "%H:%M";
+        }
+    }
 
-    $("#cpugraphbtn").click(function() {
+    function set_topic(topic) {
+        __baseuri = '/vps/{{ service.id }}/' + topic + '/';
+    }
+
+    function get_uri() {
+        return __baseuri + __start + '/' + __step;
+    }
+
+    function set_callback(callback) {
+        __callback = callback;
+    }
+
+    function update() {
         $.ajax({
-            url: '/vps/{{ service.id }}/cpustats',
+            url: get_uri(),
             type: 'GET',
             dataType: 'json',
-            success: cpu_data_received
+            success: function(d) { __callback(d, __tmf); }
         });
+    };
+
+    $("#hourlybtn").click(function(event) {
+        event.preventDefault();
+
+        $("#hourlybtn").parent().addClass("active");
+        $("#dailybtn").parent().removeClass("active");
+        $("#weeklybtn").parent().removeClass("active");
+        $("#monthlybtn").parent().removeClass("active");
+
+        set_period(3600, 60);
+        update();
     });
 
-    $("#netgraphbtn").click(function() {
-        $.ajax({
-            url: '/vps/{{ service.id }}/netstats',
-            type: 'GET',
-            dataType: 'json',
-            success: net_data_received
-        });
+    $("#dailybtn").click(function(event) {
+        event.preventDefault();
+
+        $("#hourlybtn").parent().removeClass("active");
+        $("#dailybtn").parent().addClass("active");
+        $("#weeklybtn").parent().removeClass("active");
+        $("#monthlybtn").parent().removeClass("active");
+
+        set_period(86400, 1440);
+        update();
     });
 
-    $("#vbdgraphbtn").click(function() {
-        $.ajax({
-            url: '/vps/{{ service.id }}/vbdstats',
-            type: 'GET',
-            dataType: 'json',
-            success: net_data_received
-        });
+    $("#weeklybtn").click(function(event) {
+        event.preventDefault();
+
+        $("#hourlybtn").parent().removeClass("active");
+        $("#dailybtn").parent().removeClass("active");
+        $("#weeklybtn").parent().addClass("active");
+        $("#monthlybtn").parent().removeClass("active");
+
+        set_period(86400 * 7, 1440);
+        update();
     });
+
+    $("#monthlybtn").click(function(event) {
+        event.preventDefault();
+
+        $("#hourlybtn").parent().removeClass("active");
+        $("#dailybtn").parent().removeClass("active");
+        $("#weeklybtn").parent().removeClass("active");
+        $("#monthlybtn").parent().addClass("active");
+
+        set_period(86400 * 30, 1440);
+        update();
+    });
+
+    $("#cpugraphbtn").click(function(event) {
+        event.preventDefault();
+
+        $("#cpugraphbtn").parent().addClass("active");
+        $("#netgraphbtn").parent().removeClass("active");
+        $("#vbdgraphbtn").parent().removeClass("active");
+
+        set_topic("cpustats");
+        set_callback(cpu_data_received);
+        update();
+    });
+
+    $("#netgraphbtn").click(function(event) {
+        event.preventDefault();
+
+        $("#cpugraphbtn").parent().removeClass("active");
+        $("#netgraphbtn").parent().addClass("active");
+        $("#vbdgraphbtn").parent().removeClass("active");
+
+        set_topic("netstats");
+        set_callback(net_data_received);
+        update();
+    });
+
+    $("#vbdgraphbtn").click(function(event) {
+        event.preventDefault();
+
+        $("#cpugraphbtn").parent().removeClass("active");
+        $("#netgraphbtn").parent().removeClass("active");
+        $("#vbdgraphbtn").parent().addClass("active");
+
+        set_topic("vbdstats");
+        set_callback(net_data_received);
+        update();
+    });
+
+    set_topic("cpustats");
+    set_period(3600, 60);
+    set_callback(cpu_data_received);
+    update();
 });
 </script>
 
