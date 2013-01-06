@@ -54,8 +54,8 @@ class Service(db.Model):
     def invoice(self, invoice):
         pass
 
-    def attach_ip(self, ip):
-        return IPAddressRef(ip, self.user, self)
+    def attach_ip(self, ip, ipnet=None):
+        return IPAddressRef(ip, ipnet, self.user, self)
 
     def entitle(self):
         self.is_entitled = True

@@ -54,9 +54,12 @@
 
 </table>
 
-<h3>
-	{{ subtitle }}
-</h3>
+<ul class="nav nav-tabs">
+	<li{{ ' class="active"'|safe if subtitle == 'Graphs' else '' }}><a href="{{ url_for('.view', vps=service.id) }}">Graphs</a></li>
+	{% if user.is_admin %}
+		<li{{ ' class="active"'|safe if subtitle == 'Admin Settings' else '' }}><a href="{{ url_for('.staff_toolbox', vps=service.id) }}">Admin</a></li>
+	{% endif %}
+</ul>
 
 {% block subcontent %}
 {% endblock %}

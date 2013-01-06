@@ -15,7 +15,9 @@ from the use of this software.
 
 import json
 
-from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response
+from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request
+from panel2 import db
+from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
 from panel2.user import login_required, admin_required, get_session_user
@@ -47,6 +49,15 @@ def view(vps):
     if can_access_vps(vps) is False:
         abort(403)
     return render_template('vps/view-graphs.html', service=vps)
+
+@vps.route('/<vps>/admin')
+@login_required
+@admin_required
+def staff_toolbox(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template('vps/view-admin.html', service=vps)
 
 @vps.route('/<vps>/delete')
 def adm_delete(vps):
@@ -116,3 +127,22 @@ def vbdstats(vps, start, step):
     response = make_response(json.dumps(vps.get_vbd_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
+
+@vps.route('/<vps>/admin/ip/<ip>/delete')
+@login_required
+@admin_required
+def adm_del_ip(vps, ip):
+    IPAddress.query.filter_by(id=ip).delete()
+    db.session.commit()
+    return redirect(url_for('.staff_toolbox', vps=vps))
+
+@vps.route('/<vps>/admin/ip/add', methods=['POST'])
+@login_required
+@admin_required
+def adm_add_ip(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    postdata = request.form['ipbox']
+    ipnetid, ip = postdata.split('!')
+    ipnet = IPRange.query.filter_by(id=ipnetid).first()
+    vps.attach_ip(ip, ipnet)
+    return redirect(url_for('.staff_toolbox', vps=vps.id))

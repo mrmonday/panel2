@@ -1,0 +1,51 @@
+{% extends "vps/view-base.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Admin Settings' %}
+
+{% block subcontent %}
+
+<h3>IP Allocation / Planning (changes require a VPS powercycle to go live)</h3>
+
+<table class="table table-striped">
+<tr>
+<th>IP Address</th>
+<th>IP Version</th>
+<th>Network</th>
+<th>Gateway</th>
+<th>Broadcast</th>
+<th>Netmask</th>
+<th>
+	<span class="pull-right">Options</span>
+</th>
+</tr>
+{% for ipaddr in service.ips %}
+<tr>
+	<td>{{ ipaddr.ip }}</td>
+	<td>IPv{{ ipaddr.ipnet.ipnet().version }}</td>
+	<td>{{ ipaddr.ipnet.ipnet().network_address }} / {{ ipaddr.ipnet.ipnet().prefixlen }}</td>
+	<td>{{ ipaddr.ipnet.gateway() }}</td>
+	<td>{{ ipaddr.ipnet.broadcast() }}</td>
+	<td>{{ ipaddr.ipnet.ipnet().netmask }}</td>
+	<td>
+		<span class="pull-right btn-group">
+			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger">Delete</a>
+		</span>
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+<h4>Add Additional IP</h4>
+
+<form method="POST" action="{{ url_for('.adm_add_ip', vps=service.id) }}">
+<select name="ipbox">
+{% for iprange in service.node.ipranges %}
+{% for host in iprange.available_ips() %}
+<option value="{{ iprange.id }}!{{ host }}">{{ host }}</option>
+{% endfor %}
+{% endfor %}
+</select><br>
+<button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+{% endblock %}
