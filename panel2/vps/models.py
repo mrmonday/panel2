@@ -114,6 +114,28 @@ class XenVPS(Service):
     def create(self):
         return self.node.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
 
+    def format(self):
+        return self.node.api().vps_format(domname=self.name)
+
+    def image(self, template):
+        eth0 = {
+           'address': self.ips[0].ip,
+           'netmask': self.ips[0].ipnet.ipnet().netmask,
+           'broadcast': self.ips[0].ipnet.broadcast(),
+           'gateway': self.ips[0].ipnet.gateway(),
+        }
+        return self.node.api().vps_image(domname=self.name, eth0=eth0, image=template)
+
+    # XXX: presently MD5 Crypt is still the lowest common denominator...
+    def rootpass(self, rootpass):
+        from passlib.hash import md5_crypt
+        return self.node.api().vps_rootpass(domname=self.name, newpasshash=md5_crypt.encrypt(rootpass))
+
+    def reimage(self, template, password):
+        self.format()
+        self.image(template)
+        self.rootpass(password)
+
     def shutdown(self):
         return self.node.api().shutdown(domname=self.name)
 
