@@ -18,7 +18,7 @@ import rrdtool
 
 from panel2 import app, db
 from panel2.service import Service, IPRange
-from panel2.job import QueueingProxy
+from panel2.job import QueueingProxy, Job
 
 from collections import OrderedDict
 
@@ -59,8 +59,10 @@ class Node(db.Model):
     def __repr__(self):
         return "<Node: '%s' [%s]>" % (self.name, self.ipaddr)
 
-    def api(self, constructor=QueueingProxy):
-        return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=self.id)
+    def api(self, constructor=QueueingProxy, refid=None):
+        if not refid:
+            refid = self.id
+        return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
 
 class NodeIPRange(IPRange):
     __mapper_args__ = {'polymorphic_identity': 'node'}
@@ -107,46 +109,56 @@ class XenVPS(Service):
         db.session.add(self)
         db.session.commit()
 
+    def api(self, constructor=QueueingProxy):
+        return self.node.api(constructor, refid=self.id)
+
+    def jobs(self):
+        return Job.query.filter_by(refid=self.id)
+
     def delete(self):
-        self.node.api().vps_destroy(domname=self.name)
+        self.api().vps_destroy(domname=self.name)
         Service.delete(self)
 
     def create(self):
-        return self.node.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
+        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
 
     def format(self):
-        return self.node.api().vps_format(domname=self.name)
+        return self.api().vps_format(domname=self.name)
+
+    def init(self):
+        return self.api().vps_create(domname=self.name, size=self.disk, swap=self.swap, is_hvm=False)
 
     def image(self, template):
         eth0 = {
            'address': self.ips[0].ip,
-           'netmask': self.ips[0].ipnet.ipnet().netmask,
-           'broadcast': self.ips[0].ipnet.broadcast(),
-           'gateway': self.ips[0].ipnet.gateway(),
+           'netmask': str(self.ips[0].ipnet.ipnet().netmask),
+           'broadcast': str(self.ips[0].ipnet.broadcast()),
+           'gateway': str(self.ips[0].ipnet.gateway()),
         }
-        return self.node.api().vps_image(domname=self.name, eth0=eth0, image=template)
+        return self.api().vps_image(domname=self.name, eth0=eth0, image=template)
 
     # XXX: presently MD5 Crypt is still the lowest common denominator...
     def rootpass(self, rootpass):
         from passlib.hash import md5_crypt
-        return self.node.api().vps_rootpass(domname=self.name, newpasshash=md5_crypt.encrypt(rootpass))
+        return self.api().vps_rootpass(domname=self.name, newpasshash=md5_crypt.encrypt(rootpass))
+
+    def shutdown(self):
+        return self.api().shutdown(domname=self.name)
+
+    def destroy(self):
+        return self.api().destroy(domname=self.name)
+
+    def pause(self):
+        return self.api().pause(domname=self.name)
+
+    def unpause(self):
+        return self.api().unpause(domname=self.name)
 
     def reimage(self, template, password):
+        self.destroy()
         self.format()
         self.image(template)
         self.rootpass(password)
-
-    def shutdown(self):
-        return self.node.api().shutdown(domname=self.name)
-
-    def destroy(self):
-        return self.node.api().destroy(domname=self.name)
-
-    def pause(self):
-        return self.node.api().pause(domname=self.name)
-
-    def unpause(self):
-        return self.node.api().unpause(domname=self.name)
 
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)

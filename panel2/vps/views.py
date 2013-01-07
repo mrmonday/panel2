@@ -17,6 +17,7 @@ import json
 
 from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request
 from panel2 import db
+from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
 from panel2.vps.models import XenVPS
@@ -124,8 +125,12 @@ def deploy(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
         abort(403)
-
-    return render_template('vps/view-deploy.html', service=vps, templates=template_map)
+    if request.method == 'POST':
+        flash('Your deployment request is in progress, check back later.')
+        vps.reimage(request.form['imagename'], request.form['rootpass'])
+        return redirect(url_for('.jobs', vps=vps.id))
+    else:
+        return render_template('vps/view-deploy.html', service=vps, templates=template_map)
 
 @vps.route('/<vps>/cpustats/<start>/<step>')
 def cpustats(vps, start, step):
@@ -164,3 +169,29 @@ def adm_add_ip(vps):
     ipnet = IPRange.query.filter_by(id=ipnetid).first()
     vps.attach_ip(ip, ipnet)
     return redirect(url_for('.staff_toolbox', vps=vps.id))
+
+@vps.route('/<vps>/jobs.json')
+@login_required
+def jobs_json(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    joblist = vps.jobs().order_by(Job.id.desc()).limit(100)
+    jobset = list()
+    for job in joblist:
+        d = dict()
+        d['req_env'] = json.loads(job.request_envelope)
+        d['rsp_env'] = json.loads(job.response_envelope)
+        d['start_ts'] = job.start_ts * 1000
+        d['begin_ts'] = job.begin_ts * 1000
+        d['end_ts'] = job.end_ts * 1000
+        jobset.append(d)
+
+    return jsonify(jobset)
+
+@vps.route('/<vps>/jobs')
+def jobs(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template('vps/view-jobs.html', service=vps.id)
