@@ -53,7 +53,7 @@
 {% block body %}
 
 <div class="container">
-	<form id="signin" method="POST" action="/create">
+	<form id="signin" method="POST" action="{{ url_for('.create') }}">
 		<h2>Create account</h2>
 		{% if error %}
 		<div class="error">
