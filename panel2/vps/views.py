@@ -177,21 +177,28 @@ def jobs_json(vps):
     if can_access_vps(vps) is False:
         abort(403)
     joblist = vps.jobs().order_by(Job.id.desc()).limit(100)
-    jobset = list()
+    lst = []
+    javascript_time = lambda f: f * 1000 if f is not None else None
     for job in joblist:
         d = dict()
+        d['id'] = job.id
         d['req_env'] = json.loads(job.request_envelope)
-        d['rsp_env'] = json.loads(job.response_envelope)
-        d['start_ts'] = job.start_ts * 1000
-        d['begin_ts'] = job.begin_ts * 1000
-        d['end_ts'] = job.end_ts * 1000
-        jobset.append(d)
+        if job.response_envelope:
+            d['rsp_env'] = json.loads(job.response_envelope)
+        else:
+            d['rsp_env'] = None
+        d['start_ts'] = javascript_time(job.start_ts)
+        d['entry_ts'] = javascript_time(job.entry_ts)
+        d['end_ts'] = javascript_time(job.end_ts)
+        lst.append(d)
 
-    return jsonify(jobset)
+    response = make_response(json.dumps(lst))
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 @vps.route('/<vps>/jobs')
 def jobs(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view-jobs.html', service=vps.id)
+    return render_template('vps/view-jobs.html', service=vps)
