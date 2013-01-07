@@ -59,6 +59,7 @@
 	{% if user.is_admin %}
 		<li{{ ' class="active"'|safe if subtitle == 'Admin Settings' else '' }}><a href="{{ url_for('.staff_toolbox', vps=service.id) }}">Admin</a></li>
 	{% endif %}
+	<li{{ ' class="active"'|safe if subtitle == 'Deploy' else '' }}><a href="{{ url_for('.deploy', vps=service.id) }}">Deploy</a></li>
 </ul>
 
 {% block subcontent %}

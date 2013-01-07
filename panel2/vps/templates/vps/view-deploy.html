@@ -1,0 +1,38 @@
+{% extends "vps/view-base.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Deploy' %}
+
+{% block subcontent %}
+
+<h3>Deploy</h3>
+
+<p>Deploying will (re)initialize your VPS to a clean slate and install a new OS on it.  If you have already deployed an OS,
+   please note this operation is <strong>destructive</strong>.  Our staff will be unable to recover any data which is destroyed
+   as a result of installing a new OS.</p>
+
+<form method="POST">
+
+<div class="row" style="margin-bottom: 1em;">
+	<div class="span3"><strong class="pull-right">OS Image:</strong></div>
+	<div class="span9">
+	{% for imagename, template in templates.items() %}
+		<input type="radio" name="imagename" id="dist-{{ imagename }}" value="{{ imagename }}"> {{ template }}<br>
+	{% endfor %}
+	</div>
+</div>
+<div class="row">
+	<div class="span3"><strong class="pull-right">Root Password:</strong></div>
+	<div class="span9">
+		<input type="password" name="rootpass" class="span9">
+	</div>
+</div>
+<div class="row">
+	<div class="span3"></div>
+	<div class="span9">
+		<button type="submit" class="btn btn-primary">Deploy</button>
+	</div>
+</div>
+
+</form>
+
+{% endblock %}

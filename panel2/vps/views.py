@@ -22,6 +22,15 @@ from panel2.vps import vps
 from panel2.vps.models import XenVPS
 from panel2.user import login_required, admin_required, get_session_user
 
+# XXX: this should eventually be moved to a DB and the template IR should just be
+# sent with the vps_image() opcall.  --nenolod
+template_map = {
+    'debian6_login.xml': 'Debian 6.0 (minimal)',
+    'debian7_login.xml': 'Debian 7.0 (minimal) (beta)',
+    'ubuntu12.04_login.xml': 'Ubuntu Server 12.04 LTS (minimal)',
+    'alpine2.5_login.xml': 'Alpine 2.5 (minimal)',
+}
+
 def can_access_vps(vps, user=None):
     if user is None:
         user = get_session_user()
@@ -108,6 +117,15 @@ def powercycle(vps):
     job = vps.create()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
     return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/deploy', methods=['GET', 'POST'])
+@login_required
+def deploy(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    return render_template('vps/view-deploy.html', service=vps, templates=template_map)
 
 @vps.route('/<vps>/cpustats/<start>/<step>')
 def cpustats(vps, start, step):
