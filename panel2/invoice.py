@@ -34,19 +34,24 @@ class Invoice(db.Model):
         self.creation_ts = time.time()
 
         db.session.add(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def mark_ready(self):
-        invoice_create_signal.send(app, invoice=self.invoice)
+        invoice_create_signal.send(app, invoice=self)
         if self.total_due() == 0:
             self.mark_paid()
 
     def mark_paid(self):
+        self.payment_ts = time.time()
+
+        db.session.add(self)
+        db.session.commit()
+
         [item.mark_paid() for item in self.items]
-        invoice_paid_signal.send(app, invoice=self.invoice)
+        invoice_paid_signal.send(app, invoice=self)
 
     def total_due(self):
-        return sum([child.amount for child in self.items])
+        return sum([child.price for child in self.items])
 
 invoice_item_paid_signal = blinker.Signal('A signal which is fired when an invoice item is marked paid')
 
@@ -74,7 +79,7 @@ class InvoiceItem(db.Model):
         self.service = service
 
         db.session.add(self)
-        db.session.commit(self)
+        db.session.commit()
 
     def mark_paid(self):
         invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
