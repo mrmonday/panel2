@@ -28,6 +28,9 @@ class Invoice(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='invoices')
 
+    def __repr__(self):
+        return "<Invoice {}>".format(self.id)
+
     def __init__(self, user):
         self.user_id = user.id
         self.user = user

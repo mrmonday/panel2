@@ -61,6 +61,7 @@
 	{% endif %}
 	<li{{ ' class="active"'|safe if subtitle == 'Deploy' else '' }}><a href="{{ url_for('.deploy', vps=service.id) }}">Deploy</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Expiry' else '' }}><a href="{{ url_for('.expiry', vps=service.id) }}">Expiry</a></li>
 </ul>
 
 {% block subcontent %}

@@ -60,6 +60,13 @@ def view(vps):
         abort(403)
     return render_template('vps/view-graphs.html', service=vps)
 
+@vps.route('/<vps>/expiry')
+def expiry(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template('vps/view-expiry.html', service=vps)
+
 @vps.route('/<vps>/admin')
 @login_required
 @admin_required

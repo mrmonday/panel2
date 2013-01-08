@@ -21,6 +21,14 @@ from panel2 import app
 def user_gravatar_url(email, size=24):
     return "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + ("?s=%d" % size)
 
+@app.template_filter('strftime')
+def strftime_filter(time=False, format='%c'):
+    from datetime import datetime
+    if type(time) is long:
+        time = int(time)
+    t = datetime.fromtimestamp(time)
+    return t.strftime(format)
+
 @app.template_filter('time_ago')
 def pretty_date(time=False):
     """
