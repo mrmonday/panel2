@@ -13,3 +13,66 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+from panel2 import app, db
+import time
+import blinker
+
+invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
+invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
+
+class Invoice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    creation_ts = db.Column(db.Integer)
+    payment_ts = db.Column(db.Integer)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='invoices')
+
+    def __init__(self, user):
+        self.user_id = user.id
+        self.user = user
+        self.creation_ts = time.time()
+
+        db.session.add(self)
+        db.session.commit(self)
+
+    def mark_ready(self):
+        invoice_create_signal.send(app, invoice=self.invoice)
+
+    def mark_paid(self):
+        [item.mark_paid() for item in self.items]
+        invoice_paid_signal.send(app, invoice=self.invoice)
+
+    def total_due(self):
+        return sum([child.amount for child in self.items])
+
+invoice_item_paid_signal = blinker.Signal('A signal which is fired when an invoice item is marked paid')
+
+class InvoiceItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(255))
+    entry_ts = db.Column(db.Integer)
+    price = db.Column(db.Float)
+
+    service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
+    service = db.relationship('Service')
+
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
+    invoice = db.relationship('Invoice', backref='items')
+
+    def __init__(self, service, invoice, price):
+        self.description = '{} renewal'.format(service.name)
+        self.entry_ts = time.time()
+        self.price = price
+
+        self.invoice_id = invoice.id
+        self.invoice = invoice
+
+        self.service_id = service.id
+        self.service = service
+
+        db.session.add(self)
+        db.session.commit(self)
+
+    def mark_paid(self):
+        invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
