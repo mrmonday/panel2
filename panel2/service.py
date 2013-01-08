@@ -51,7 +51,10 @@ class Service(db.Model):
         pass
 
     def suspend(self):
-        pass
+        self.is_entitled = False
+
+        db.session.add(self)
+        db.session.commit()
 
     def invoice(self, invoice):
         return InvoiceItem(self, invoice, self.price)
@@ -70,8 +73,7 @@ class Service(db.Model):
         current_expiry = list(time.gmtime(self.expiry))
         current_expiry[1] += 1
         self.expiry = time.mktime(tuple(current_expiry))
-        db.session.add(self)
-        db.session.commit()
+        self.entitle()
 
 @invoice_item_paid_signal.connect_via(app)
 def service_update_expiry(*args, **kwargs):

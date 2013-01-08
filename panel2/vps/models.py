@@ -112,6 +112,10 @@ class XenVPS(Service):
     def api(self, constructor=QueueingProxy):
         return self.node.api(constructor, refid=self.id)
 
+    def suspend(self):
+        self.destroy()
+        Service.suspend(self)
+
     def jobs(self):
         return Job.query.filter_by(refid=self.id)
 
