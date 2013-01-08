@@ -54,10 +54,6 @@ class Service(db.Model):
         pass
 
     def invoice(self, invoice):
-        if time.time() - self.expiry > 604800:
-            return None
-        if InvoiceItem.query.filter_by(service_id=self.id).filter_by(payment_ts=None).first():
-            return None
         return InvoiceItem(self, invoice, self.price)
 
     def attach_ip(self, ip, ipnet=None):
