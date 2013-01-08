@@ -14,8 +14,9 @@ from the use of this software.
 """
 
 from panel2 import app, db
-from panel2.invoice import InvoiceItem
+from panel2.invoice import InvoiceItem, invoice_item_paid_signal
 import ipaddress
+import time
 
 class Service(db.Model):
     __tablename__ = 'services'
@@ -67,6 +68,19 @@ class Service(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    # XXX: update this when yearly is added --nenolod
+    def update_expiry(self):
+        current_expiry = time.gmtime(self.expiry)
+        current_expiry[1] += 1
+        self.expiry = time.mktime(current_expiry)
+        db.session.add(self)
+        db.session.commit()
+
+@invoice_item_paid_signal.connect_via(app)
+def service_update_expiry(*args, **kwargs):
+    service = kwargs.get('service', None)
+    service.update_expiry()
 
 class IPAddress(db.Model):
     __tablename__ = 'ips'
