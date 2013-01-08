@@ -53,8 +53,6 @@ class Service(db.Model):
         pass
 
     def invoice(self, invoice):
-        if not self.price:
-            return None
         if time.time() - self.expiry > 604800:
             return None
         if InvoiceItem.query.filter_by(service_id=self.id).filter_by(payment_ts=None).first():

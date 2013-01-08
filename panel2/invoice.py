@@ -38,6 +38,8 @@ class Invoice(db.Model):
 
     def mark_ready(self):
         invoice_create_signal.send(app, invoice=self.invoice)
+        if self.total_due() == 0:
+            self.mark_paid()
 
     def mark_paid(self):
         [item.mark_paid() for item in self.items]
