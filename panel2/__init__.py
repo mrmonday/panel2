@@ -33,6 +33,7 @@ import panel2.preferences
 import panel2.service
 import panel2.filters
 import panel2.job
+import panel2.invoice
 
 # plugins!
 from panel2.dns import dns
