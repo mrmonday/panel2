@@ -71,9 +71,9 @@ class Service(db.Model):
 
     # XXX: update this when yearly is added --nenolod
     def update_expiry(self):
-        current_expiry = time.gmtime(self.expiry)
+        current_expiry = list(time.gmtime(self.expiry))
         current_expiry[1] += 1
-        self.expiry = time.mktime(current_expiry)
+        self.expiry = time.mktime(tuple(current_expiry))
         db.session.add(self)
         db.session.commit()
 
