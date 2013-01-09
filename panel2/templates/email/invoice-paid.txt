@@ -1,0 +1,5 @@
+{% extends "email/base-message.txt" %}
+{% block message %}This is a notification that invoice {{ invoice.id }} has been created.
+
+You may view the invoice at https://manage.tortois.es/invoice/{{ invoice.id }} - accepted payment
+methods right now are PayPal.{% endblock %}
