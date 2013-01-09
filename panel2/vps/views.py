@@ -92,6 +92,7 @@ def signup():
     return render_template('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
 
 @vps.route('/<vps>')
+@login_required
 def view(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -99,6 +100,7 @@ def view(vps):
     return render_template('vps/view-graphs.html', service=vps)
 
 @vps.route('/<vps>/expiry')
+@login_required
 def expiry(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -115,6 +117,7 @@ def staff_toolbox(vps):
     return render_template('vps/view-admin.html', service=vps)
 
 @vps.route('/<vps>/delete')
+@login_required
 def adm_delete(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -124,6 +127,7 @@ def adm_delete(vps):
     return redirect(url_for('.list'))
 
 @vps.route('/<vps>/create')
+@login_required
 def create(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -134,6 +138,7 @@ def create(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/shutdown')
+@login_required
 def shutdown(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -144,6 +149,7 @@ def shutdown(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/destroy')
+@login_required
 def destroy(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -154,6 +160,7 @@ def destroy(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/powercycle')
+@login_required
 def powercycle(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
@@ -242,6 +249,7 @@ def jobs_json(vps):
     return response
 
 @vps.route('/<vps>/jobs')
+@login_required
 def jobs(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
