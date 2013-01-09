@@ -1,0 +1,34 @@
+{% extends "invoice/invoice-base.html" %}
+{% block title %}Invoices{% endblock %}
+{% block content %}
+{{ super() }}
+
+<h3>
+Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
+{% if user.is_admin %}
+	<span class="pull-right btn-group">
+		<a href="{{ url_for('.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
+	</span>
+{% endif %}
+</h3>
+
+<table class="table table-striped">
+<tr>
+	<th>Line Item #</th>
+	<th>Description</th>
+	<th>Amount</th>
+</tr>
+{% for item in invoice.items %}
+<tr>
+	<td>{{ item.id }}</td>
+	<td>{{ item.description }}</td>
+	<td>${{ item.price | strf("{0:.2f}") }}</td>
+</tr>
+{% endfor %}
+<tr>
+	<td></td>
+	<td><strong class="pull-right">Total:</strong></td>
+	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
+</table>
+
+{% endblock %}

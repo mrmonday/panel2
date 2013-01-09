@@ -82,3 +82,8 @@ def truncate(data):
         return data
 
     return data[0:50] + '...'
+
+@app.template_filter('strf')
+def strf(data, fmt):
+    return fmt.format(data)
+

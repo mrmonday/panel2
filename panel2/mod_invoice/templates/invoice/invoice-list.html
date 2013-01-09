@@ -1,0 +1,32 @@
+{% extends "invoice/invoice-base.html" %}
+{% block title %}Invoices{% endblock %}
+{% block content %}
+{{ super() }}
+
+<table class="table table-striped">
+<tr>
+	<th>Invoice ID</th>
+	<th>Status</th>
+	<th>Amount</th>
+	<th>
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+{% for invoice in invoices %}
+<tr>
+	<td><a href="{{ url_for('.view', invoice_id=invoice.id) }}">{{ invoice.id }}</a></td>
+	<td>{{ "Paid" if invoice.payment_ts else "Unpaid" }}</td>
+	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
+	<td>
+		<span class="pull-right btn-group">
+			<a href="{{ url_for('.view', invoice_id=invoice.id) }}" class="btn btn-primary">View</a>
+			{% if user.is_admin %}
+				<a href="{{ url_for('.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
+			{% endif %}
+		</span>
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
