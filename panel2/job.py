@@ -67,8 +67,8 @@ from ediarpc import rpc_message, rpc_client
 
 class QueueingProxy(rpc_client.ServerProxy):
     def __init__(self, *args, **kwargs):
-        super(QueueingProxy, self).__init__(*args, **kwargs)
         self._refid = kwargs.pop('refid', None)
+        super(QueueingProxy, self).__init__(*args, **kwargs)
 
     def _call(self, name, **kwargs):
         envelope = rpc_message.encode(self._secret, name, iterations=self._iterations, **kwargs) + '\r\n'

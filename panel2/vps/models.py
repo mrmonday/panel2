@@ -110,7 +110,7 @@ class XenVPS(Service):
         db.session.commit()
 
     def api(self, constructor=QueueingProxy):
-        return self.node.api(constructor, refid=self.id)
+        return self.node.api(constructor, self.id)
 
     def suspend(self):
         self.destroy()
