@@ -39,7 +39,9 @@ import panel2.invoice
 from panel2.dns import dns
 from panel2.support import support
 from panel2.vps import vps
+from panel2.mod_invoice import invoice
 
 app.register_blueprint(dns, url_prefix='/dns')
 app.register_blueprint(support, url_prefix='/support')
 app.register_blueprint(vps, url_prefix='/vps')
+app.register_blueprint(invoice, url_prefix='/invoice')
