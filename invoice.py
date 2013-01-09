@@ -15,6 +15,7 @@ from the use of this software.
 
 import time
 
+from panel2 import app
 from panel2.user import User
 from panel2.invoice import Invoice, InvoiceItem
 
@@ -28,6 +29,9 @@ def is_open_invoice_covering_service(user, service):
             if line.service == service:
                 return True
     return False
+
+ctx = app.test_request_context()
+ctx.push()
 
 for user in User.query:
     due = due_invoices(user)
@@ -46,3 +50,5 @@ for user in User.query:
     invoice.mark_ready()
     print user.username, "invoice ID", invoice.id
     print user.username, "invoice auto PAID?", invoice.payment_ts is not None
+
+ctx.pop()
