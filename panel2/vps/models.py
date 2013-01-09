@@ -62,6 +62,8 @@ class Node(db.Model):
     def api(self, constructor=QueueingProxy, refid=None):
         if not refid:
             refid = self.id
+        if constructor is not QueueingProxy:
+            return constructor(self.ipaddr, 5959, self.secret, iterations=15)
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
 
 class NodeIPRange(IPRange):
@@ -185,7 +187,7 @@ class XenVPS(Service):
         negated = -(start - (start % step))
 
         rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
-	data = rdata[2]
+        data = rdata[2]
 
         step = rdata[0][2]
 	begin_ts = rdata[0][0]
