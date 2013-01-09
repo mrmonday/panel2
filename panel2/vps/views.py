@@ -14,14 +14,16 @@ from the use of this software.
 """
 
 import json
+import time
 
 from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request
 from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
-from panel2.vps.models import XenVPS
+from panel2.vps.models import XenVPS, ResourcePlan, Region
 from panel2.user import login_required, admin_required, get_session_user
+from panel2.invoice import Invoice
 
 # XXX: this should eventually be moved to a DB and the template IR should just be
 # sent with the vps_image() opcall.  --nenolod
@@ -52,6 +54,42 @@ def list():
 @admin_required
 def list_all():
     return render_template('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
+
+@vps.route('/signup', methods=['GET', 'POST'])
+@login_required
+def signup():
+    user = get_session_user()
+    regions = Region.query.all()
+    resource_plans = ResourcePlan.query.all()
+    vpsname = user.username + '-' + str(len(user.services))
+    if request.method == 'POST':
+        region = Region.query.filter_by(id=int(request.form['region'])).first()
+        if not region:
+            abort(404)
+        resource_plan = ResourcePlan.query.filter_by(id=int(request.form['plan'])).first()
+        if not resource_plan:
+            abort(404)
+
+        vps = resource_plan.create_vps(user, region, vpsname)
+        vps.expiry_ts = time.time()
+        if user.is_admin:
+            vps.price = 0.00
+        db.session.add(vps)
+        db.session.commit()
+
+        invoice = Invoice(user)
+        vps.invoice(invoice)
+        invoice.mark_ready()
+
+        if not invoice.payment_ts:
+            return redirect(url_for('invoice.view', invoice_id=invoice.id))
+
+        return redirect(url_for('.view', vps=vps.id))
+
+    for service in user.services:
+        if vpsname == service.name:
+            vpsname += '-' + time.time()
+    return render_template('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
 
 @vps.route('/<vps>')
 def view(vps):
