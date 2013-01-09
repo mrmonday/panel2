@@ -291,3 +291,35 @@ class XenVPS(Service):
         oobytes = {'label': 'Rescheduled requests', 'data': set, 'color': "#663333"}
 
         return [rxbytes, txbytes, oobytes]
+
+class ResourcePlan(db.Model):
+    __tablename__ = 'vps_resource_plan'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    memory = db.Column(db.Integer)
+    disk = db.Column(db.Integer)
+    swap = db.Column(db.Integer)
+    price = db.Column(db.Float)
+
+    def __init__(self, name, memory, swap, disk, price):
+        self.name = name
+        self.memory = memory
+        self.disk = disk
+        self.swap = swap
+        self.price = price
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<ResourcePlan: {}>".format(self.name)
+
+    def create_vps(self, user, region, name):
+        node = region.available_node(self.memory, self.disk)
+        vps = XenVPS(name, self.memory, self.swap, self.disk, self.price, node, user)
+        iprs = filter(lambda x: len(x.available_ips()) > 0, node.ipranges)
+        if not iprs or len(iprs) == 0:
+            return vps
+        iprs[0].assign_first_available(user, vps)
+        vps.init()
+        return vps
