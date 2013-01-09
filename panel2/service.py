@@ -34,6 +34,9 @@ class Service(db.Model):
     __mapper_args__ = {'polymorphic_on': type}
 
     def delete(self):
+        InvoiceItem.query.filter_by(service_id=self.id).delete()
+        db.session.commit()
+
         for ip in self.ips:
             ip.service_id = None
             ip.service = None
