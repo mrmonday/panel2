@@ -1,0 +1,58 @@
+{% extends "vps/base.html" %}
+{% block title %}New Server{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<form method="POST">
+
+<h3>Resource Plan</h3>
+
+<table class="table table-striped">
+<tr>
+	<th></th>
+	<th>Plan</th>
+	<th>Memory</th>
+	<th>Swap</th>
+	<th>Disk</th>
+	<th>Bandwidth</th>
+	<th>SLA</th>
+	<th>Max IPv4</th>
+	<th>Price</th>
+</tr>
+{% for plan in resource_plans %}
+<tr>
+	<td><input type="radio" name="plan" value="{{ plan.id }}"></td>
+	<td>{{ plan.name }}</td>
+	<td>{{ plan.memory }} MB</td>
+	<td>{{ plan.swap }} MB</td>
+	<td>{{ plan.disk }} GB</td>
+	<td>20mbps guaranteed; 1000mbps burstable<sup>1</sup></td>
+	<td>100% network / power, 99.5% storage<sup>3</sup></td>
+	<td>{{ (plan.memory / 512) | strf("{0:.0f}") }}<sup>2</sup></td>
+	<td>${{ plan.price | strf("{0:.2f}") }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<p><sup>1</sup>: QoS guidelines: 20mbps guaranteed to be available to each individual VPS at any time, 1000mbps to each network segment.  Nodes are connected at 10 gigabit (10000mbps).</p>
+
+<p><sup>2</sup>: All plans start with 1 IP by default, but more may be requested free of charge with proper justification, and at our discretion.</p>
+
+<p><sup>3</sup>: SLA for storage subsystems will be increased at the conclusion of the beta period.</p>
+
+<h3>Region</h3>
+
+<p>
+{% for region in regions %}
+<input type="radio" name="region" value="{{ region.id }}"> {{ region.name }}<br>
+{% endfor %}
+</p>
+
+<p>To add a new server, click below.  You will be invoiced immediately.  Upon payment of the invoice, your server will be available for use.</p>
+
+<button class="btn btn-primary btn-large" type="submit">Add New Server</button>
+
+</form>
+
+{% endblock %}
