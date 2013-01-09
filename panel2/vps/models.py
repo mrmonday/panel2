@@ -35,6 +35,11 @@ class Region(db.Model):
     def __repr__(self):
         return "<Region: '%s'>" % self.name
 
+    def available_node(self, memory, disk):
+        for node in self.nodes:
+            if len(node.available_ips()) > 0:
+                return node
+
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -65,6 +70,9 @@ class Node(db.Model):
         if constructor is not QueueingProxy:
             return constructor(self.ipaddr, 5959, self.secret, iterations=15)
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
+
+    def available_ips(self):
+        return [ip for iprange in self.ipranges for ip in iprange.available_ips()]
 
 class NodeIPRange(IPRange):
     __mapper_args__ = {'polymorphic_identity': 'node'}
