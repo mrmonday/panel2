@@ -86,3 +86,13 @@ class InvoiceItem(db.Model):
 
     def mark_paid(self):
         invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
+
+@invoice_create_signal.connect_via(app)
+def invoice_paid_sig_hdl(*args, **kwargs):
+    invoice = kwargs.get('invoice', None)
+    invoice.user.send_email('Invoice Created', 'email/invoice-new.txt', invoice=invoice)
+
+@invoice_paid_signal.connect_via(app)
+def invoice_paid_sig_hdl(*args, **kwargs):
+    invoice = kwargs.get('invoice', None)
+    invoice.user.send_email('Invoice Payment Received', 'email/invoice-paid.txt', invoice=invoice)
