@@ -21,7 +21,7 @@ from panel2.invoice import Invoice
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import requests
 
-@invoice.route('/<invoice_id>/ipn-post')
+@invoice.route('/<invoice_id>/ipn-post', methods=['POST'])
 def ipn_post(invoice_id):
     request.parameter_storage_class = ImmutableOrderedMultiDict()
     values = request.form
