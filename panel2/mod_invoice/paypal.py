@@ -23,9 +23,10 @@ import requests
 
 @invoice.route('/<invoice_id>/ipn-post', methods=['POST'])
 def ipn_post(invoice_id):
-    request.parameter_storage_class = ImmutableOrderedMultiDict()
+    request.parameter_storage_class = ImmutableOrderedMultiDict
     values = request.form
 
+    arg = ''
     for x, y in values.iteritems():
         arg += "&{x}={y}".format(x=x,y=y)
 
