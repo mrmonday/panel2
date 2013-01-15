@@ -25,6 +25,26 @@ db = SQLAlchemy(app)
 mail = Mail(app)
 ssl = SSLify(app)
 
+if app.config['SEND_DEBUG_EMAILS'] is True:
+    import logging
+    from logging.handlers import SMTPHandler
+    mail_handler = SMTPHandler('127.0.0.1',
+                               app.config['NOREPLY_MAIL'],
+                               app.config['DEBUG_EMAIL_TARGETS'], __name__ + ' failed')
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(logging.Formatter('''
+Message type:       %(levelname)s
+Location:           %(pathname)s:%(lineno)d
+Module:             %(module)s
+Function:           %(funcName)s
+Time:               %(asctime)s
+
+Message:
+
+%(message)s
+'''))
+    app.logger.addHandler(mail_handler)
+
 import panel2.user
 import panel2.views
 import panel2.session
