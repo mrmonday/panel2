@@ -32,3 +32,7 @@ def error_forbidden(e):
 @app.errorhandler(404)
 def error_forbidden(e):
     return render_template('error-notfound.html'), 404
+
+@app.errorhandler(500)
+def error_exception(e):
+    return render_template('error-exception.html'), 500
