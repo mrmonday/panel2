@@ -34,11 +34,11 @@ class CronManager(object):
             print 'hourly event'
     """
     taskqueues = {
-        MINUTELY = list(),
-        HOURLY   = list(),
-        DAILY    = list(),
-        WEEKLY   = list(),
-        MONTHLY  = list()
+        MINUTELY: list(),
+        HOURLY:   list(),
+        DAILY:    list(),
+        WEEKLY:   list(),
+        MONTHLY:  list()
     }
 
     def task(self, queue, func):
