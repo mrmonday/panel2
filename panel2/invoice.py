@@ -107,7 +107,7 @@ def is_open_invoice_covering_service(user, service):
     open_invs = filter(lambda x: x.payment_ts is None, user.invoices)
     for i in open_invs:
         for line in i.items:
-            if line.service == service:
+            if line.service.id == service.id:
                 return True
     return False
 
@@ -121,7 +121,7 @@ def invoice_task():
         if len(due) == 0:
             continue
         print user.username, len(due), "service(s) due"
-        for service in due:
+        for service in list(due):
             if is_open_invoice_covering_service(user, service) is True:
                 due.remove(service)
         print user.username, len(due), "service(s) not covered by prior invoices"
