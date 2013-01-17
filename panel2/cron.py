@@ -41,17 +41,20 @@ class CronManager(object):
         MONTHLY:  list()
     }
 
-    def task(self, queue, func):
+    def task(self, queue):
         """
-        Decorator to add a task to a taskqueue.
+        Decorator factory which returns a new decorator that
+        is used to add a task to a taskqueue.
 
         :param queue: queue to add the function to.
-        :param func: function to add to the queue.
+        :returns decorator
         """
         if not self.taskqueues.has_key(queue):
             raise NameError(queue)
 
-        self.taskqueues[queue].append(func)
+        def wrapped_fn(func):
+            self.taskqueues[queue].append(func)
+        return wrapped_fn
 
     def dispatch(self, queue):
         """
