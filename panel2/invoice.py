@@ -13,7 +13,10 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from panel2 import app, db
+from panel2 import app, db, cron
+from panel2.user import User
+from panel2.cron import DAILY
+
 import time
 import blinker
 
@@ -96,3 +99,39 @@ def invoice_paid_sig_hdl(*args, **kwargs):
 def invoice_paid_sig_hdl(*args, **kwargs):
     invoice = kwargs.get('invoice', None)
     invoice.user.send_email('Invoice Payment Received', 'email/invoice-paid.txt', invoice=invoice)
+
+def due_invoices(user):
+    return filter(lambda x: x.expiry - time.time() <= 604800, user.services)
+
+def is_open_invoice_covering_service(user, service):
+    open_invs = filter(lambda x: x.payment_ts is None, user.invoices)
+    for i in open_invs:
+        for line in i.items:
+            if line.service == service:
+                return True
+    return False
+
+@cron.task(DAILY)
+def invoice_task():
+    ctx = app.test_request_context()
+    ctx.push()
+
+    for user in User.query:
+        due = due_invoices(user)
+        if len(due) == 0:
+            continue
+        print user.username, len(due), "service(s) due"
+        for service in due:
+            if is_open_invoice_covering_service(user, service) is True:
+                due.remove(service)
+        print user.username, len(due), "service(s) not covered by prior invoices"
+        if len(due) == 0:
+            continue
+        invoice = Invoice(user)
+        for service in due:
+            service.invoice(invoice)
+        invoice.mark_ready()
+        print user.username, "invoice ID", invoice.id
+        print user.username, "invoice auto PAID?", invoice.payment_ts is not None
+
+    ctx.pop()
