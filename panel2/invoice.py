@@ -48,6 +48,9 @@ class Invoice(db.Model):
             self.mark_paid()
 
     def mark_paid(self):
+        if self.payment_ts:
+            return
+
         self.payment_ts = time.time()
 
         db.session.add(self)
