@@ -45,6 +45,11 @@ Message:
 '''))
     app.logger.addHandler(mail_handler)
 
+# cron system
+import panel2.cron
+cron = panel2.cron.CronManager()
+
+# base components
 import panel2.user
 import panel2.views
 import panel2.session
