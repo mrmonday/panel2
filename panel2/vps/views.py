@@ -32,6 +32,7 @@ template_map = {
     'debian7_login.xml': 'Debian 7.0 (minimal) (beta)',
     'ubuntu12.04_login.xml': 'Ubuntu Server 12.04 LTS (minimal)',
     'alpine2.5_login.xml': 'Alpine 2.5 (minimal)',
+    'centos6_login.xml': 'CentOS 6 (minimal)',
 }
 
 def can_access_vps(vps, user=None):
@@ -95,6 +96,8 @@ def signup():
 @login_required
 def view(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     return render_template('vps/view-graphs.html', service=vps)
@@ -103,6 +106,8 @@ def view(vps):
 @login_required
 def expiry(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     return render_template('vps/view-expiry.html', service=vps)
@@ -112,6 +117,8 @@ def expiry(vps):
 @admin_required
 def staff_toolbox(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     return render_template('vps/view-admin.html', service=vps)
@@ -120,6 +127,8 @@ def staff_toolbox(vps):
 @login_required
 def adm_delete(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     vps.delete()
@@ -130,6 +139,8 @@ def adm_delete(vps):
 @login_required
 def create(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
 
@@ -141,6 +152,8 @@ def create(vps):
 @login_required
 def shutdown(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
 
@@ -152,6 +165,8 @@ def shutdown(vps):
 @login_required
 def destroy(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
 
@@ -163,6 +178,8 @@ def destroy(vps):
 @login_required
 def powercycle(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
 
@@ -175,6 +192,8 @@ def powercycle(vps):
 @login_required
 def deploy(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     if request.method == 'POST':
@@ -187,11 +206,15 @@ def deploy(vps):
 @vps.route('/<vps>/cpustats/<start>/<step>')
 def cpustats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     return jsonify(vps.get_cpu_stats(start=int(start), step=int(step)))
 
 @vps.route('/<vps>/netstats/<start>/<step>')
 def netstats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     response = make_response(json.dumps(vps.get_net_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
@@ -199,6 +222,8 @@ def netstats(vps, start, step):
 @vps.route('/<vps>/vbdstats/<start>/<step>')
 def vbdstats(vps, start, step):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     response = make_response(json.dumps(vps.get_vbd_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
@@ -226,6 +251,8 @@ def adm_add_ip(vps):
 @login_required
 def jobs_json(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
     if can_access_vps(vps) is False:
         abort(403)
     joblist = vps.jobs().order_by(Job.id.desc()).limit(100)
