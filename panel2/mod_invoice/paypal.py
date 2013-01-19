@@ -37,12 +37,10 @@ def ipn_post(invoice_id):
     print 'Validating IPN using {url}'.format(url=validate_url)
 
     r = requests.get(validate_url)
-    if r.text is not 'VERIFIED':
+    if r.text != 'VERIFIED':
         return r.text
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     invoice.mark_paid()
 
     return r.text
-
-
