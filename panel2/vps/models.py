@@ -194,7 +194,12 @@ class XenVPS(Service):
         start_ts = now - (now % step)
         negated = -(start - (start % step))
 
-        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        rdata = None
+        try:
+            rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        except:
+            return {}
+
         data = rdata[2]
 
         step = rdata[0][2]
@@ -221,7 +226,12 @@ class XenVPS(Service):
         start_ts = now - (now % step)
         negated = -(start - (start % step))
 
-        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        rdata = None
+        try:
+            rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        except:
+            return {}
+
 	data = rdata[2]
         step = rdata[0][2]
 
@@ -259,7 +269,12 @@ class XenVPS(Service):
         start_ts = now - (now % step)
         negated = -(start - (start % step))
 
-        rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        rdata = None
+        try:
+            rdata = rrdtool.fetch(str(path), cf, '-s', str(negated), '-e', str(start_ts), '-r', str(step))
+        except:
+            return {}
+
 	data = rdata[2]
         step = rdata[0][2]
 
