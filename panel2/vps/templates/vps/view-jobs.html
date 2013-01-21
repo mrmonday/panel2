@@ -69,11 +69,10 @@ $(function() {
 			dataType: 'json',
 			success: on_log_data_received,
 		});
-
-		setTimeout(fetch, 1000);
 	}
 
 	fetch();
+	setInterval(fetch, 1000);
 });
 </script>
 
