@@ -188,6 +188,8 @@ $(function() {
     set_period(3600, 60);
     set_callback(cpu_data_received);
     update();
+
+    setInterval(update, 10000);
 });
 </script>
 {% endblock %}
