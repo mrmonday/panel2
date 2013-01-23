@@ -19,6 +19,7 @@ import rrdtool
 from panel2 import app, db
 from panel2.service import Service, IPRange
 from panel2.job import QueueingProxy, Job
+from ediarpc.rpc_client import ServerProxy
 
 from collections import OrderedDict
 
@@ -73,6 +74,12 @@ class Node(db.Model):
 
     def available_ips(self):
         return [ip for iprange in self.ipranges for ip in iprange.available_ips()]
+
+    def gen_keypair(self):
+        api = self.api(ServerProxy)
+        res = api.tmp_keypair_gen()
+        data = res['pubkey'].split(' ')[0:2]
+        return ' '.join(data)
 
 class NodeIPRange(IPRange):
     __mapper_args__ = {'polymorphic_identity': 'node'}
