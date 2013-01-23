@@ -19,6 +19,15 @@ from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.invoice import Invoice
 
+def can_access_invoice(invoice, user=None):
+    if user is None:
+        user = get_session_user()
+    if user.is_admin is True:
+        return True
+    if invoice.user != user:
+        return False
+    return True
+
 @invoice.route('/')
 @login_required
 def index():
@@ -38,6 +47,8 @@ def view(invoice_id):
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     if not invoice:
         abort(404)
+    if can_access_invoice(invoice) is False:
+        abort(403)
     return render_template("invoice/invoice-view.html", invoice=invoice)
 
 @invoice.route('/<invoice_id>/credit')
