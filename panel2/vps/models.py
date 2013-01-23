@@ -191,12 +191,11 @@ class XenVPS(Service):
         now = int(time.time())
         path = self._make_path('cpu')
 
-        if step != 60:
+        if step >= 1440:
             cf = 'AVERAGE'
             step = 1440
         else:
             cf = 'LAST'
-            step = 60
 
         start_ts = now - (now % step)
         negated = -(start - (start % step))
@@ -223,12 +222,11 @@ class XenVPS(Service):
         now = int(time.time())
         path = self._make_path('net')
 
-        if step != 60:
+        if step >= 1440:
             cf = 'AVERAGE'
             step = 1440
         else:
             cf = 'LAST'
-            step = 60
 
         start_ts = now - (now % step)
         negated = -(start - (start % step))
@@ -266,7 +264,7 @@ class XenVPS(Service):
         now = int(time.time())
         path = self._make_path('vbd')
 
-        if step != 60:
+        if step >= 1440:
             cf = 'AVERAGE'
             step = 1440
         else:

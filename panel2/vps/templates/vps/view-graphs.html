@@ -72,7 +72,7 @@ $(function() {
         __step = step;
         if (start >= (86400 * 5)) {
             __tmf = "%b %d";
-        } else if (start > 3600) { 
+        } else if (step > 3600) { 
             __tmf = "%m/%d/%y %H:%M";
         } else {
             __tmf = "%H:%M";
@@ -120,7 +120,7 @@ $(function() {
         $("#weeklybtn").parent().removeClass("active");
         $("#monthlybtn").parent().removeClass("active");
 
-        set_period(86400, 1440);
+        set_period(86400, 600);
         update();
     });
 
