@@ -282,3 +282,23 @@ def jobs(vps):
     if can_access_vps(vps) is False:
         abort(403)
     return render_template('vps/view-jobs.html', service=vps)
+
+@vps.route('/<vps>/clone', methods=['GET', 'POST'])
+@login_required
+def clone(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    if request.method == 'POST':
+        flash('Your clone is in progress, check back later.')
+        vps.clone(request.form['imagename'], request.form['targetip'])
+        return redirect(url_for('.jobs', vps=vps.id))
+    return render_template('vps/view-clone.html', service=vps, templates=template_map)
+
+@vps.route('/<vps>/keypair')
+@login_required
+def keypair(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return jsonify({'pubkey': vps.node.gen_keypair()})

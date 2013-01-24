@@ -1,0 +1,58 @@
+{% extends "vps/view-base.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Clone' %}
+
+{% block subcontent %}
+
+<h3>Clone</h3>
+
+<p>Cloning another VPS will erase this VPS and clone the other VPS's filesystem to it.  The target VPS will not
+   be modified in any way.</p>
+
+<p>In order to successfully clone the VPS, the VPS must allow SSH access on port 22, have rsync installed, and
+   install the following SSH key into <strong>/root/.ssh/authorized_keys</strong>:</p>
+
+<div id="placeholder"></div>
+
+<form method="POST">
+
+<div class="row" style="margin-bottom: 1em;">
+	<div class="span3"><strong class="pull-right">Target IP:</strong></div>
+	<div class="span9">
+		<input type="text" name="targetip" class="span9">
+	</div>
+</div>
+<div class="row" style="margin-bottom: 1em;">
+	<div class="span3"><strong class="pull-right">OS Type:</strong></div>
+	<div class="span9">
+	{% for imagename, template in templates.items() %}
+		<input type="radio" name="imagename" id="dist-{{ imagename }}" value="{{ imagename }}"> {{ template }}<br>
+	{% endfor %}
+		<input type="radio" name="imagename" id="dist-noconfig" value="noconfig"> Do not reconfigure</input>
+	</div>
+</div>
+<div class="row">
+	<div class="span3"></div>
+	<div class="span9">
+		<button type="submit" class="btn btn-primary">Clone</button>
+	</div>
+</div>
+
+</form>
+
+<script>
+$(function() {
+	function on_pubkey_received(data) {
+		$("#placeholder").append("<h3>SSH Public Key</h3><pre class='pre-scrollable'>" + data['pubkey'] + "</pre>");
+	}
+
+	$.ajax({
+		url: '{{ url_for('.keypair', vps=service.id) }}',
+		type: 'GET',
+		dataType: 'json',
+		success: on_pubkey_received
+	});
+});
+</script>
+
+{% endblock %}

@@ -181,6 +181,17 @@ class XenVPS(Service):
         self.image(template)
         self.rootpass(password)
 
+    def clone(self, template, targetip):
+        eth0 = {
+           'address': self.ips[0].ip,
+           'netmask': str(self.ips[0].ipnet.ipnet().netmask),
+           'broadcast': str(self.ips[0].ipnet.broadcast()),
+           'gateway': str(self.ips[0].ipnet.gateway()),
+        }
+        self.destroy()
+        self.format()
+        self.api().vps_clone(domname=self.name, eth0=eth0, image=template, targetip=targetip)
+
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)
 
