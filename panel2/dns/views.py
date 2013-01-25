@@ -26,7 +26,7 @@ def is_valid_host(host):
     host = host.encode('idna').lower()
     if not hasattr(is_valid_host, '_re'):
         import re
-        is_valid_host._re = re.compile(r'^([0-9a-z][-\w]*[0-9a-z]\.)+[a-z0-9\-]{2,15}$')
+        is_valid_host._re = re.compile(r'^([0-9a-z_][-\w]*[0-9a-z_]\.)+[a-z0-9\-_]{2,15}$')
     return bool(is_valid_host._re.match(host))
 
 def user_can_access_domain(domain, user=None):
