@@ -22,7 +22,7 @@
 </tr>
 {% for plan in resource_plans %}
 <tr>
-	<td><input type="radio" name="plan" value="{{ plan.id }}"></td>
+	<td><input type="radio" name="plan" value="{{ plan.id }}" {{ 'checked="checked"' if plan.id == 1 }}></td>
 	<td>{{ plan.name }}</td>
 	<td>{{ plan.memory }} MB</td>
 	<td>{{ plan.swap }} MB</td>
@@ -45,7 +45,7 @@
 
 <p>
 {% for region in regions %}
-<input type="radio" name="region" value="{{ region.id }}"> {{ region.name }}<br>
+	<input type="radio" name="region" value="{{ region.id }}" {{ 'checked="checked"' if region.id == 1 }}> {{ region.name }}<br>
 {% endfor %}
 </p>
 
