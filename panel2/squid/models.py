@@ -63,7 +63,7 @@ class access_log(db.Model):
     reply_size = db.Column(db.Integer)
     request_method = db.Column(db.string(255))
     request_url = db.Column(db.string(255))
-    squiduser = db.Column(db.string(255)) #corresponds to squidusers.squiduser
+    squiduser = db.Column(db.string(255)) #corresponds to squidusers.squiduser test
     squid_hier_status = db.Column(db.string(255))
     ipaddr = db.Column(db.string(255)) # corresponds to squidservers.ipaddr
     mime_type = db.Column(db.string(255))
