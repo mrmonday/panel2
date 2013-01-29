@@ -65,6 +65,7 @@ from panel2.dns import dns
 from panel2.support import support
 from panel2.vps import vps
 from panel2.mod_invoice import invoice
+from panel2.squid import squid
 
 app.register_blueprint(dns, url_prefix='/dns')
 app.register_blueprint(support, url_prefix='/support')
