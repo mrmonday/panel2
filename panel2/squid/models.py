@@ -18,10 +18,10 @@ import random
 
 class SquidServers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    location = db.Column(db.string(255))
-    ipaddr = db.Column(db.string(255))
+    location = db.Column(db.String(255))
+    ipaddr = db.Column(db.String(255))
     port = db.Column(db.Integer)
-    name = db.Column(db.string(255))
+    name = db.Column(db.String(255))
 
     def __init__(self, location, ipaddr, port, name):
         self.location = location
@@ -40,17 +40,18 @@ class SquidUsers(Service):
     __mapper_args__ = {'polymorphic_identity': 'squidusers'}
 
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
-    squiduser = db.Column(db.string(255), primary_key=True) # this is what squid checks for
-    password = db.Column(db.string(255))
+    squiduser = db.Column(db.String(255), primary_key=True) # this is what squid checks for
+    password = db.Column(db.String(255))
     enabled = db.Column(db.Boolean)
 
-
-
-    def __init__(self, squiduser, password, user, enabled=1):
+    def __init__(self, squiduser, password, user, enabled=True):
         self.squiduser = squiduser
         self.enabled = enabled
 
         self.passwd = self.genpass()
+
+        self.user_id = user.id
+        self.user = user
 
         db.session.add(self)
         db.session.commit()
@@ -75,18 +76,18 @@ class SquidUsers(Service):
 class access_log(db.Model):
     __tablename__ = "access_log"
     id = db.Column(db.Integer, auto_increment=True, primary_key=True)
-    time_since_epoch= db.Column(db.Decimal)
+    time_since_epoch = db.Column(db.Decimal)
     response_time = db.Column(db.Integer)
-    client_src_ip_addr = db.Column(db.string(255))
-    squid_request_status = db.Column(db.string(255))
-    http_status_code = db.Column(db.string(255))
+    client_src_ip_addr = db.Column(db.String(255))
+    squid_request_status = db.Column(db.String(255))
+    http_status_code = db.Column(db.String(255))
     reply_size = db.Column(db.Integer)
-    request_method = db.Column(db.string(255))
-    request_url = db.Column(db.string(255))
-    squiduser = db.Column(db.string(255)) #corresponds to squidusers.squiduser t
-    squid_hier_status = db.Column(db.string(255))
-    ipaddr = db.Column(db.string(255)) # corresponds to squidservers.ipaddr
-    mime_type = db.Column(db.string(255))
+    request_method = db.Column(db.String(255))
+    request_url = db.Column(db.String(255))
+    squiduser = db.Column(db.String(255)) #corresponds to squidusers.squiduser t
+    squid_hier_status = db.Column(db.String(255))
+    ipaddr = db.Column(db.String(255)) # corresponds to squidservers.ipaddr
+    mime_type = db.Column(db.String(255))
 
     def __init__(self, id, time_since_epoch, response_time, client_src_ip_addr, squid_request_status, http_status_code, reply_size, request_method, request_url, squiduser, squid_hier_status, ipaddr, mime_type ):
         self.id = id
