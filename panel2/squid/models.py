@@ -47,7 +47,6 @@ class SquidUsers(Service):
 
     def __init__(self, squiduser, password, user, enabled=1):
         self.squiduser = squiduser
-        self.user = user
         self.enabled = enabled
 
         self.passwd = self.genpass()
@@ -56,7 +55,7 @@ class SquidUsers(Service):
         db.session.commit()
 
     def __repr__(self):
-        return "<Squiduser: '%s' [%s]>" % (self.squiduser, self.user)
+        return "<Squiduser: '%s' [%s]>" % (self.squiduser)
 
     def suspend(self):
         self.enabled = 0
