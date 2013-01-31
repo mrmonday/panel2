@@ -12,9 +12,9 @@ This software is provided 'as is' and without any warranty, express or
 implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
-import time
-from panel2 import app, db
-from collections import OrderedDict
+from panel2 import  db
+from panel2.service import Service
+import random
 
 class SquidServers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,15 +35,19 @@ class SquidServers(db.Model):
     def __repr__(self):
         return "<SquidServer: '%s' [%s]>" % (self.name, self.ipaddr)
 
-class SquidUsers(db.Model):
+class SquidUsers(Service):
+    __tablename__ = "squidusers"
+    service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     squiduser = db.Column(db.string(255), primary_key=True) # this is what squid checks for
     password = db.Column(db.string(255))
     user = db.Column(db.string(255)) #tortoiselabs user
     enabled = db.Column(db.Boolean)
 
+
+
     def __init__(self, squiduser, password, user, enabled=1):
         self.squiduser = squiduser
-        self.password = password
+        self.passwd = self.genpass()
         self.user = user
         self.enabled = enabled
 
@@ -53,7 +57,22 @@ class SquidUsers(db.Model):
     def __repr__(self):
         return "<Squiduser: '%s' [%s]>" % (self.squiduser, self.user)
 
+    def suspend(self):
+        self.enabled = 0
+        Service.suspend(self)
+
+    def entitle(self):
+        self.enabled = 0
+        Service.suspend(self)
+
+    def genpass(self):
+        passwd = ''
+        for x in xrange(0, 20):
+            passwd += random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*")
+        return passwd
+
 class access_log(db.Model):
+    __tablename__ = "access_log"
     id = db.Column(db.Integer, auto_increment=True, primary_key=True)
     time_since_epoch= db.Column(db.Decimal)
     response_time = db.Column(db.Integer)
@@ -63,7 +82,7 @@ class access_log(db.Model):
     reply_size = db.Column(db.Integer)
     request_method = db.Column(db.string(255))
     request_url = db.Column(db.string(255))
-    squiduser = db.Column(db.string(255)) #corresponds to squidusers.squiduser test
+    squiduser = db.Column(db.string(255)) #corresponds to squidusers.squiduser t
     squid_hier_status = db.Column(db.string(255))
     ipaddr = db.Column(db.string(255)) # corresponds to squidservers.ipaddr
     mime_type = db.Column(db.string(255))
