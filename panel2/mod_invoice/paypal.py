@@ -34,11 +34,9 @@ def ipn_post(invoice_id):
        '/cgi-bin/webscr?cmd=_notify-validate{arg}' \
        .format(arg=arg)
 
-    print 'Validating IPN using {url}'.format(url=validate_url)
-
     r = requests.get(validate_url)
-    if 'VERIFIED' not in r.text:
-        return r.text
+#    if 'VERIFIED' not in r.text:
+#        return r.text
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     invoice.mark_paid()
