@@ -37,6 +37,7 @@ class SquidServers(db.Model):
 
 class SquidUsers(Service):
     __tablename__ = "squidusers"
+    __mapper_args__ = {'polymorphic_identity': 'squidusers'}
 
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     squiduser = db.Column(db.string(255), primary_key=True) # this is what squid checks for
