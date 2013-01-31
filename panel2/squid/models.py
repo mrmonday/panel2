@@ -41,7 +41,6 @@ class SquidUsers(Service):
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     squiduser = db.Column(db.string(255), primary_key=True) # this is what squid checks for
     password = db.Column(db.string(255))
-    user = db.Column(db.string(255)) #tortoiselabs user
     enabled = db.Column(db.Boolean)
 
 
