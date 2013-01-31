@@ -65,7 +65,7 @@ class SquidUsers(Service):
 
     def entitle(self):
         self.enabled = 0
-        Service.suspend(self)
+        Service.entitle(self)
 
     def genpass(self):
         passwd = ''
