@@ -48,9 +48,10 @@ class SquidUsers(Service):
 
     def __init__(self, squiduser, password, user, enabled=1):
         self.squiduser = squiduser
-        self.passwd = self.genpass()
         self.user = user
         self.enabled = enabled
+
+        self.passwd = self.genpass()
 
         db.session.add(self)
         db.session.commit()
