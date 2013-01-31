@@ -89,7 +89,7 @@ def signup():
 
     for service in user.services:
         if vpsname == service.name:
-            vpsname += '-' + time.time()
+            vpsname += '-{:.0f}'.format(time.time())
     return render_template('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
 
 @vps.route('/<vps>')
@@ -263,7 +263,10 @@ def jobs_json(vps):
         d['id'] = job.id
         d['req_env'] = json.loads(job.request_envelope)
         if job.response_envelope:
-            d['rsp_env'] = json.loads(job.response_envelope)
+            try:
+                d['rsp_env'] = json.loads(job.response_envelope)
+            except:
+                d['rsp_env'] = None
         else:
             d['rsp_env'] = None
         d['start_ts'] = javascript_time(job.start_ts)
