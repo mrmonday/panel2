@@ -55,7 +55,7 @@ class SquidUsers(Service):
         db.session.commit()
 
     def __repr__(self):
-        return "<Squiduser: '%s' [%s]>" % (self.squiduser)
+        return "<Squiduser: '%s'>" % (self.squiduser)
 
     def suspend(self):
         self.enabled = 0
