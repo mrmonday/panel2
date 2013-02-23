@@ -38,7 +38,7 @@ class Region(db.Model):
 
     def available_node(self, memory, disk):
         for node in self.nodes:
-            if len(node.available_ips()) > 0:
+            if len(node.available_ips()) > 0 and node.locked == False:
                 return node
 
 class Node(db.Model):
@@ -46,6 +46,7 @@ class Node(db.Model):
     name = db.Column(db.String(255))
     ipaddr = db.Column(db.String(255))
     secret = db.Column(db.String(255))
+    locked = db.Column(db.Boolean, default=False)
 
     region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
     region = db.relationship('Region', backref='nodes')
