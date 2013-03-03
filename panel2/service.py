@@ -17,6 +17,7 @@ from panel2 import app, db
 from panel2.invoice import InvoiceItem, invoice_item_paid_signal
 import ipaddress
 import time
+import random
 
 class Service(db.Model):
     __tablename__ = 'services'
@@ -180,14 +181,25 @@ class IPRange(db.Model):
 
     def available_ips(self):
         iplist = []
-        for host in self.ipnet().iterhosts():
-            if str(host) == self.gateway():
-                continue
-            ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
-            if ip_obj is None:
-                iplist.append(str(host))
-            elif ip_obj.service is None:
-                iplist.append(str(host))
+        if self.ipnet().version == 4:
+            for host in self.ipnet().iterhosts():
+                if str(host) == self.gateway():
+                   continue
+                ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
+                if ip_obj is None:
+                    iplist.append(str(host))
+                elif ip_obj.service is None:
+                    iplist.append(str(host))
+        else:
+            for i in xrange(32):
+                host = ipaddress.IPv6Address(str(self.ipnet().network_address)) + int(random.getrandbits(32))
+                if str(host) == self.gateway():
+                    continue
+                ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
+                if ip_obj is None:
+                    iplist.append(str(host))
+                elif ip_obj.service is None:
+                    iplist.append(str(host))
         return iplist
 
     def assign_first_available(self, user=None, service=None):
