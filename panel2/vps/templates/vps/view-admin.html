@@ -14,9 +14,11 @@
 <th>Gateway</th>
 <th>Broadcast</th>
 <th>Netmask</th>
+{% if user.is_admin %}
 <th>
 	<span class="pull-right">Options</span>
 </th>
+{% endif %}
 </tr>
 {% for ipaddr in service.ips %}
 <tr>
@@ -26,15 +28,18 @@
 	<td>{{ ipaddr.ipnet.gateway() }}</td>
 	<td>{{ ipaddr.ipnet.broadcast() }}</td>
 	<td>{{ ipaddr.ipnet.ipnet().netmask }}</td>
+	{% if user.is_admin %}
 	<td>
 		<span class="pull-right btn-group">
 			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger">Delete</a>
 		</span>
 	</td>
+	{% endif %}
 </tr>
 {% endfor %}
 </table>
 
+{% if user.is_admin %}
 <h4>Add Additional IP</h4>
 
 <form method="POST" action="{{ url_for('.adm_add_ip', vps=service.id) }}">
@@ -47,5 +52,6 @@
 </select><br>
 <button type="submit" class="btn btn-primary">Add</button>
 </form>
+{% endif %}
 
 {% endblock %}

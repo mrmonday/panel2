@@ -56,9 +56,7 @@
 
 <ul class="nav nav-tabs">
 	<li{{ ' class="active"'|safe if subtitle == 'Graphs' else '' }}><a href="{{ url_for('.view', vps=service.id) }}">Graphs</a></li>
-	{% if user.is_admin %}
-		<li{{ ' class="active"'|safe if subtitle == 'Admin Settings' else '' }}><a href="{{ url_for('.staff_toolbox', vps=service.id) }}">Admin</a></li>
-	{% endif %}
+	<li{{ ' class="active"'|safe if subtitle == 'IP Admin' else '' }}><a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Admin</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Deploy' else '' }}><a href="{{ url_for('.deploy', vps=service.id) }}">Deploy</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Clone' else '' }}><a href="{{ url_for('.clone', vps=service.id) }}">Clone</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>

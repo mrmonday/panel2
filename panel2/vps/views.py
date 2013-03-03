@@ -114,8 +114,7 @@ def expiry(vps):
 
 @vps.route('/<vps>/admin')
 @login_required
-@admin_required
-def staff_toolbox(vps):
+def ip_admin(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
         abort(404)
