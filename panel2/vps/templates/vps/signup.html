@@ -27,7 +27,7 @@
 	<td>{{ plan.memory }} MB</td>
 	<td>{{ plan.swap }} MB</td>
 	<td>{{ plan.disk }} GB</td>
-	<td>20mbps guaranteed; 1000mbps burstable<sup>1</sup></td>
+	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed; 1000mbps burstable<sup>1</sup></td>
 	<td>100% network / power, 99.5% storage<sup>3</sup></td>
 	<td>{{ (plan.memory / 512) | strf("{0:.0f}") }}<sup>2</sup></td>
 	<td>${{ plan.price | strf("{0:.2f}") }}</td>
