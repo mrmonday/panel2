@@ -75,8 +75,8 @@ class SquidUsers(Service):
 
 class access_log(db.Model):
     __tablename__ = "access_log"
-    id = db.Column(db.Integer, auto_increment=True, primary_key=True)
-    time_since_epoch = db.Column(db.Decimal)
+    id = db.Column(db.Integer, primary_key=True)
+    time_since_epoch = db.Column(db.Integer)
     response_time = db.Column(db.Integer)
     client_src_ip_addr = db.Column(db.String(255))
     squid_request_status = db.Column(db.String(255))
@@ -89,8 +89,7 @@ class access_log(db.Model):
     ipaddr = db.Column(db.String(255)) # corresponds to squidservers.ipaddr
     mime_type = db.Column(db.String(255))
 
-    def __init__(self, id, time_since_epoch, response_time, client_src_ip_addr, squid_request_status, http_status_code, reply_size, request_method, request_url, squiduser, squid_hier_status, ipaddr, mime_type ):
-        self.id = id
+    def __init__(self, time_since_epoch, response_time, client_src_ip_addr, squid_request_status, http_status_code, reply_size, request_method, request_url, squiduser, squid_hier_status, ipaddr, mime_type ):
         self.time_since_epoch = time_since_epoch
         self.response_time = response_time
         self.client_src_ip_addr = client_src_ip_addr
