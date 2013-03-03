@@ -26,8 +26,13 @@
 	<td>IPv{{ ipaddr.ipnet.ipnet().version }}</td>
 	<td>{{ ipaddr.ipnet.ipnet().network_address }} / {{ ipaddr.ipnet.ipnet().prefixlen }}</td>
 	<td>{{ ipaddr.ipnet.gateway() }}</td>
-	<td>{{ ipaddr.ipnet.broadcast() }}</td>
-	<td>{{ ipaddr.ipnet.ipnet().netmask }}</td>
+	{% if ipaddr.ipnet.ipnet().version == 4 %}
+		<td>{{ ipaddr.ipnet.broadcast() }}</td>
+		<td>{{ ipaddr.ipnet.ipnet().netmask }}</td>
+	{% else %}
+		<td>&mdash;</td>
+		<td>&mdash;</td>
+	{% endif %}
 	{% if user.is_admin %}
 	<td>
 		<span class="pull-right btn-group">
