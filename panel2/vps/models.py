@@ -349,9 +349,13 @@ class ResourcePlan(db.Model):
     def create_vps(self, user, region, name):
         node = region.available_node(self.memory, self.disk)
         vps = XenVPS(name, self.memory, self.swap, self.disk, self.price, node, user)
-        iprs = filter(lambda x: len(x.available_ips()) > 0, node.ipranges)
-        if not iprs or len(iprs) == 0:
+        ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
+        if not ipv4_rs or len(ipv4_rs) == 0:
             return vps
-        iprs[0].assign_first_available(user, vps)
+        ipv4_rs[0].assign_first_available(user, vps)
         vps.init()
+        ipv6_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == True, node.ipranges)
+        if not ipv6_rs or len(ipv6_rs) == 0:
+            return vps
+        ipv6_rs[0].assign_first_available(user, vps)
         return vps
