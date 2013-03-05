@@ -50,6 +50,7 @@ def validate_login(username, password):
     return True
 
 @app.route('/login', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/login', methods=['GET', 'POST'], subdomain='status')
 def login():
     if request.method == 'POST':
         user = validate_login(request.form['username'], request.form['password'])
@@ -62,6 +63,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/logout', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/logout', subdomain='status')
 def logout():
     _user = get_session_user()
     if _user is not None:
@@ -69,7 +71,8 @@ def logout():
 
     return redirect(url_for('index'))
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/create', methods=['GET', 'POST'], subdomain='status')
 def create():
     if request.method == 'POST':
         try:
