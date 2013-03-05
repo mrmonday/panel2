@@ -1,0 +1,14 @@
+{% extends "base-scaffolding.html" %}
+{% block title %}Service Status{% endblock %}
+
+{% block content %}
+<h2>
+	Service Status
+	<span class="btn-group pull-right">
+		{% if user.is_admin %}
+			<a href="{{ url_for('.new') }}" class="btn btn-success">New Incident</a>
+		{% endif %}
+		<a href="{{ url_for('.list') }}" class="btn">Incidents</a>
+	</span>
+</h2>
+{% endblock %}
