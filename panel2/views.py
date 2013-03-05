@@ -16,7 +16,7 @@ from the use of this software.
 from panel2 import app
 from flask import render_template, session, redirect, url_for
 
-@app.route('/')
+@app.route('/', subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def index():
     if session.has_key("uid"):
         # For right now, lets just redirect to VPS.

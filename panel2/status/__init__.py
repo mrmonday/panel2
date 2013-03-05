@@ -18,4 +18,4 @@ from flask import Blueprint
 status = Blueprint('status', __name__, template_folder='templates')
 
 import panel2.status.models
-#import panel2.status.views
+import panel2.status.views

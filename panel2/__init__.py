@@ -68,8 +68,19 @@ from panel2.mod_invoice import invoice
 from panel2.squid import squid
 from panel2.status import status
 
-app.register_blueprint(dns, url_prefix='/dns')
-app.register_blueprint(support, url_prefix='/support')
-app.register_blueprint(vps, url_prefix='/vps')
-app.register_blueprint(invoice, url_prefix='/invoice')
-app.register_blueprint(status, url_prefix='/', host='status.tortois.es')
+app.add_url_rule('/static/<path:filename>',
+                 endpoint='static',
+                 subdomain='manage',
+                 view_func=app.send_static_file)
+
+app.register_blueprint(dns, subdomain='manage', url_prefix='/dns')
+app.register_blueprint(support, subdomain='manage', url_prefix='/support')
+app.register_blueprint(vps, subdomain='manage', url_prefix='/vps')
+app.register_blueprint(invoice, subdomain='manage', url_prefix='/invoice')
+
+app.register_blueprint(status, subdomain='status')
+
+app.add_url_rule('/static/<path:filename>',
+                 endpoint='static',
+                 subdomain='status',
+                 view_func=app.send_static_file)
