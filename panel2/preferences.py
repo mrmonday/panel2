@@ -18,12 +18,12 @@ from panel2.user import get_session_user
 
 from flask import render_template, redirect, url_for, flash, request
 
-@app.route('/profile')
-@app.route('/profile/index')
+@app.route('/profile', subdomain='manage')
+@app.route('/profile/index', subdomain='manage')
 def profile_index():
     return render_template('profile.html')
 
-@app.route('/profile/password', methods=['POST'])
+@app.route('/profile/password', methods=['POST'], subdomain='manage')
 def profile_change_pw():
     user = get_session_user()
     if user.validate_password(request.form['oldpass']) is not True:
@@ -34,7 +34,7 @@ def profile_change_pw():
     flash('Your password has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/email', methods=['POST'])
+@app.route('/profile/email', methods=['POST'], subdomain='manage')
 def profile_change_email():
     user = get_session_user()
     user.assign_email(request.form['new_email'])
