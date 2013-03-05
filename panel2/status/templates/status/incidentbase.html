@@ -1,6 +1,17 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}Service Status{% endblock %}
 
+{% block head %}
+{{ super() }}
+	<link href="{{ url_for('.syndicate') }}" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+{% endblock %}
+
+{% block links %}
+	<li class="menu-item">
+		<a href="{{ url_for('.syndicate') }}">Syndicate (Atom)</a>
+	</li>
+{% endblock %}
+
 {% block content %}
 <h2>
 	Service Status

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+ 
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>TortoiseLabs Status</title>
+	<link href="https://status.tortois.es/atom.xml" rel="self" />
+	<link href="https://status.tortois.es/" />
+	<updated>{{ incidents[0].replies[-1].replied_at | iso8601 }}</updated>
+
+	{% for incident in incidents %}
+	<entry>
+		<title>{{ incident.subject }}</title>
+		<link href="{{ url_for('.view', incident_id=incident.id) }}" />
+		<author>
+			<name>{{ incident.user.username }}</name>
+		</author>
+		<updated>{{ incident.replies[-1].replied_at | iso8601 }}</updated>
+		<summary>{{ incident.replies[0].message }}</summary>
+	</entry>
+	{% endfor %}
+</feed>

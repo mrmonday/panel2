@@ -77,3 +77,8 @@ def new():
         return redirect(url_for('.view', incident_id=incident.id))
 
     return render_template('status/incidentnew.html')
+
+@status.route('/atom.xml')
+def syndicate():
+    incidents = Incident.query.order_by(Incident.opened_at.desc()).all()
+    return render_template('status/incidentlist.xml', incidents=incidents)
