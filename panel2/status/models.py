@@ -52,7 +52,7 @@ class Incident(db.Model):
 
         reply = self.add_reply(self.user, message, False)
 
-        incident_create_signal.send(app, ticket=self, reply=reply)
+        incident_create_signal.send(app, incident=self, reply=reply)
 
     def __repr__(self):
         return "<Incident: %d - '%s'>" % (self.id, self.subject)
@@ -79,8 +79,8 @@ class IncidentReply(db.Model):
     from_user = db.relationship('User')
 
     def __init__(self, incident, from_user, message, fire_reply_signal=True):
-        self.incident = ticket
-        self.incident_id = ticket.id
+        self.incident = incident
+        self.incident_id = incident.id
 
         self.from_user = from_user
         self.from_id = from_user.id
@@ -93,7 +93,7 @@ class IncidentReply(db.Model):
         db.session.commit()
 
         if fire_reply_signal is True:
-            incident_reply_signal.send(app, ticket=self.ticket, reply=self)
+            incident_reply_signal.send(app, incident=self.incident, reply=self)
 
     def __repr__(self):
         return "<IncidentReply for Incident %d, '%s...'>" % (self.ticket.id, self.message[0:50])

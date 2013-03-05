@@ -5,10 +5,11 @@
 <h2>
 	Service Status
 	<span class="btn-group pull-right">
-		{% if user.is_admin %}
+		{% if user and user.is_admin %}
 			<a href="{{ url_for('.new') }}" class="btn btn-success">New Incident</a>
 		{% endif %}
 		<a href="{{ url_for('.list') }}" class="btn">Incidents</a>
+		<a href="http://monitor.tortois.es/smokeping/smokeping.cgi" class="btn">Latency Monitor</a>
 	</span>
 </h2>
 {% endblock %}

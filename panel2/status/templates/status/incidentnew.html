@@ -1,0 +1,32 @@
+{% extends "status/incidentbase.html" %}
+{% block title %}New Incident{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<form method="POST">
+<h3>New Incident</h3>
+
+<div class="row ticket-row">
+	<div class="span2">
+		<div class="pull-right ticket-reply-source">
+			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
+			<strong>{{ user.username }}</strong>
+		</div>
+	</div>
+	<div class="span10">
+		<input type="text" name="subject" placeholder="Subject" class="span10">
+		<select name="department" class="span10">
+			<option>Incident</option>
+			<option>Planned Maintenance</option>
+			<option>Followup (Reason for Outage)</option>
+		</select>
+		<textarea name="message" placeholder="Message" class="ticket-reply-textarea span10"></textarea><br>
+		<div class="btn-group pull-right">
+			<button type="submit" class="btn btn-primary">Create Incident</button>
+		</div>
+	</div>
+</div>
+</form>
+
+{% endblock %}
