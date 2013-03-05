@@ -21,6 +21,7 @@
 			</div>
 			<div class="menu span9 pull-right">
 				<ul class="menu-list">
+					{% block links %}
 					{% if user %}
 					<li class="menu-item">
 						<a href="{{ url_for('dns.list') }}">My DNS Zones</a>
@@ -41,13 +42,13 @@
 					<li class="menu-item">
 						<a href="{{ url_for('invoice.index') }}">My Invoices</a>
 					</li>
-
 					{% endif %}
+					{% endblock %}
 					<li class="menu-item login-item">
 						{% if user %}
-						<a class="btn btn-inverse btn-mini" href="/logout">Logout ({{ user.username }})</a>
+						<a class="btn btn-inverse btn-mini" href="{{ url_for('logout') }}">Logout ({{ user.username }})</a>
 						{% else %}
-						<a class="btn btn-inverse btn-mini" href="/login">Login</a>
+						<a class="btn btn-inverse btn-mini" href="{{ url_for('login') }}">Login</a>
 						{% endif %}
 					</li>
 				</ul>
