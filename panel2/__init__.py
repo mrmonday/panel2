@@ -66,8 +66,10 @@ from panel2.support import support
 from panel2.vps import vps
 from panel2.mod_invoice import invoice
 from panel2.squid import squid
+from panel2.status import status
 
 app.register_blueprint(dns, url_prefix='/dns')
 app.register_blueprint(support, url_prefix='/support')
 app.register_blueprint(vps, url_prefix='/vps')
 app.register_blueprint(invoice, url_prefix='/invoice')
+app.register_blueprint(status, url_prefix='/', host='status.tortois.es')
