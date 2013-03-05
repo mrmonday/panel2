@@ -14,6 +14,7 @@ from the use of this software.
 """
 
 import hashlib
+from datetime import datetime
 
 from panel2 import app
 
@@ -29,6 +30,13 @@ def strftime_filter(time=False, format='%c'):
     t = datetime.fromtimestamp(time)
     return t.strftime(format)
 
+@app.template_filter('iso8601')
+def iso8601_data(time=False):
+    if type(time) is long:
+        time = int(time)
+    dtime = datetime.fromtimestamp(time)
+    return dtime.strftime("%Y-%m-%dT%H:%M:%SZ")
+
 @app.template_filter('time_ago')
 def pretty_date(time=False):
     """
@@ -37,7 +45,6 @@ def pretty_date(time=False):
     'just now', etc.  Pretty much ganked this from Atheme and rewrote
     it in python.
     """
-    from datetime import datetime
     now = datetime.now()
     if type(time) is long:
         time = int(time)
