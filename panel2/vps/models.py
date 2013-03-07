@@ -18,6 +18,7 @@ import rrdtool
 
 from panel2 import app, db
 from panel2.service import Service, IPRange
+from panel2.invoice import ExchangeRate
 from panel2.job import QueueingProxy, Job
 from ediarpc.rpc_client import ServerProxy
 
@@ -345,6 +346,10 @@ class ResourcePlan(db.Model):
 
     def __repr__(self):
         return "<ResourcePlan: {}>".format(self.name)
+
+    def bitcoin_cost(self):
+        btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
+        return btc.convert_to(self.price)
 
     def create_vps(self, user, region, name):
         node = region.available_node(self.memory, self.disk)
