@@ -19,3 +19,4 @@ invoice = Blueprint('invoice', __name__, template_folder='templates')
 
 import panel2.mod_invoice.views
 import panel2.mod_invoice.paypal
+import panel2.mod_invoice.blockchain
