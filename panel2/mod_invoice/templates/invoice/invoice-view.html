@@ -16,19 +16,27 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
 <tr>
 	<th>Line Item #</th>
 	<th>Description</th>
-	<th>Amount</th>
+	<th>Amount (BTC)</th>
+	<th>Amount (USD)</th>
 </tr>
 {% for item in invoice.items %}
 <tr>
 	<td>{{ item.id }}</td>
 	<td>{{ item.description }}</td>
+	<td>{{ item.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
 	<td>${{ item.price | strf("{0:.2f}") }}</td>
 </tr>
 {% endfor %}
 <tr>
-	<td></td>
-	<td><strong class="pull-right">Total:</strong></td>
+	<td colspan="2"></td>
+	<td><strong class="pull-right">Total (BTC):</strong></td>
+	<td>{{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC</td>
+</tr>
+<tr>
+	<td colspan="2"></td>
+	<td><strong class="pull-right">Total (USD):</strong></td>
 	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
+</tr>
 </table>
 
 <!-- PayPal button -->
@@ -39,7 +47,12 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
 	<input type="hidden" name="amount" value="{{ invoice.total_due() | strf("{0:.2f}") }}">
 	<input type="hidden" name="notify_url" value="https://manage.tortois.es/invoice/{{ invoice.id }}/ipn-post">
 	<input type="hidden" name="currency_code" value="USD">
-	<button type="submit" class="pull-right btn btn-large btn-primary">Pay with PayPal</button>
+	<button type="submit" class="pull-right btn btn-large btn-primary">Pay in USD with PayPal</button>
 </form>
+
+<h4 style="clear: left;">
+	<img src="/static/invoice/bitcoin.png" alt="Bitcoin Address" style="float: left;">
+	<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
+</h4>
 
 {% endblock %}
