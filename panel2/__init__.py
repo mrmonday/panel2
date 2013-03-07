@@ -13,17 +13,22 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import Flask
+from flask import Flask, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.mail import Mail
 from flask.ext.sslify import SSLify
+
+class LocalSSLify(SSLify):
+    def redirect_to_ssl(self):
+        if 'btc-notify' not in request.url:
+            super(LocalSSLify, self).redirect_to_ssl()
 
 app = Flask(__name__)
 app.config.from_pyfile('panel2.conf')
 
 db = SQLAlchemy(app)
 mail = Mail(app)
-ssl = SSLify(app)
+ssl = LocalSSLify(app)
 
 if app.config['SEND_DEBUG_EMAILS'] is True:
     import logging
