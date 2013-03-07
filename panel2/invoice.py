@@ -23,6 +23,27 @@ import blinker
 invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
 invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
 
+class ExchangeRate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    currency_name = db.Column(db.String(3))
+    currency_value = db.Column(db.Float)
+
+    def __repr__(self):
+        return "<ExchangeRate {}>".format(self.currency_name)
+
+    def __init__(self, currency_name, currency_value):
+        self.currency_name = currency_name
+        self.currency_value = currency_value
+
+        db.session.add(self)
+        db.session.commit()
+
+    def convert_to(self, value):
+        return value * self.currency_value
+
+    def convert_from(self, value):
+        return value / self.currency_value
+
 class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     creation_ts = db.Column(db.Integer)
