@@ -15,3 +15,6 @@ from the use of this software.
 
 from panel2 import db
 db.create_all()
+
+from panel2.invoice import ExchangeRate
+ExchangeRate('BTC', 0.00)
