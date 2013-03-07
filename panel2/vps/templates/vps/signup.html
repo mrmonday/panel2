@@ -18,7 +18,8 @@
 	<th>Bandwidth</th>
 	<th>SLA</th>
 	<th>Max IPv4</th>
-	<th>Price</th>
+	<th>Price (USD)</th>
+	<th>Price (BTC)</th>
 </tr>
 {% for plan in resource_plans %}
 <tr>
@@ -27,10 +28,11 @@
 	<td>{{ plan.memory }} MB</td>
 	<td>{{ plan.swap }} MB</td>
 	<td>{{ plan.disk }} GB</td>
-	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed; 1000mbps burstable<sup>1</sup></td>
-	<td>100% network / power, 99.5% storage<sup>3</sup></td>
+	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed<sup>1</sup></td>
+	<td>100% network / power / storage</td>
 	<td>{{ (plan.memory / 512) | strf("{0:.0f}") }}<sup>2</sup></td>
 	<td>${{ plan.price | strf("{0:.2f}") }}</td>
+	<td>{{ plan.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
 </tr>
 {% endfor %}
 </table>
@@ -38,8 +40,6 @@
 <p><sup>1</sup>: QoS guidelines: 20mbps guaranteed to be available to each individual VPS at any time, 1000mbps to each network segment.  Nodes are connected at 10 gigabit (10000mbps).</p>
 
 <p><sup>2</sup>: All plans start with 1 IP by default, but more may be requested free of charge with proper justification, and at our discretion.</p>
-
-<p><sup>3</sup>: SLA for storage subsystems will be increased at the conclusion of the beta period.</p>
 
 <h3>Region</h3>
 
