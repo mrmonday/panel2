@@ -85,6 +85,9 @@ class Invoice(db.Model):
     def total_due(self):
         return sum([child.price for child in self.items])
 
+    def total_btc_due(self):
+        return sum([child.bitcoin_cost() for child in self.items])
+
 invoice_item_paid_signal = blinker.Signal('A signal which is fired when an invoice item is marked paid')
 
 class InvoiceItem(db.Model):
@@ -112,6 +115,10 @@ class InvoiceItem(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def bitcoin_cost(self):
+        btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
+        return btc.convert_to(self.price)
 
     def mark_paid(self):
         invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
