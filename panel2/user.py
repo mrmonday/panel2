@@ -105,6 +105,8 @@ class User(db.Model):
 def get_session_user():
     if session.has_key('session_id'):
         sess = Session.query.filter_by(id=session['session_id']).first()
+        if not sess:
+            return None
         if not sess.validate(session['session_challenge']):
             return None
         return sess.user
