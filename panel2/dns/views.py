@@ -16,7 +16,7 @@ from the use of this software.
 from flask import render_template, Markup, redirect, url_for, request, abort, flash
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable
-from panel2.dns.models import Domain, Record
+from panel2.dns.models import Domain, Record, valid_records
 from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
 from panel2 import db
@@ -107,7 +107,7 @@ def new_record(zone_id):
                           request.form['prio'], request.form['ttl'])
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
-    return render_template('dns/new-record.html', zone=domain)
+    return render_template('dns/new-record.html', zone=domain, record_types=valid_records)
 
 @dns.route('/zone/<zone_id>/record/<record_id>/delete')
 @login_required
