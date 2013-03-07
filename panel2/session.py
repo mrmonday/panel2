@@ -99,7 +99,9 @@ def create():
             return render_template('create.html', error='Username is already taken')
             
         if user is not None:
-            session['uid'] = user.id
+            sess = Session(user)
+            session['session_id'] = sess.id
+            session['session_challenge'] = sess.challenge
             return redirect(url_for('index'))
 
     return render_template('create.html')
