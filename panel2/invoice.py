@@ -50,6 +50,7 @@ class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     creation_ts = db.Column(db.Integer)
     payment_ts = db.Column(db.Integer)
+    btc_adr = db.Column(db.String(255))
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='invoices')
@@ -87,6 +88,23 @@ class Invoice(db.Model):
 
     def total_btc_due(self):
         return sum([child.bitcoin_cost() for child in self.items])
+
+    def btc_callback_url(self):
+        return 'https://manage.tortois.es/invoice/{0}/btc-notify'.format(self.id)
+
+    def bitcoin_address(self):
+        if self.btc_adr:
+            return self.btc_adr
+
+        uri = 'https://blockchain.info/api/receive?method=create&address={0}&callback={1}'.format(app.config['BITCOIN_ADDRESS'], self.btc_callback_url())
+        resp = requests.get(uri)
+        resp_obj = json.loads(resp.text)
+        self.btc_adr = resp_obj['input_address']
+
+        db.session.add(self)
+        db.session.commit()
+
+        return self.btc_adr
 
 invoice_item_paid_signal = blinker.Signal('A signal which is fired when an invoice item is marked paid')
 
