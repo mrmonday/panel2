@@ -31,10 +31,11 @@ authfail_signal = blinker.Signal('A signal sent when the user fails authenticati
 def handle_session_login(*args, **kwargs):
     user = kwargs.pop('user', None)
     session['uid'] = user.id
-
+    
 @logout_signal.connect_via(app)
 def handle_session_logout(*args, **kwargs):
-    session.pop('uid', None)
+    sess = session._get_current_object()
+    sess.clear()
 
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
