@@ -19,6 +19,8 @@ from panel2.cron import DAILY
 
 import time
 import blinker
+import requests
+import json
 
 invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
 invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
@@ -160,3 +162,16 @@ def invoice_task():
         print user.username, "invoice auto PAID?", invoice.payment_ts is not None
 
     ctx.pop()
+
+@cron.task(DAILY)
+def update_btc_exchange_rate():
+    exc_table_json = requests.get('https://blockchain.info/ticker')
+    exc_table = json.loads(exc_table_json.text)
+
+    btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
+    btc.currency_value = exc_table['USD']['24h']
+
+    db.session.add(btc)
+    db.session.commit()
+
+    print "BTC is now set to", btc.currency_value
