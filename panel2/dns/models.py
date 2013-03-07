@@ -17,6 +17,15 @@ from panel2 import app, db
 
 import time
 
+valid_records = ['A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT', 'SPF']
+
+class InvalidRecordException(Exception):
+    def __init__(self, type):
+        self.type = type
+
+    def __repr__(self):
+        return 'InvalidRecordException: {} is not a valid domain type'.format(self.type)
+
 class Domain(db.Model):
     __tablename__ = 'domains'
 
@@ -78,6 +87,9 @@ class Record(db.Model):
         self.ttl = ttl
         self.domain_id = domain_id
         self.change_date = int(time.time())
+
+        if self.type not in valid_records:
+            raise InvalidRecordException(self.type)
 
         db.session.add(self)
         db.session.commit()
