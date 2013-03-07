@@ -27,6 +27,10 @@ def btc_notify(invoice_id):
     value_in_btc = int(request.args.get('value', 0)) / 100000000
     destination_address = request.args.get('destination_address', None)
     confirmations = int(request.args.get('confirmations', 0))
+    test = request.args.get('test', 'false')
+
+    if test == 'true':
+        return '*ok*'
 
     if destination_address != app.config['BITCOIN_ADDRESS']:
         return ''
