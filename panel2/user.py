@@ -22,6 +22,7 @@ from panel2.utils import send_simple_email
 
 import hashlib, os
 import blinker
+import random, base64
 
 createuser_signal = blinker.Signal('A signal which is fired when a user is created')
 
@@ -32,18 +33,23 @@ class Session(db.Model):
     user = db.relationship('User', backref='sessions')
 
     host = db.Column(db.String(255))
+    challenge = db.Column(db.String(255))
 
     def __init__(self, user):
         self.user_id = user.id
         self.user = user
 
         self.host = request.remote_addr
+        self.challenge = base64.b64encode(str(random.getrandbits(256)))
 
         db.session.add(self)
         db.session.commit()
 
     def __repr__(self):
         return '<Session: {0} from {1}>'.format(self.id, self.host)
+
+    def validate(self, challenge):
+        return (self.challenge == challenge)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,6 +105,8 @@ class User(db.Model):
 def get_session_user():
     if session.has_key('session_id'):
         sess = Session.query.filter_by(id=session['session_id']).first()
+        if not sess.validate(session['session_challenge']):
+            return None
         return sess.user
 
     return None

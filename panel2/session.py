@@ -32,6 +32,7 @@ def handle_session_login(*args, **kwargs):
     user = kwargs.pop('user', None)
     sess = Session(user)
     session['session_id'] = sess.id
+    session['session_challenge'] = sess.challenge
 
 @logout_signal.connect_via(app)
 def handle_session_logout(*args, **kwargs):
@@ -42,6 +43,7 @@ def handle_session_logout(*args, **kwargs):
         db.session.commit()
 
     session.pop('session_id')
+    session.pop('session_challenge')
 
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
