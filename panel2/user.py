@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from functools import wraps
-from flask import session, redirect, url_for, abort, render_template
+from flask import session, redirect, url_for, abort, render_template, request
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
@@ -24,6 +24,26 @@ import hashlib, os
 import blinker
 
 createuser_signal = blinker.Signal('A signal which is fired when a user is created')
+
+class Session(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  
+    user = db.relationship('User', backref='sessions')
+
+    host = db.Column(db.String(255))
+
+    def __init__(self, user):
+        self.user_id = user.id
+        self.user = user
+
+        self.host = request.remote_addr
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return '<Session: {0} from {1}>'.format(self.id, self.host)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,8 +97,9 @@ class User(db.Model):
         send_simple_email(recipient=self.email, subject=subject, message=message)
 
 def get_session_user():
-    if session.has_key('uid'):
-        return User.query.filter_by(id=session['uid']).first()
+    if session.has_key('session_id'):
+        sess = Session.query.filter_by(id=session['session_id']).first()
+        return sess.user
 
     return None
 

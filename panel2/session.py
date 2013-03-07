@@ -17,8 +17,8 @@ import sys
 import hashlib
 import blinker
 
-from panel2 import app
-from panel2.user import User, get_session_user
+from panel2 import app, db
+from panel2.user import User, Session, get_session_user
 from panel2.utils import is_email_valid
 from flask import session, redirect, url_for, escape, request, render_template
 from sqlalchemy.exc import IntegrityError
@@ -30,12 +30,18 @@ authfail_signal = blinker.Signal('A signal sent when the user fails authenticati
 @login_signal.connect_via(app)
 def handle_session_login(*args, **kwargs):
     user = kwargs.pop('user', None)
-    session['uid'] = user.id
-    
+    sess = Session(user)
+    session['session_id'] = sess.id
+
 @logout_signal.connect_via(app)
 def handle_session_logout(*args, **kwargs):
-    sess = session._get_current_object()
-    sess.clear()
+    sess = Session.query.filter_by(id=session['session_id']).first()
+
+    if sess:
+        db.session.delete(sess)
+        db.session.commit()
+
+    session.pop('session_id')
 
 def validate_login(username, password):
     u = User.query.filter_by(username=username).first()
