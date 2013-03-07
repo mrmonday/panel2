@@ -40,10 +40,10 @@ class ExchangeRate(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def convert_to(self, value):
+    def convert_from(self, value):
         return value * self.currency_value
 
-    def convert_from(self, value):
+    def convert_to(self, value):
         return value / self.currency_value
 
 class Invoice(db.Model):
