@@ -34,9 +34,9 @@ def send_simple_email(recipient, subject, message):
     send_simple_email_list([recipient], subject, message)
 
 def serialize_obj(obj):
-    if isinstance(obj, list):
+    if hasattr(obj, '__iter__'):
         lst = []
-        for child in obj:
+        for child in obj.__iter__():
             lst.append(serialize_obj(child))
         return lst
 
