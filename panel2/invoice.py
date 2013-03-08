@@ -106,6 +106,11 @@ class Invoice(db.Model):
 
         return self.btc_adr
 
+    def _serialize(self):
+        return dict(invoice=self.id, user=self.user.username, creation_ts=self.creation_ts, payment_ts=self.payment_ts,
+                    total=self.total_due(),
+                    items=[item._serialize() for item in self.items])
+
 invoice_item_paid_signal = blinker.Signal('A signal which is fired when an invoice item is marked paid')
 
 class InvoiceItem(db.Model):
@@ -140,6 +145,10 @@ class InvoiceItem(db.Model):
 
     def mark_paid(self):
         invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
+
+    def _serialize(self):
+        return dict(line_item=self.id, invoice=self.invoice_id, service=self.service.name, price=self.price,
+                    btc_price=self.bitcoin_cost(), entry_ts=self.entry_ts)
 
 @invoice_create_signal.connect_via(app)
 def invoice_paid_sig_hdl(*args, **kwargs):
