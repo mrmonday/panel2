@@ -102,7 +102,19 @@ class User(db.Model):
         message = render_template(template, user=self, **kwargs)
         send_simple_email(recipient=self.email, subject=subject, message=message)
 
+def is_api_session():
+    return True if request.authorization else False
+
 def get_session_user():
+    if request.authorization:
+        auth = request.authorization
+        user = User.query.filter_by(username=auth.username).first()
+        if not user:
+            return None
+        if user.validate_password(auth.password) != True:
+            return None
+        return user
+
     if session.has_key('session_id'):
         sess = Session.query.filter_by(id=session['session_id']).first()
         if not sess:
