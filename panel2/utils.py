@@ -14,6 +14,8 @@ from the use of this software.
 """
 
 from panel2 import db, mail, app
+from flask import render_template
+
 import json
 
 def strip_unprintable(s, printable="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \n"):
@@ -77,6 +79,11 @@ def to_json(obj):
        only handles a static set of fields in this example.  You might want to dynamically generate the dictionary if this
        is a problem, but that isn't covered here.
     """
+    try:
+        return json.dumps(obj)
+    except:
+        pass
+
     if hasattr(obj, '_serialize'):
         return json.dumps(obj._serialize())
     elif hasattr(obj, 'to_dict'):
@@ -84,3 +91,6 @@ def to_json(obj):
 
     # Nothing to serialize, so just return back 'null'
     return json.dumps(None)
+
+def render_template_or_json(template, **kwargs):
+    return render_template(template, **kwargs)
