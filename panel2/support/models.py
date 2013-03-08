@@ -67,6 +67,11 @@ class Ticket(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def _serialize(self):
+        return dict(ticket=self.id, subject=self.subject, user=self.user.username, priority=self.priority,
+                    department=self.department, is_open=self.is_open, opened_at=self.opened_at,
+                    closed_at=self.closed_at, replies=[reply._serialize() for reply in self.replies])
+
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
@@ -97,3 +102,7 @@ class Reply(db.Model):
 
     def __repr__(self):
         return "<Reply for Ticket %d, '%s...'>" % (self.ticket.id, self.message[0:50])
+
+    def _serialize(self):
+        return dict(ticket=self.ticket_id, user=self.from_user.username, message=self.message,
+                    replied_at=self.replied_at)
