@@ -128,6 +128,10 @@ class XenVPS(Service):
         db.session.add(self)
         db.session.commit()
 
+    def _serialize(self):
+        return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
+                    user=self.user.username, ips=[ip._serialize() for ip in self.ips])
+
     def api(self, constructor=QueueingProxy):
         return self.node.api(constructor, self.id)
 

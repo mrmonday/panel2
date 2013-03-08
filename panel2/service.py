@@ -144,6 +144,9 @@ class IPAddress(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def _serialize(self):
+        return dict(ip=self.ip, ipnet=self.ipnet._serialize())
+
 def IPAddressRef(ip, ipnet=None, user=None, service=None):
     '''A wrapper around the IPAddress constructor which handles lookup as well as
        creation of IP address records.'''
@@ -207,3 +210,8 @@ class IPRange(db.Model):
         if len(iplist) < 1:
             return None
         return IPAddressRef(iplist[0], self, user, service)
+ 
+    def _serialize(self):
+        return dict(network=self.network, version=self.ipnet().version,
+                    gateway=self.gateway(), broadcast=self.broadcast(),
+                    netmask=str(self.ipnet().netmask))
