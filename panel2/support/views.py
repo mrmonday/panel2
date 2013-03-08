@@ -15,11 +15,11 @@ from the use of this software.
 
 import re
 
-from flask import render_template, Markup, redirect, url_for, request, abort
+from flask import Markup, redirect, url_for, request, abort
 from jinja2 import escape
 
 from panel2.user import User, get_session_user, login_required, admin_required
-from panel2.utils import strip_unprintable
+from panel2.utils import strip_unprintable, render_template_or_json
 from panel2.support.models import Ticket, Reply
 from panel2.support import support
 from panel2 import app, db
@@ -55,7 +55,7 @@ def list():
         else:
             open_tickets.append(ticket)
 
-    return render_template('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
+    return render_template_or_json('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
                            open_tickets_count=len(open_tickets), closed_tickets_count=len(closed_tickets))
 
 @support.route('/tickets/all')
@@ -64,7 +64,7 @@ def list_all():
     open_tickets = Ticket.query.filter_by(is_open=True)
     closed_tickets = Ticket.query.filter_by(is_open=False)
 
-    return render_template('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
+    return render_template_or_json('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
                            open_tickets_count=open_tickets.count(), closed_tickets_count=closed_tickets.count())
 
 @support.route('/ticket/<ticket_id>', methods=['GET', 'POST'])
@@ -78,7 +78,7 @@ def view(ticket_id):
         ticket.add_reply(get_session_user(), reply)
         return redirect(url_for('.view', ticket_id=ticket_id))
 
-    return render_template('support/ticketview.html', ticket=ticket)
+    return render_template_or_json('support/ticketview.html', ticket=ticket)
 
 @support.route('/ticket/<ticket_id>/close')
 @login_required
@@ -105,4 +105,4 @@ def new():
         ticket = Ticket(get_session_user(), subject, message)
         return redirect(url_for('.view', ticket_id=ticket.id))
 
-    return render_template('support/ticketnew.html')
+    return render_template_or_json('support/ticketnew.html')

@@ -16,7 +16,7 @@ from the use of this software.
 import json
 import time
 
-from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request
+from flask import redirect, url_for, abort, flash, jsonify, make_response, request
 from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
@@ -24,6 +24,7 @@ from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region
 from panel2.user import login_required, admin_required, get_session_user
 from panel2.invoice import Invoice
+from panel2.utils import render_template_or_json
 
 # XXX: this should eventually be moved to a DB and the template IR should just be
 # sent with the vps_image() opcall.  --nenolod
@@ -48,13 +49,13 @@ def can_access_vps(vps, user=None):
 @vps.route('/list')
 @login_required
 def list():
-    return render_template('vps/list.html')
+    return render_template_or_json('vps/list.html')
 
 @vps.route('/list/all')
 @login_required
 @admin_required
 def list_all():
-    return render_template('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
+    return render_template_or_json('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
 
 @vps.route('/signup', methods=['GET', 'POST'])
 @login_required
@@ -90,7 +91,7 @@ def signup():
     for service in user.services:
         if vpsname == service.name:
             vpsname += '-{:.0f}'.format(time.time())
-    return render_template('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
+    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
 
 @vps.route('/<vps>')
 @login_required
@@ -100,7 +101,7 @@ def view(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view-graphs.html', service=vps)
+    return render_template_or_json('vps/view-graphs.html', service=vps)
 
 @vps.route('/<vps>/expiry')
 @login_required
@@ -110,7 +111,7 @@ def expiry(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view-expiry.html', service=vps)
+    return render_template_or_json('vps/view-expiry.html', service=vps)
 
 @vps.route('/<vps>/admin')
 @login_required
@@ -120,7 +121,7 @@ def ip_admin(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view-admin.html', service=vps)
+    return render_template_or_json('vps/view-admin.html', service=vps)
 
 @vps.route('/<vps>/delete')
 @login_required
@@ -200,7 +201,7 @@ def deploy(vps):
         vps.reimage(request.form['imagename'], request.form['rootpass'])
         return redirect(url_for('.jobs', vps=vps.id))
     else:
-        return render_template('vps/view-deploy.html', service=vps, templates=template_map)
+        return render_template_or_json('vps/view-deploy.html', service=vps, templates=template_map)
 
 @vps.route('/<vps>/cpustats/<start>/<step>')
 def cpustats(vps, start, step):
@@ -283,7 +284,7 @@ def jobs(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template('vps/view-jobs.html', service=vps)
+    return render_template_or_json('vps/view-jobs.html', service=vps)
 
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
@@ -295,7 +296,7 @@ def clone(vps):
         flash('Your clone is in progress, check back later.')
         vps.clone(request.form['imagename'], request.form['targetip'])
         return redirect(url_for('.jobs', vps=vps.id))
-    return render_template('vps/view-clone.html', service=vps, templates=template_map)
+    return render_template_or_json('vps/view-clone.html', service=vps, templates=template_map)
 
 @vps.route('/<vps>/keypair')
 @login_required

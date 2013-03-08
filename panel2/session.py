@@ -19,8 +19,8 @@ import blinker
 
 from panel2 import app, db
 from panel2.user import User, Session, get_session_user
-from panel2.utils import is_email_valid
-from flask import session, redirect, url_for, escape, request, render_template
+from panel2.utils import is_email_valid, render_template_or_json
+from flask import session, redirect, url_for, escape, request
 from sqlalchemy.exc import IntegrityError
 
 login_signal = blinker.Signal('A signal sent when the user logs in')
@@ -67,9 +67,9 @@ def login():
         else:
             session.pop('session_id', None)
             session.pop('session_challenge', None)
-            return render_template('login.html', error='Invalid username or password')
+            return render_template_or_json('login.html', error='Invalid username or password')
 
-    return render_template('login.html')
+    return render_template_or_json('login.html')
 
 @app.route('/logout', subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def logout():
@@ -87,14 +87,14 @@ def create():
             password = request.form['password'].strip().rstrip()
             email = request.form['email'].strip().rstrip()
             if len(username) == 0:
-                return render_template('create.html', error='No username provided') 
+                return render_template_or_json('create.html', error='No username provided') 
             if len(password) == 0:
-                return render_template('create.html', error='No password provided') 
+                return render_template_or_json('create.html', error='No password provided') 
             if len(email) == 0:
-                return render_template('create.html', error='No email provided') 
+                return render_template_or_json('create.html', error='No email provided') 
             user = User(username, password, email)
         except:
-            return render_template('create.html', error='Username is already taken')
+            return render_template_or_json('create.html', error='Username is already taken')
             
         if user is not None:
             sess = Session(user)
@@ -102,7 +102,7 @@ def create():
             session['session_challenge'] = sess.challenge
             return redirect(url_for('index'))
 
-    return render_template('create.html')
+    return render_template_or_json('create.html')
 
 @app.context_processor
 def user_information_from_session():

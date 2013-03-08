@@ -15,11 +15,11 @@ from the use of this software.
 
 import re
 
-from flask import render_template, Markup, redirect, url_for, request, abort
+from flask import Markup, redirect, url_for, request, abort
 from jinja2 import escape
 
 from panel2.user import User, get_session_user, login_required, admin_required
-from panel2.utils import strip_unprintable
+from panel2.utils import strip_unprintable, render_template_or_json
 from panel2.status.models import Incident, IncidentReply
 from panel2.status import status
 from panel2 import app, db
@@ -37,7 +37,7 @@ def nl2br(value):
 @status.route('/incidents')
 def list():
     incidents = Incident.query.order_by(Incident.opened_at.desc()).all()
-    return render_template('status/incidentlist.html', incidents=incidents)
+    return render_template_or_json('status/incidentlist.html', incidents=incidents)
 
 @status.route('/incident/<incident_id>', methods=['GET', 'POST'])
 def view(incident_id):
@@ -48,7 +48,7 @@ def view(incident_id):
         incident.add_reply(get_session_user(), reply)
         return redirect(url_for('.view', incident_id=incident_id))
 
-    return render_template('status/incidentview.html', incident=incident)
+    return render_template_or_json('status/incidentview.html', incident=incident)
 
 @status.route('/incident/<incident_id>/close')
 @admin_required
@@ -76,9 +76,9 @@ def new():
         incident = Incident(get_session_user(), subject, message, 0, department)
         return redirect(url_for('.view', incident_id=incident.id))
 
-    return render_template('status/incidentnew.html')
+    return render_template_or_json('status/incidentnew.html')
 
 @status.route('/atom.xml')
 def syndicate():
     incidents = Incident.query.order_by(Incident.opened_at.desc()).all()
-    return render_template('status/incidentlist.xml', incidents=incidents)
+    return render_template_or_json('status/incidentlist.xml', incidents=incidents)

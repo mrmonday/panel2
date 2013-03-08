@@ -15,13 +15,14 @@ from the use of this software.
 
 from panel2 import app
 from panel2.user import get_session_user
+from panel2.utils import render_template_or_json
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import redirect, url_for, flash, request
 
 @app.route('/profile', subdomain='manage')
 @app.route('/profile/index', subdomain='manage')
 def profile_index():
-    return render_template('profile.html')
+    return render_template_or_json('profile.html')
 
 @app.route('/profile/password', methods=['POST'], subdomain='manage')
 def profile_change_pw():

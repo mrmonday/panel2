@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request
+from flask import redirect, url_for, abort, flash, jsonify, make_response, request
 from panel2 import app, db
 from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required

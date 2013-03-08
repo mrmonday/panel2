@@ -13,9 +13,9 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import render_template, Markup, redirect, url_for, request, abort, flash
+from flask import Markup, redirect, url_for, request, abort, flash
 from panel2.user import User, get_session_user, login_required, admin_required
-from panel2.utils import strip_unprintable
+from panel2.utils import strip_unprintable, render_template_or_json
 from panel2.dns.models import Domain, Record, valid_records
 from panel2.dns import dns
 from panel2.dns.axfr import do_axfr
@@ -43,12 +43,12 @@ def user_can_access_domain(domain, user=None):
 @login_required
 def list():
     user = get_session_user()
-    return render_template('dns/zones.html', zones=user.domains)
+    return render_template_or_json('dns/zones.html', zones=user.domains)
 
 @dns.route('/zones/all')
 @admin_required
 def list_all():
-    return render_template('dns/zones.html', zones=Domain.query)
+    return render_template_or_json('dns/zones.html', zones=Domain.query)
 
 @dns.route('/zone/<zone_id>')
 @login_required
@@ -56,7 +56,7 @@ def view_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first()
     if user_can_access_domain(domain) is False:
         abort(403)
-    return render_template('dns/view-zone.html', zone=domain)
+    return render_template_or_json('dns/view-zone.html', zone=domain)
 
 @dns.route('/zone/<zone_id>/record/<record_id>', methods=['GET', 'POST'])
 @login_required
@@ -70,7 +70,7 @@ def edit_record(zone_id, record_id):
         record_obj.update_content(request.form['content'])
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
-    return render_template('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
+    return render_template_or_json('dns/edit-record.html', zone=record_obj.domain, record=record_obj)
 
 @dns.route('/zone/new', methods=['GET', 'POST'])
 @login_required
@@ -88,7 +88,7 @@ def new_domain():
         domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
-    return render_template('dns/new-domain.html')
+    return render_template_or_json('dns/new-domain.html')
 
 @dns.route('/zone/<zone_id>/record/new', methods=['GET', 'POST'])
 @login_required
@@ -107,7 +107,7 @@ def new_record(zone_id):
                           request.form['prio'], request.form['ttl'])
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
-    return render_template('dns/new-record.html', zone=domain, record_types=valid_records)
+    return render_template_or_json('dns/new-record.html', zone=domain, record_types=valid_records)
 
 @dns.route('/zone/<zone_id>/record/<record_id>/delete')
 @login_required
@@ -155,4 +155,4 @@ def import_domain(zone_id):
 
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
-    return render_template('dns/import-records.html', zone=domain)
+    return render_template_or_json('dns/import-records.html', zone=domain)
