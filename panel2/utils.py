@@ -111,8 +111,14 @@ def to_json(obj):
     # Nothing to serialize, so just return back 'null'
     return json.dumps(None)
 
+def request_wants_json():
+    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        request.accept_mimetypes[best] > \
+        request.accept_mimetypes['text/html']
+
 def render_template_or_json(template, **kwargs):
-    if request.authorization:
+    if request.authorization or request_wants_json():
         structure = dict()
         for k, v in kwargs.iteritems():
             structure[k] = serialize_obj(v)
