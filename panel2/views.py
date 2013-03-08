@@ -14,11 +14,12 @@ from the use of this software.
 """
 
 from panel2 import app
+from panel2.user import get_session_user
 from flask import render_template, session, redirect, url_for
 
 @app.route('/', subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def index():
-    if session.has_key("uid"):
+    if get_session_user():
         # For right now, lets just redirect to VPS.
         # return render_template('frontpage.html')
         return redirect(url_for('vps.list'))
