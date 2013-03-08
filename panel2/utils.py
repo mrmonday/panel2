@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from panel2 import db, mail, app
-from flask import render_template
+from flask import render_template, request
 
 import json
 
@@ -32,6 +32,25 @@ def send_simple_email_list(recipients, subject, message):
 
 def send_simple_email(recipient, subject, message):
     send_simple_email_list([recipient], subject, message)
+
+def serialize_obj(obj):
+    if isinstance(obj, list):
+        lst = []
+        for child in obj:
+            lst.append(serialize_obj(child))
+        return lst
+
+    if hasattr(obj, '_serialize'):
+        return obj._serialize()
+    elif hasattr(obj, 'to_dict'):
+        return obj.to_dict()
+
+    try:
+        json.dumps(obj)
+    except:
+        return None
+
+    return obj
 
 def to_json(obj):
     """Serialize an object to a JSON structure, if it supports serialization.
@@ -93,4 +112,10 @@ def to_json(obj):
     return json.dumps(None)
 
 def render_template_or_json(template, **kwargs):
+    if request.authorization:
+        structure = dict()
+        for k, v in kwargs.iteritems():
+            structure[k] = serialize_obj(v)
+        return json.dumps(structure)
+
     return render_template(template, **kwargs)
