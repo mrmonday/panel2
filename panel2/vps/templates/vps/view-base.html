@@ -35,8 +35,9 @@
 	<th class="span1">Memory</th>
 	<th class="span1">Swap</th>
 	<th class="span1">Disk</th>
-	<th class="span2">Primary IP</th>
-	<th class="span2">Host</th>
+	<th class="span1">Primary IP</th>
+	<th class="span1">Host</th>
+	<th class="span2">Owner</th>
 	<th class="span3">Location</th>
 </tr>
 
@@ -48,6 +49,11 @@
 	<td>{{ service.disk }} GB</td>
 	<td>{{ service.ips[0].ip }}</td>
 	<td>{{ service.node.name }}</td>
+	{% if user and user.is_admin %}
+		<td><a href="{{ url_for('profile.view_base', username=service.user.username) }}">{{ service.user.username }}</a></td>
+	{% else %}
+		<td>{{ service.user.username }}</td>
+	{% endif %}	
 	<td>{{ service.node.region.name }}</td>
 </tr>
 {% endif %}     
