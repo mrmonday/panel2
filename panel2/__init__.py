@@ -72,6 +72,7 @@ from panel2.vps import vps
 from panel2.mod_invoice import invoice
 from panel2.squid import squid
 from panel2.status import status
+from panel2.profile import profile
 
 app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
@@ -84,6 +85,7 @@ app.register_blueprint(vps, subdomain='manage', url_prefix='/vps')
 app.register_blueprint(invoice, subdomain='manage', url_prefix='/invoice')
 
 app.register_blueprint(status, subdomain='status')
+app.register_blueprint(profile, subdomain='manage', url_prefix='/account')
 
 app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
