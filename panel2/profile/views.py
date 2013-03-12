@@ -16,6 +16,7 @@ from the use of this software.
 from panel2.profile import profile
 from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
+from panel2.vps.models import Node
 
 @profile.route('/')
 @admin_required
@@ -44,6 +45,21 @@ def list_active():
     users = filter(lambda x: len(x.services) > 0, User.query)
     return render_template_or_json('profile/userlist.html', users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
+
+@profile.route('/_statistics/node')
+@admin_required
+def node_stats():
+    nodes = Node.query
+    revenue = dict()
+    for node in nodes:
+        revenue[node.name] = sum([service.price for service in node.vps])
+    return render_template_or_json('profile/nodestats.html', nodes=nodes, revenue=revenue)
+
+@profile.route('/_statistics/node/<node>')
+@admin_required
+def node_info(node):
+    node = Node.query.filter_by(id=node).first_or_404()
+    return render_template_or_json('profile/nodeinfo.html', node=node)
 
 @profile.route('/<username>')
 @profile.route('/<username>/index')
