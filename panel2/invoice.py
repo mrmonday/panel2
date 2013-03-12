@@ -98,8 +98,11 @@ class Invoice(db.Model):
 
         uri = 'https://blockchain.info/api/receive?method=create&address={0}&callback={1}'.format(app.config['BITCOIN_ADDRESS'], self.btc_callback_url())
         resp = requests.get(uri)
-        resp_obj = json.loads(resp.text)
-        self.btc_adr = resp_obj['input_address']
+        try:
+            resp_obj = json.loads(resp.text)
+            self.btc_adr = resp_obj['input_address']
+        except:
+            return None
 
         db.session.add(self)
         db.session.commit()

@@ -51,8 +51,11 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
 </form>
 
 <h4 style="clear: left;">
-	<img src="/static/invoice/bitcoin.png" alt="Bitcoin Address" style="float: left;">
-	<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
+	{% set btc_adr = invoice.bitcoin_address() %}
+	{% if btc_adr %}
+		<img src="/static/invoice/bitcoin.png" alt="Bitcoin Address" style="float: left;">
+		<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
+	{% endif %}
 </h4>
 
 {% endblock %}
