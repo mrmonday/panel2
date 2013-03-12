@@ -8,6 +8,7 @@
 		<th>ID</th>
 		<th>Username</th>
 		<th>E-Mail</th>
+		<th>Revenue</th>
 		<th>
 			<span class="pull-right">Options</span>
 		</th>
@@ -15,8 +16,9 @@
 	{% for user in users %}
 	<tr>
 		<td class="span1">{{ user.id }}</td>
-		<td class="span8">{{ user.username }}</td>
-		<td class="span1">{{ user.email }}</td>
+		<td class="span4">{{ user.username }}</td>
+		<td class="span4">{{ user.email }}</td>
+		<td class="span1">${{ user.total_revenue() | strf("{0:.2f}") }}</td>
 		<td class="span2">
 			<div class="btn-group pull-right">
 				<a href="{{ url_for('.view_base', username=user.username) }}" class="btn btn-primary">View</a>
@@ -24,6 +26,11 @@
 		</td>
 	</tr>
 	{% endfor %}
+	<tr>
+		<td colspan="3" style="text-align: right; font-weight: bold;">Total revenue:</td>
+		<td colspan="2">${{ revenue_sum | strf("{0:.2f}") }}</td>
+	</tr>
 </table>
+
 
 {% endblock %}

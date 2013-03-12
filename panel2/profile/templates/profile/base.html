@@ -5,9 +5,10 @@
 <h2>
 	Accounts
 	<span class="btn-group pull-right">
-		{% if user and user.is_admin %}
 		<a href="{{ url_for('.list') }}" class="btn btn-danger">Account List</a>
-		{% endif %}
+		<a href="{{ url_for('.list_paid') }}" class="btn">Paid Accounts</a>
+		<a href="{{ url_for('.list_free') }}" class="btn">Free Accounts</a>
+		<a href="{{ url_for('.list_active') }}" class="btn">All with Active Services</a>
 	</span>
 </h2>
 {% endblock %}

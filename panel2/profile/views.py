@@ -21,7 +21,29 @@ from panel2.utils import render_template_or_json
 @admin_required
 def list():
     users = User.query
-    return render_template_or_json('profile/userlist.html', users=users)
+    return render_template_or_json('profile/userlist.html', users=users,
+           revenue_sum=sum([user.total_revenue() for user in users]))
+
+@profile.route('/_list/filter/paid')
+@admin_required
+def list_paid():
+    users = filter(lambda x: x.total_revenue() > 0, User.query)
+    return render_template_or_json('profile/userlist.html', users=users,
+           revenue_sum=sum([user.total_revenue() for user in users]))
+
+@profile.route('/_list/filter/free')
+@admin_required
+def list_free():
+    users = filter(lambda x: x.total_revenue() == 0 and len(x.services) > 0, User.query)
+    return render_template_or_json('profile/userlist.html', users=users,
+           revenue_sum=sum([user.total_revenue() for user in users]))
+
+@profile.route('/_list/filter/active')
+@admin_required
+def list_active():
+    users = filter(lambda x: len(x.services) > 0, User.query)
+    return render_template_or_json('profile/userlist.html', users=users,
+           revenue_sum=sum([user.total_revenue() for user in users]))
 
 @profile.route('/<username>')
 @profile.route('/<username>/index')

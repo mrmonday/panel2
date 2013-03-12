@@ -20,7 +20,11 @@
 	<td>{{ service.name }}</td>
 	<td>{{ service.type }}</td>
 	<td>${{ service.price | strf("{0:.2f}") }}</td>
+	{% if service.expiry %}
 	<td>{{ service.expiry | strftime('%m/%d/%Y') }}</td>
+	{% else %}
+	<td>&mdash;</td>
+	{% endif %}
 	<td>
 		<span class="pull-right btn-group">
 			{% if service.type == 'xenvps' %}
