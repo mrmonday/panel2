@@ -1,0 +1,30 @@
+{% extends "profile/userviewbase.html" %}
+{% set subtitle='Tickets' %}
+
+{% block subcontent %}
+
+<table class="table table-striped">
+	<tr>
+		<th>ID</th>
+		<th>Subject</th>
+		<th>Creator</th>
+		<th>
+			<span class="pull-right">Options</span>
+		</th>
+	</tr>
+	{% for ticket in user.tickets %}
+	<tr>
+		<td class="span1">{{ ticket.id }}</td>
+		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span1">{{ ticket.user.username }}</td>
+		<td class="span2">
+			<div class="btn-group pull-right">
+				<a href="{{ url_for('support.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
+				<a href="{{ url_for('support.close', ticket_id=ticket.id) }}" class="btn">Close</a>
+			</div>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

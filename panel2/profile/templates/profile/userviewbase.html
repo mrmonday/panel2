@@ -1,0 +1,22 @@
+{% extends "profile/base.html" %}
+{% block title %}{{ user.username }} - Accounts{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<h2>
+	<img class="gravatar" src="{{ user.email | gravatar(48) }}" alt="{{ user.username }}'s gravatar">
+	{{ user.username }}
+</h2>
+
+<ul class="nav nav-tabs">
+	<li{{ ' class="active"'|safe if subtitle == 'Account' else '' }}><a href="{{ url_for('.view_base', username=user.username) }}">Account</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Invoices' else '' }}><a href="{{ url_for('.view_invoices', username=user.username) }}">Invoices</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Services' else '' }}><a href="{{ url_for('.view_services', username=user.username) }}">Services</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Tickets' else '' }}><a href="{{ url_for('.view_tickets', username=user.username) }}">Tickets</a></li>
+</ul>
+
+{% block subcontent %}
+{% endblock %}
+
+{% endblock %}
