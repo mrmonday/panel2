@@ -102,6 +102,12 @@ class User(db.Model):
         message = render_template(template, user=self, **kwargs)
         send_simple_email(recipient=self.email, subject=subject, message=message)
 
+    def _serialize(self):
+        return dict(username=self.username, email=self.email,
+                    services=[service._serialize() for service in self.services],
+                    invoices=[invoice._serialize() for invoice in self.invoices],
+                    tickets=[ticket._serialize() for ticket in self.tickets])
+
 def is_api_session():
     return True if request.authorization else False
 
