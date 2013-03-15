@@ -6,7 +6,7 @@
 
 <h3>#{{ incident.id }} - {{ incident.subject }}</h3>
 
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<strong>Task type:</strong>
@@ -15,7 +15,7 @@
 	<div class="span10">{{ incident.department }}</div>
 </div>
 
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<strong>Opened:</strong>
@@ -24,7 +24,7 @@
 	<div class="span10">{{ incident.opened_at | time_ago }}</div>
 </div>
 
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<strong>Last Update:</strong>
@@ -34,7 +34,7 @@
 </div>
 
 {% if incident.closed_at %}
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<strong>Closed:</strong>
@@ -45,7 +45,7 @@
 {% endif %}
 
 {% for reply in incident.replies %}
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<img src="{{ reply.from_user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
@@ -61,7 +61,7 @@
 
 {% if user and user.is_admin %}
 <form method="POST">
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
@@ -69,7 +69,7 @@
 		</div>
 	</div>
 	<div class="span10">
-		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span10"></textarea><br>
+		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span12"></textarea><br>
 		<div class="btn-group pull-right">
 			<button type="submit" class="btn btn-primary">Add Reply</button>
 			<a href="{{ url_for('.close', incident_id=incident.id) }}" class="btn">Close Ticket</a>

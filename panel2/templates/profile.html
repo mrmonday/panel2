@@ -10,12 +10,12 @@
 <h3>Change Password</h3>
 
 <form action="{{ url_for('.profile_change_pw') }}" method="POST">
-	<div class="row">
+	<div class="row-fluid">
 		<div class="span12">
 			<input type="password" placeholder="Old Password" class="span12" name="oldpass">
 		</div>
 	</div>
-	<div class="row">
+	<div class="row-fluid">
 		<div class="span12">
 			<input type="password" placeholder="New Password" class="span12" name="newpass">
 		</div>
@@ -33,7 +33,7 @@
 		Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
 		address on file for the account.
 	</p>
-	<div class="row">
+	<div class="row-fluid">
 		<div class="span12">
 			<input type="text" placeholder="E-Mail Address" value="{{ user.email }}" name="new_email" class="span12">
 		</div>

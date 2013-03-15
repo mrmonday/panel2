@@ -12,7 +12,7 @@
 
 <form method="POST">
 
-<div class="row" style="margin-bottom: 1em;">
+<div class="row-fluid" style="margin-bottom: 1em;">
 	<div class="span3"><strong class="pull-right">OS Image:</strong></div>
 	<div class="span9">
 	{% for imagename, template in templates.items() %}
@@ -20,13 +20,13 @@
 	{% endfor %}
 	</div>
 </div>
-<div class="row">
+<div class="row-fluid">
 	<div class="span3"><strong class="pull-right">Root Password:</strong></div>
 	<div class="span9">
-		<input type="password" name="rootpass" class="span9">
+		<input type="password" name="rootpass" class="span12">
 	</div>
 </div>
-<div class="row">
+<div class="row-fluid">
 	<div class="span3"></div>
 	<div class="span9">
 		<button type="submit" class="btn btn-primary">Deploy</button>

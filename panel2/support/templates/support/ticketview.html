@@ -28,7 +28,7 @@
 <h3>Replies</h3>
 
 {% for reply in ticket.replies %}
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<img src="{{ reply.from_user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
@@ -43,7 +43,7 @@
 {% endfor %}
 
 <form method="POST">
-<div class="row ticket-row">
+<div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
 			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
@@ -51,7 +51,7 @@
 		</div>
 	</div>
 	<div class="span10">
-		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span10"></textarea><br>
+		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span12"></textarea><br>
 		<div class="btn-group pull-right">
 			<button type="submit" class="btn btn-primary">Add Reply</button>
 			<a href="{{ url_for('.close', ticket_id=ticket.id) }}" class="btn">Close Ticket</a>

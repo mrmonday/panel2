@@ -16,13 +16,13 @@
 
 <form method="POST">
 
-<div class="row" style="margin-bottom: 1em;">
+<div class="row-fluid" style="margin-bottom: 1em;">
 	<div class="span3"><strong class="pull-right">Target IP:</strong></div>
 	<div class="span9">
-		<input type="text" name="targetip" class="span9">
+		<input type="text" name="targetip" class="span12">
 	</div>
 </div>
-<div class="row" style="margin-bottom: 1em;">
+<div class="row-fluid" style="margin-bottom: 1em;">
 	<div class="span3"><strong class="pull-right">OS Type:</strong></div>
 	<div class="span9">
 	{% for imagename, template in templates.items() %}
@@ -31,7 +31,7 @@
 		<input type="radio" name="imagename" id="dist-noconfig" value="noconfig"> Do not reconfigure</input>
 	</div>
 </div>
-<div class="row">
+<div class="row-fluid">
 	<div class="span3"></div>
 	<div class="span9">
 		<button type="submit" class="btn btn-primary">Clone</button>
