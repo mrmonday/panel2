@@ -4,13 +4,14 @@
 {% block content %}
 {{ super() }}
 
-<h3>Open Tickets ({{ open_tickets_count }})</h3>
+<div class="pushdown"></div>
 
 <table class="table table-striped">
 	<tr>
 		<th>ID</th>
 		<th>Subject</th>
 		<th>Creator</th>
+		<th>Status</th>
 		<th>
 			<span class="pull-right">Options</span>
 		</th>
@@ -18,8 +19,9 @@
 	{% for ticket in open_tickets %}
 	<tr>
 		<td class="span1">{{ ticket.id }}</td>
-		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span7">{{ ticket.subject }}</td>
 		<td class="span1">{{ ticket.user.username }}</td>
+		<td class="span1">OPEN</td>
 		<td class="span2">
 			<div class="btn-group pull-right">
 				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
@@ -28,24 +30,12 @@
 		</td>
 	</tr>
 	{% endfor %}
-</table>
-
-<h3>Closed Tickets ({{ closed_tickets_count }})</h3>
-
-<table class="table table-striped">
-	<tr>
-		<th>ID</th>
-		<th>Subject</th>
-		<th>Creator</th>
-		<th>
-			<span class="pull-right">Options</span>
-		</th>
-	</tr>
 	{% for ticket in closed_tickets %}
 	<tr>
 		<td class="span1">{{ ticket.id }}</td>
-		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span7">{{ ticket.subject }}</td>
 		<td class="span1">{{ ticket.user.username }}</td>
+		<td class="span1">CLOSED</td>
 		<td class="span2">
 			<div class="btn-group pull-right">
 				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
