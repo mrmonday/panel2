@@ -113,16 +113,6 @@ def graphs(vps):
         abort(403)
     return render_template_or_json('vps/view-graphs.html', service=vps)
 
-@vps.route('/<vps>/expiry')
-@login_required
-def expiry(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
-    if vps is None:
-        abort(404)
-    if can_access_vps(vps) is False:
-        abort(403)
-    return render_template_or_json('vps/view-expiry.html', service=vps)
-
 @vps.route('/<vps>/admin')
 @login_required
 def ip_admin(vps):
