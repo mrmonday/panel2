@@ -20,7 +20,7 @@ import blinker
 from panel2 import app, db
 from panel2.user import User, Session, get_session_user
 from panel2.utils import is_email_valid, render_template_or_json
-from flask import session, redirect, url_for, escape, request
+from flask import session, redirect, url_for, escape, request, get_flashed_messages, jsonify
 from sqlalchemy.exc import IntegrityError
 
 login_signal = blinker.Signal('A signal sent when the user logs in')
@@ -103,6 +103,11 @@ def create():
             return redirect(url_for('index'))
 
     return render_template_or_json('create.html')
+
+@app.route('/notifications.json', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def notifications():
+    messages = get_flashed_messages(with_categories=True)
+    return jsonify({'messages': [{'type': type, 'message': message} for type, message in messages]})
 
 @app.context_processor
 def user_information_from_session():
