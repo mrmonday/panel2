@@ -18,10 +18,10 @@
 				<li>
 					<ul class="nav nav-list">
 						<li class="nav-header">Power Control</li>
-						<li><a href="{{ url_for('.create', vps=service.id) }}">Start</a></li>
-						<li><a href="{{ url_for('.shutdown', vps=service.id) }}">Shutdown</a></li>
-						<li><a href="{{ url_for('.destroy', vps=service.id) }}">Forceful Shutdown</a></li>
-						<li><a href="{{ url_for('.powercycle', vps=service.id) }}">Powercycle</a></li>
+						<li><a class="jsonify" href="{{ url_for('.create', vps=service.id) }}">Start</a></li>
+						<li><a class="jsonify" href="{{ url_for('.shutdown', vps=service.id) }}">Shutdown</a></li>
+						<li><a class="jsonify" href="{{ url_for('.destroy', vps=service.id) }}">Forceful Shutdown</a></li>
+						<li><a class="jsonify" href="{{ url_for('.powercycle', vps=service.id) }}">Powercycle</a></li>
 
 						<li class="nav-header">Management</li>
 						<li{{ ' class="active"'|safe if subtitle == 'Dashboard' else '' }}><a href="{{ url_for('.view', vps=service.id) }}">Dashboard</a></li>
