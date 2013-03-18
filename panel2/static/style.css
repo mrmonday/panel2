@@ -1,9 +1,16 @@
 .header {
 	background-color: #333;
-	padding: 14px 20px;
-	position: relative;
+	padding-top: 14px;
+	top: 0;
+	width: 100%;
+	position: fixed;
 	z-index: 2;
 	color: #999;
+	height: 75px;
+}
+
+.header .span3, .header .span9 {
+	min-height: 70px;
 }
 
 h1, h2, h3, h4 {
@@ -15,15 +22,21 @@ h1 .btn, h2 .btn, h3 .btn {
 }
 
 .menu-list {
-	margin: 0;
 	float: right;
+	margin-right: 2em;
+	height: 100%;
+	min-height: 70px;
 }
 
 .menu-item {
-	display: inline;
-	padding-left: 1em;
+	display: block;
+	float: left;
+	padding: 0;
+	padding-right: 1em;
+	line-height: 60px;
 	vertical-align: middle;
-	line-height: 4em;
+	height: 100%;
+	min-height: 75px;
 }
 
 .gravatar {
@@ -59,3 +72,48 @@ h1 .btn, h2 .btn, h3 .btn {
 	margin: 0;
 }
 
+.alignfix {
+	margin-left: -0.531915%;
+}
+
+#sidebar {
+	position: fixed;
+	top: 100;
+	left: 0;
+	background: #eee;
+	min-height: 100%;
+	border-right: 1px #ccc solid;
+	margin-top: 1em;
+	padding-top: 1em;
+}
+
+.contentfix {
+	margin-top: 1em;
+	clear: left;
+}
+
+.service-hdr {
+	border-bottom: 1px #ccc solid;
+}
+
+.specification {
+	font-size: 17.5px;
+	color: #888;
+}
+
+.minigraph {
+	height: 16em;
+}
+
+.btn-group .btn, .btn,
+.btn-group > .btn:first-child,
+.btn-group > .btn:last-child {
+	border-radius: 0;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	-o-border-radius: 0;
+}
+
+.btn, .btn-danger, .btn-warning, .btn-primary, .btn-success {
+	background-image: none;
+}
