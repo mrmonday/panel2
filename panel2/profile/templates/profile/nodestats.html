@@ -1,0 +1,32 @@
+{% extends "profile/base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<h3>Revenue by Node</h3>
+
+<table class="table table-striped">
+<tr>
+<th>Node</th>
+<th>Revenue</th>
+<th>Active VPS</th>
+<th>
+	<div class="pull-right">Options</div>
+</th>
+</tr>
+{% for node in nodes %}
+<tr>
+<td>{{ node.name }}</td>
+<td>${{ revenue[node.name] | strf("{0:.2f}") }}</td>
+<td>{{ node.vps | count }}</td>
+<td>
+	<div class="btn-group pull-right">
+		<a href="{{ url_for('.node_info', node=node.id) }}" class="btn btn-primary">View</a>
+	</div>
+</td>
+</tr>
+</div>
+{% endfor %}
+</table>
+
+{% endblock %}

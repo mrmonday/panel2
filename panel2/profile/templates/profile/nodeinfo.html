@@ -1,0 +1,41 @@
+{% extends "profile/base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<h3>{{ node.name }} ({{ node.vps | count }})</h3>
+
+<table class="table table-striped">
+<tr>
+	<th>Service ID</th>
+	<th>Name</th>
+	<th>Type</th>
+	<th>Price</th>
+	<th>Expiry</th>
+	<th>
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+{% for service in node.vps %}
+<tr>
+	<td>{{ service.id }}</td>
+	<td>{{ service.name }}</td>
+	<td>{{ service.type }}</td>
+	<td>${{ service.price | strf("{0:.2f}") }}</td>
+	{% if service.expiry %}
+	<td>{{ service.expiry | strftime('%m/%d/%Y') }}</td>
+	{% else %}
+	<td>&mdash;</td>
+	{% endif %}
+	<td>
+		<span class="pull-right btn-group">
+			{% if service.type == 'xenvps' %}
+			<a href="{{ url_for('vps.view', vps=service.id) }}" class="btn btn-primary">View</a>
+			{% endif %}
+		</span>
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
