@@ -14,41 +14,20 @@
 	{% endif %}
 	{% endwith %}
 
-	<header class="header">
-		<div class="row">
+	<header class="header container-fluid">
+		<div class="row-fluid alignfix">
 			<div class="span3">
 				<a href="/"><img src="/static/tl-logo.png" alt="TortoiseLabs" id="logo"></a>
 			</div>
-			<div class="menu span9 pull-right">
+			<div class="span9">
 				<ul class="menu-list">
 					{% block links %}
-					{% if user %}
-					<li class="menu-item">
-						<a href="{{ url_for('dns.list') }}">My DNS Zones</a>
-					</li>
-
-					<li class="menu-item">
-						<a href="/vps/list">My Servers</a>
-					</li>
-
-					<li class="menu-item">
-						<a href="{{ url_for('support.list') }}">My Tickets</a>
-					</li>
-
-					<li class="menu-item">
-						<a href="{{ url_for('profile_index') }}">My Account</a>
-					</li>
-
-					<li class="menu-item">
-						<a href="{{ url_for('invoice.index') }}">My Invoices</a>
-					</li>
-					{% endif %}
 					{% endblock %}
-					<li class="menu-item login-item">
+					<li class="menu-item">
 						{% if user %}
-						<a class="btn btn-inverse btn-mini" href="{{ url_for('logout') }}">Logout ({{ user.username }})</a>
+						<a href="{{ url_for('logout') }}"><i class="icon-user icon-white"></i> {{ user.username }}</a>
 						{% else %}
-						<a class="btn btn-inverse btn-mini" href="{{ url_for('login') }}">Login</a>
+						<a href="{{ url_for('login') }}">Login</a>
 						{% endif %}
 					</li>
 				</ul>
@@ -56,8 +35,31 @@
 		</div>
 	</header>
 
-	<div class="container-fluid">
+	<div class="container-fluid" id="container-base">
+
+    <div class="row-fluid">
+        <div class="span2" id="sidebar">
+		{% block sidebar %}
+		<ul class="nav nav-list">
+		{% if user %}
+		<li><a href="{{ url_for('dns.list') }}">DNS</a>{% block dnssidebar %}{% endblock %}</li>
+		<li><a href="{{ url_for('vps.list') }}">Servers</a>{% block serversidebar %}{% endblock %}</li>
+		<li><a href="{{ url_for('support.list') }}">Support</a>{% block supportsidebar %}{% endblock %}</li>
+		<li><a href="{{ url_for('profile_index') }}">Preferences</a></li>
+		<li><a href="{{ url_for('invoice.index') }}">Invoices</a>{% block invoicesidebar %}{% endblock %}</li>
+		{% if user.is_admin %}
+		<li><a href="{{ url_for('profile.list') }}"><i class="icon-lock"></i> Accounting</a>{% block accountingsidebar %}{% endblock accountingsidebar %}</li>
+		{% endif %}
+		{% endif %}
+		</ul>
+		{% endblock %}
+        </div>
+
+	<div class="span10 contentfix">
 	{% block content %}{% endblock %}
+	</div>
+    </div>
+
 	</div>
 
 {% endblock body %}

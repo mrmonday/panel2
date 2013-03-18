@@ -2,8 +2,9 @@
 {% set vpslist=vpslist or user.services %}
 {% block title %}Server List{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block subcontent %}
+
+<h3>Server List</h3>
 
 <table class="table table-striped">
 <tr>
@@ -28,7 +29,7 @@
 	<td>{{ service.node.name }}</td>
 	<td>{{ service.node.region.name }}</td>
 	<td>
-		<span class="pull-right btn-group">
+		<span class="pull-right">
 			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-primary">View</a>
 			{% if user.is_admin %}
 				<a href="{{ url_for('.ip_admin', vps=service.id) }}" class="btn btn-danger">Admin</a>

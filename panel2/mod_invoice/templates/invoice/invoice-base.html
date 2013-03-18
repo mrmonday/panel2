@@ -1,13 +1,9 @@
 {% extends "base-scaffolding.html" %}
-{% block content %}
 
-<h2>
-	Invoices
-	{% if user.is_admin %}
-	<span class="pull-right btn-group">
-		<a href="{{ url_for('.list_unpaid') }}" class="btn btn-danger">Unpaid Invoices</a>
-	</span>
-	{% endif %}
-</h2>
+{% block invoicesidebar %}
+
+{% if user.is_admin %}
+<li><a href="{{ url_for('.list_unpaid') }}"><i class="icon-lock"></i> Unpaid Invoices</a></li>
+{% endif %}
 
 {% endblock %}

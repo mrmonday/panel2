@@ -2,7 +2,8 @@
 {% block title %}DNS Zones{% endblock %}
 
 {% block content %}
-{{ super() }}
+
+<div class="pushdown"></div>
 
 <table class="table table-striped">
 	<tr>
@@ -21,7 +22,7 @@
 			<span class="pull-right">{{ zone.user.username }}</span>
 		</td>
 		<td class="span2">
-			<div class="btn-group pull-right">
+			<div class="pull-right">
 				<a href="{{ url_for('.view_domain', zone_id=zone.id) }}" class="btn btn-primary">View</a>
 				<a href="{{ url_for('.delete_domain', zone_id=zone.id) }}" class="btn btn-danger">Delete</a>
 			</div>

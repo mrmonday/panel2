@@ -1,15 +1,53 @@
 {% extends "base-scaffolding.html" %}
+{% if service %}
+	{% set svclist = service.user.services %}
+{% else %}
+	{% set svclist = user.services %}
+{% endif %}
+
+{% block serversidebar %}
+	<ul class="nav nav-list">
+		<li{{ ' class="active"'|safe if subtitle == 'New Server' else '' }}><a href="{{ url_for('.signup') }}">New Server</a></li>
+		{% if user.is_admin %}
+		<li><a href="{{ url_for('.list_all') }}"><i class="icon-lock"></i> View All Servers</a></li>
+		{% endif %}
+
+		{% for vps in svclist %}
+			{% if service and vps.name == service.name %}
+				<li class="active"><a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a></li>
+				<li>
+					<ul class="nav nav-list">
+						<li class="nav-header">Power Control</li>
+						<li><a href="{{ url_for('.create', vps=service.id) }}">Start</a></li>
+						<li><a href="{{ url_for('.shutdown', vps=service.id) }}">Shutdown</a></li>
+						<li><a href="{{ url_for('.destroy', vps=service.id) }}">Forceful Shutdown</a></li>
+						<li><a href="{{ url_for('.powercycle', vps=service.id) }}">Powercycle</a></li>
+
+						<li class="nav-header">Management</li>
+						<li{{ ' class="active"'|safe if subtitle == 'Dashboard' else '' }}><a href="{{ url_for('.view', vps=service.id) }}">Dashboard</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Graphs' else '' }}><a href="{{ url_for('.graphs', vps=service.id) }}">Graphs</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'IP Admin' else '' }}><a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Admin</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Deploy' else '' }}><a href="{{ url_for('.deploy', vps=service.id) }}">Deploy</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Clone' else '' }}><a href="{{ url_for('.clone', vps=service.id) }}">Clone</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Expiry' else '' }}><a href="{{ url_for('.expiry', vps=service.id) }}">Expiry</a></li>
+					</ul>
+				<li>
+			{% else %}
+				<li><a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a></li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+{% endblock %}
+
 {% block content %}
 
-<h2>
-	Servers
-	<span class="pull-right btn-group">
-		<a href="{{ url_for('.list') }}" class="btn btn-primary">Servers</a>
-		<a href="{{ url_for('.signup') }}" class="btn btn-success">Add Server</a>
-		{% if user.is_admin %}
-			<a href="{{ url_for('.list_all') }}" class="btn btn-danger">All Servers</a>
-		{% endif %}
-	</span>
-</h2>
+<div class="row-fluid">
+
+<div class="span12">
+	{% block subcontent %}{% endblock %}
+</div>
+
+</div>
 
 {% endblock %}

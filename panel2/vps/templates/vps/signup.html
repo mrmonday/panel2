@@ -1,8 +1,8 @@
 {% extends "vps/base.html" %}
+{% set subtitle = 'New Server' %}
 {% block title %}New Server{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block subcontent %}
 
 <form method="POST">
 
@@ -16,7 +16,6 @@
 	<th>Swap</th>
 	<th>Disk</th>
 	<th>Bandwidth</th>
-	<th>SLA</th>
 	<th>Max IPv4</th>
 	<th>Price (USD)</th>
 	<th>Price (BTC)</th>
@@ -29,7 +28,6 @@
 	<td>{{ plan.swap }} MB</td>
 	<td>{{ plan.disk }} GB</td>
 	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed<sup>1</sup></td>
-	<td>100% network / power / storage</td>
 	<td>{{ (plan.memory / 512) | strf("{0:.0f}") }}<sup>2</sup></td>
 	<td>${{ plan.price | strf("{0:.2f}") }}</td>
 	<td>{{ plan.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>

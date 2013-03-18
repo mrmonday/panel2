@@ -1,8 +1,8 @@
-{% extends "vps/view-base.html" %}
+{% extends "vps/view-hdr.html" %}
 {% block title %}{{ service.name }} - Servers{% endblock %}
 {% set subtitle='Graphs' %}
 
-{% block subcontent %}
+{% block component %}
 <div class="row-fluid">
 <div class="span6">
 <ul class="nav nav-pills">
@@ -22,7 +22,7 @@
 </div>
 </div>
 
-<div id="placeholder" style="width: 100%; height: 300px"></div>
+<div id="placeholder" style="width: 100%; height: 500px"></div>
 
 <script type="text/javascript">
 $(function() {

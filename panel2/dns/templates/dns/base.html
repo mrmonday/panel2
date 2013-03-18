@@ -1,15 +1,24 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}DNS Zones{% endblock %}
 
-{% block content %}
-<h2>
-	DNS Zones
-	<span class="btn-group pull-right">
-		<a href="{{ url_for('.new_domain') }}" class="btn btn-success">New Zone</a>
-		{% if user.is_admin %}
-		<a href="{{ url_for('.list_all') }}" class="btn btn-info">View All Zones</a>
-		{% endif %}
-		<a href="{{ url_for('.list') }}" class="btn">View Your Zones</a>
-	</span>
-</h2>
+{% block dnssidebar %}
+<ul class="nav nav-list">
+	<li><a href="{{ url_for('.new_domain') }}">New Zone</a></li>
+	{% if user.is_admin %}
+	<li><a href="{{ url_for('.list_all') }}"><i class="icon-lock"></i> View All Zones</a></li>
+	{% endif %}
+
+	{% for zn in user.domains %}
+	<li>
+		<a href="{{ url_for('.view_domain', zone_id=zn.id) }}">{{ zn.name }}</a>
+	{% if zone and zone.name == zn.name %}
+		<ul class="nav nav-list">
+			<li><a href="{{ url_for('.new_record', zone_id=zn.id) }}">New Record</a></li>
+			<li><a href="{{ url_for('.delete_domain', zone_id=zn.id) }}">Delete Zone</a></li>
+			<li><a href="{{ url_for('.import_domain', zone_id=zn.id) }}">Import Zone</a></li>
+		</ul>
+	{% endif %}
+	</li>
+	{% endfor %}
+</ul>
 {% endblock %}

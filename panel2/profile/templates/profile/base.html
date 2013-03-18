@@ -1,15 +1,12 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}Accounts{% endblock %}
 
-{% block content %}
-<h2>
-	Accounts
-	<span class="btn-group pull-right">
-		<a href="{{ url_for('.list') }}" class="btn">Account List</a>
-		<a href="{{ url_for('.list_paid') }}" class="btn">Paid Accounts</a>
-		<a href="{{ url_for('.list_free') }}" class="btn">Free Accounts</a>
-		<a href="{{ url_for('.list_active') }}" class="btn">All with Active Services</a>
-		<a href="{{ url_for('.node_stats') }}" class="btn">Node Statistics</a>
-	</span>
-</h2>
+{% block accountingsidebar %}
+<ul class="nav nav-list">
+	<li><a href="{{ url_for('.list') }}"><i class="icon-lock"></i> Account List</a></li>
+	<li><a href="{{ url_for('.list_paid') }}"><i class="icon-lock"></i> Paid Accounts</a></li>
+	<li><a href="{{ url_for('.list_free') }}"><i class="icon-lock"></i> Free Accounts</a></li>
+	<li><a href="{{ url_for('.list_active') }}"><i class="icon-lock"></i> All with Active Services</a></li>
+	<li><a href="{{ url_for('.node_stats') }}"><i class="icon-lock"></i> Node Statistics</a></li>
+</ul>
 {% endblock %}
