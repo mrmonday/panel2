@@ -25,7 +25,6 @@
 	</header>
 
 	<div class="container-fluid" id="container-base">
-
     <div class="row-fluid">
         <div class="span2" id="sidebar">
 		{% block sidebar %}
@@ -48,6 +47,13 @@
 	{% block content %}{% endblock %}
 	</div>
     </div>
+
+	<div class="row-fluid">
+          <div class='notifications top-right'></div>
+          <div class='notifications bottom-right'></div>
+          <div class='notifications top-left'></div>
+          <div class='notifications bottom-left'></div>
+	</div>
 
 	</div>
 
