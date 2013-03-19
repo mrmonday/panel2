@@ -63,7 +63,7 @@ def signup():
     user = get_session_user()
     regions = Region.query.all()
     resource_plans = ResourcePlan.query.all()
-    vpsname = user.username + '-' + str(len(user.services))
+    vpsname = user.next_service_name()
     if request.method == 'POST':
         region = Region.query.filter_by(id=int(request.form['region'])).first()
         if not region:
