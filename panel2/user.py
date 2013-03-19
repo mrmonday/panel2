@@ -105,6 +105,14 @@ class User(db.Model):
     def total_revenue(self):
         return sum([service.price for service in self.services])
 
+    def next_service_name(self):
+        i = len(self.services)
+        svsname_base = '{0}-{1}'.format(self.username, i)
+        while len(filter(lambda x: x.name == svsname_base, self.services)) != 0:
+            i += 1
+            svsname_base = '{0}-{1}'.format(self.username, i)
+        return svsname_base       
+
     def _serialize(self):
         return dict(username=self.username, email=self.email,
                     services=[service._serialize() for service in self.services],
