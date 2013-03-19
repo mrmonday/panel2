@@ -146,7 +146,7 @@ def create(vps):
 
     job = vps.create()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
-    return redirect(url_for('.view', vps=vps.id))
+    return jsonify({'job': job.id})
 
 @vps.route('/<vps>/shutdown')
 @login_required
@@ -159,7 +159,7 @@ def shutdown(vps):
 
     job = vps.shutdown()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
-    return redirect(url_for('.view', vps=vps.id))
+    return jsonify({'job': job.id})
 
 @vps.route('/<vps>/destroy')
 @login_required
@@ -172,7 +172,7 @@ def destroy(vps):
 
     job = vps.destroy()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
-    return redirect(url_for('.view', vps=vps.id))
+    return jsonify({'job': job.id})
 
 @vps.route('/<vps>/powercycle')
 @login_required
@@ -186,7 +186,7 @@ def powercycle(vps):
     job = vps.destroy()
     job = vps.create()
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
-    return redirect(url_for('.view', vps=vps.id))
+    return jsonify({'job': job.id})
 
 @vps.route('/<vps>/deploy', methods=['GET', 'POST'])
 @login_required
