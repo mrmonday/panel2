@@ -24,7 +24,11 @@
 
 	<div class="span6">
 		<h4>Expiry:</h4>
+		{% if service.expiry %}
 		<span class="specification">{{ service.expiry | strftime('%m/%d/%Y') }} (${{ service.price | strf("{0:.2f}") }} per month)</span>
+		{% else %}
+		<span class="specification">Inactive</span>
+		{% endif %}
 	</div>
 </div>
 

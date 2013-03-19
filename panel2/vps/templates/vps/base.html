@@ -13,6 +13,7 @@
 		{% endif %}
 
 		{% for vps in svclist %}
+		{% if vps.is_entitled %}
 			{% if service and vps.name == service.name %}
 				<li class="active"><a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a></li>
 				<li>
@@ -35,6 +36,7 @@
 			{% else %}
 				<li><a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a></li>
 			{% endif %}
+		{% endif %}
 		{% endfor %}
 	</ul>
 {% endblock %}
