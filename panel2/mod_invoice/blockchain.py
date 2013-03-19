@@ -35,12 +35,12 @@ def btc_notify(invoice_id):
     if destination_address != app.config['BITCOIN_ADDRESS']:
         return ''
 
-    if confirmations < 2:
+    if confirmations < 1:
         return ''
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
 
-    if value_in_btc != invoice.total_btc_due():
+    if value_in_btc < invoice.total_btc_due():
         return '*not ok*'
 
     invoice.mark_paid()
