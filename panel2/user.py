@@ -22,7 +22,7 @@ from panel2.utils import send_simple_email
 
 import hashlib, os
 import blinker
-import random, base64
+import random, base64, string
 
 createuser_signal = blinker.Signal('A signal which is fired when a user is created')
 
@@ -65,11 +65,13 @@ class User(db.Model):
     zip = db.Column(db.String(255))
     salt = db.Column(db.String(32))
     is_admin = db.Column(db.Boolean)
+    api_key = db.Column(db.String(255))
 
     def __init__(self, username, password, email):
         self.username = username
         self.email = email
         self.assign_password(password.encode('utf-8'))
+        self.set_api_key()
 
         createuser_signal.send(app, user=self)
 
@@ -112,6 +114,12 @@ class User(db.Model):
             i += 1
             svsname_base = '{0}-{1}'.format(self.username, i)
         return svsname_base       
+
+    def set_api_key(self):
+        self.api_key = ''.join([random.choice(string.letters + string.digits) for i in xrange(150)])
+
+        db.session.add(self)
+        db.session.commit()
 
     def _serialize(self):
         return dict(username=self.username, email=self.email,

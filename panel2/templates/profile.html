@@ -41,4 +41,13 @@
 	<button class="pull-right btn btn-primary" type="submit">Change E-Mail Address</button>
 </form>
 
+<h3>API Key</h3>
+
+<p>
+	<div class="pull-right">
+		<a href="{{ url_for('.profile_new_key') }}" class="btn btn-primary">Change</a>
+	</div>
+	Your API key is presently: <code>{{ user.api_key }}</code>
+</p>
+
 {% endblock %}

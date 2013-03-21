@@ -19,12 +19,12 @@ from panel2.utils import render_template_or_json
 
 from flask import redirect, url_for, flash, request
 
-@app.route('/profile', subdomain='manage')
-@app.route('/profile/index', subdomain='manage')
+@app.route('/profile', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/index', subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def profile_index():
     return render_template_or_json('profile.html')
 
-@app.route('/profile/password', methods=['POST'], subdomain='manage')
+@app.route('/profile/password', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def profile_change_pw():
     user = get_session_user()
     if user.validate_password(request.form['oldpass']) is not True:
@@ -35,10 +35,16 @@ def profile_change_pw():
     flash('Your password has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/email', methods=['POST'], subdomain='manage')
+@app.route('/profile/email', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def profile_change_email():
     user = get_session_user()
     user.assign_email(request.form['new_email'])
     flash('Your e-mail address has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
+@app.route('/profile/new-apikey', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def profile_new_key():
+    user = get_session_user()
+    user.set_api_key()
+    flash('Your API key has been changed', 'success')
+    return redirect(url_for('.profile_index'))
