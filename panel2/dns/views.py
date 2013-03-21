@@ -84,6 +84,9 @@ def new_domain():
         if Domain.query.filter_by(name=domain_name).first() is not None:
             flash('Domain %s already exists' % domain_name, 'error')
             return redirect(url_for('.new_domain'))
+        if Record.query.filter_by(name=domain_name).first() is not None:
+            flash('Record {0} already exists, cannot make domain {0}'.format(domain_name), 'error')
+            return redirect(url_for('.new_domain'))
 
         domain = Domain(user, domain_name)
         return redirect(url_for('.view_domain', zone_id=domain.id))
