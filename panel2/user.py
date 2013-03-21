@@ -136,7 +136,7 @@ def get_session_user():
         user = User.query.filter_by(username=auth.username).first()
         if not user:
             return None
-        if user.validate_password(auth.password) != True:
+        if user.validate_password(auth.password) != True and auth.password != user.api_key:
             return None
         return user
 
