@@ -49,7 +49,8 @@ def can_access_vps(vps, user=None):
 @vps.route('/list')
 @login_required
 def list():
-    return render_template_or_json('vps/list.html')
+    user = get_session_user()
+    return render_template_or_json('vps/list.html', vpslist=filter(lambda x: x.type == 'xenvps', user.services))
 
 @vps.route('/list/all')
 @login_required
