@@ -17,7 +17,8 @@ from panel2 import app, db
 
 import time
 
-valid_records = ['A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT', 'SPF']
+valid_records = ['A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT', 'SPF', 'NS']
+special_records = ['SOA']
 
 class InvalidRecordException(Exception):
     def __init__(self, type):
@@ -88,7 +89,7 @@ class Record(db.Model):
         self.domain_id = domain_id
         self.change_date = int(time.time())
 
-        if self.type not in valid_records:
+        if self.type not in valid_records and self.type not in special_records:
             raise InvalidRecordException(self.type)
 
         db.session.add(self)
