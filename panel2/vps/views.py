@@ -236,7 +236,7 @@ def vbdstats(vps, start, step):
 def adm_del_ip(vps, ip):
     IPAddress.query.filter_by(id=ip).delete()
     db.session.commit()
-    return redirect(url_for('.staff_toolbox', vps=vps))
+    return redirect(url_for('.ip_admin', vps=vps))
 
 @vps.route('/<vps>/admin/ip/add', methods=['POST'])
 @login_required
@@ -247,7 +247,7 @@ def adm_add_ip(vps):
     ipnetid, ip = postdata.split('!')
     ipnet = IPRange.query.filter_by(id=ipnetid).first()
     vps.attach_ip(ip, ipnet)
-    return redirect(url_for('.staff_toolbox', vps=vps.id))
+    return redirect(url_for('.ip_admin', vps=vps.id))
 
 @vps.route('/<vps>/jobs.json')
 @login_required
