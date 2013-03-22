@@ -25,6 +25,7 @@ from panel2.vps.models import XenVPS, ResourcePlan, Region
 from panel2.user import login_required, admin_required, get_session_user
 from panel2.invoice import Invoice
 from panel2.utils import render_template_or_json
+from ediarpc.rpc_client import ServerProxy
 
 # XXX: this should eventually be moved to a DB and the template IR should just be
 # sent with the vps_image() opcall.  --nenolod
@@ -287,6 +288,14 @@ def jobs(vps):
         abort(403)
     return render_template_or_json('vps/view-jobs.html', service=vps)
 
+@vps.route('/<vps>/profiler')
+@login_required
+def profiler(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template_or_json('vps/view-profiler.html', service=vps)
+
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
 def clone(vps):
@@ -306,3 +315,13 @@ def keypair(vps):
     if can_access_vps(vps) is False:
         abort(403)
     return jsonify({'pubkey': vps.node.gen_keypair()})
+
+@vps.route('/<vps>/rawstats.json')
+@login_required
+def rawstats(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    data = vps.node.api(ServerProxy).domain_list()[vps.name]
+    if data:
+        return jsonify({'stats': data})
