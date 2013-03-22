@@ -1,0 +1,305 @@
+{% extends "vps/view-hdr.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Profiler' %}
+
+{% block component %}
+
+<div class="row-fluid">
+	<div class="span6">
+		<button id="start" class="btn btn-primary">Start Profiling</button>
+		<button id="stop" class="btn btn-danger">Stop Profiling</button>
+	</div>
+
+	<div class="span6">
+		<span class="pull-right">
+			<ul class="nav nav-pills">
+			        <li class="active"><a id="cpu">CPU</a></li>
+			        <li><a id="net">NET</a></li>
+			        <li><a id="vbd">VBD</a></li>
+			</ul>
+		</span>
+	</div>
+</div>
+
+<div id="graph" style="width: 100%; height: 275px; margin-bottom: 1em; margin-top: 1em;"></div>
+
+<div id="perfdata"></div>
+
+<script>
+$(function() {
+	var dataqueue = [];
+	var dataqueue_length = 302;
+	var dataqueue_pos = 0;
+	var refresh_timer_id = 0;
+	var graph_function = null;
+
+	function reset() {
+		dataqueue = [];
+		dataqueue_pos = 0;
+	}
+
+	function net_graph() {
+		var placeholder = $("#graph");
+		var options = {
+			legend: { show: true },
+			lines: { show: true, fill: false },
+			points: { show: false },
+			grid: { show: true, borderColor: null, borderWidth: 0 },
+			xaxis: { mode: "time", timeformat: "%H:%M:%S", timezone: "browser" },
+			yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) {
+					if (num <= 1) { return num.toFixed(2); }
+					var suffix = ['', 'K', 'M', 'G'];
+					var i = parseInt(Math.floor(Math.log(num) / Math.log(1000)));
+					num /= Math.pow(1024, i);
+					return num.toFixed(2) + suffix[i];
+				}
+			}
+		}
+
+		indata = [];
+		outdata = [];
+		for (i = 1; i < dataqueue.length; i++) {
+			if (!dataqueue[i - 1])
+				continue;
+			tuple = [
+				dataqueue[i].date.getTime(),
+				(dataqueue[i].netif.recv_bytes - dataqueue[i - 1].netif.recv_bytes),
+			];
+			indata[i - 1] = tuple;
+			tuple = [
+				dataqueue[i].date.getTime(),
+				(dataqueue[i].netif.trans_bytes - dataqueue[i - 1].netif.trans_bytes),
+			];
+			outdata[i - 1] = tuple;
+		}
+
+		graphdata = [{
+			color: "#336633",
+			data: indata,
+			label: "Bytes received",
+		}, {
+			color: "#333366",
+			data: outdata,
+			label: "Bytes sent",
+		}];
+
+	        $.plot(placeholder, graphdata, options);
+	}
+
+	function vbd_graph() {
+		var placeholder = $("#graph");
+		var options = {
+			legend: { show: true },
+			lines: { show: true, fill: false },
+			points: { show: false },
+			grid: { show: true, borderColor: null, borderWidth: 0 },
+			xaxis: { mode: "time", timeformat: "%H:%M:%S", timezone: "browser" },
+			yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) {
+					if (num <= 1) { return num.toFixed(2); }
+					var suffix = ['', 'K', 'M', 'G'];
+					var i = parseInt(Math.floor(Math.log(num) / Math.log(1000)));
+					num /= Math.pow(1024, i);
+					return num.toFixed(2) + suffix[i];
+				}
+			}
+		}
+
+		rddata = [];
+		wrdata = [];
+		oodata = [];
+		for (i = 1; i < dataqueue.length; i++) {
+			if (!dataqueue[i - 1])
+				continue;
+			tuple = [
+				dataqueue[i].date.getTime(),
+				(dataqueue[i].blkif.rd_req - dataqueue[i - 1].blkif.rd_req),
+			];
+			rddata[i - 1] = tuple;
+			tuple = [
+				dataqueue[i].date.getTime(),
+				(dataqueue[i].blkif.wr_req - dataqueue[i - 1].blkif.wr_req),
+			];
+			wrdata[i - 1] = tuple;
+			tuple = [
+				dataqueue[i].date.getTime(),
+				(dataqueue[i].blkif.oo_req - dataqueue[i - 1].blkif.oo_req),
+			];
+			oodata[i - 1] = tuple;
+		}
+
+		graphdata = [{
+			color: "#336633",
+			data: rddata,
+			label: "Read requests",
+		}, {
+			color: "#333366",
+			data: wrdata,
+			label: "Write requests",
+		}, {
+			color: "#663333",
+			data: oodata,
+			label: "Rescheduled requests",
+		}];
+
+	        $.plot(placeholder, graphdata, options);
+	}
+
+	function cpu_graph() {
+		var placeholder = $("#graph");
+		var options = {
+			lines: { show: true, fill: false },
+			points: { show: false },
+			grid: { show: true, borderColor: null, borderWidth: 0 },
+			xaxis: { mode: "time", timeformat: "%H:%M:%S", timezone: "browser" },
+			yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) { return num.toFixed(2) + "%"; } }
+		}
+
+		cpudata = [];
+		for (i = 1; i < dataqueue.length; i++) {
+			tuple = [
+				dataqueue[i].date.getTime(),
+				dataqueue[i].cputime_pct,
+			];
+			cpudata[i - 1] = tuple;
+		}
+
+		graphdata = {
+			color: "#336633",
+			data: cpudata,
+			label: "CPU usage (%)",
+		};
+
+	        $.plot(placeholder, [graphdata], options);
+	}
+
+	function render_perf_data() {
+		if (dataqueue.length < 2)
+			return;
+
+		$("#perfdata").html("");
+
+                var table = $('<table></table>').addClass('table table-striped');
+                var header_row = $('<tr></tr>');
+                var headers = ['Time', 'Status', 'CPU Time', 'VBD Read', 'VBD Write', 'VBD Orphaned', 'NET In', 'NET Out'];
+
+                for (i = 0; i < headers.length; i++) {
+                    header_row.append($('<th>' + headers[i] + '</th>'));
+                }
+
+                table.append(header_row);
+
+		for (i = dataqueue.length - 1; i > (dataqueue.length - 15); i--) {
+			if (!dataqueue[i])
+				continue;
+
+			var row = $('<tr></tr>');
+
+			var cell = $('<td></td>').append(dataqueue[i].date.toLocaleString());
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].state);
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].cputime_sec + " (" + dataqueue[i].cputime_pct.toFixed(2) + "%)");
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].blkif.rd_req);
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].blkif.wr_req);
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].blkif.oo_req);
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].netif.recv_bytes);
+			row.append(cell);
+
+			cell = $('<td></td>').append(dataqueue[i].netif.trans_bytes);
+			row.append(cell);
+
+			table.append(row);
+		}
+
+		$("#perfdata").append(table);
+	}
+
+	function shift_left(array) {
+		for (i = 1; i < array.length; i++) {
+			array[i] = array[i + 1];
+		}
+		array[array.length - 1] = null;
+	}
+
+	function on_log_data_received(json_data) {
+		var data = json_data.stats;
+		data.date = new Date();
+
+		if (dataqueue[dataqueue_pos]) {
+			var timeslice = (data.date.getTime() - dataqueue[dataqueue_pos].date.getTime());
+			data.cputime_pct = ((data.cputime_sec - dataqueue[dataqueue_pos].cputime_sec) / timeslice) * 100000;
+		} else
+			data.cputime_pct = 0;
+
+		dataqueue_pos++;
+		if (dataqueue.length >= dataqueue_length) {
+			shift_left(dataqueue);
+			dataqueue_pos = dataqueue_length - 1;
+		}
+
+		dataqueue[dataqueue_pos] = data;
+		render_perf_data();
+		graph_function();
+	}
+
+	function fetch() {
+		$.ajax({
+			url: '{{ url_for('.rawstats', vps=service.id) }}',
+			type: 'GET',
+			dataType: 'json',
+			success: on_log_data_received,
+		});
+	}
+
+	graph_function = cpu_graph;
+
+	$("#start").click(function (event) {
+		reset();
+		fetch();
+		refresh_timer_id = setInterval(fetch, 1000);
+	});
+
+	$("#stop").click(function (event) {
+		clearInterval(refresh_timer_id);
+	});
+
+	$("#cpu").click(function (event) {
+		$("#cpu").parent().addClass("active");
+		$("#net").parent().removeClass("active");
+		$("#vbd").parent().removeClass("active"); 
+
+		graph_function = cpu_graph;
+		graph_function();
+	});
+
+	$("#vbd").click(function (event) {
+		$("#cpu").parent().removeClass("active");
+		$("#net").parent().removeClass("active");
+		$("#vbd").parent().addClass("active"); 
+
+		graph_function = vbd_graph;
+		graph_function();
+	});
+
+	$("#net").click(function (event) {
+		$("#cpu").parent().removeClass("active");
+		$("#net").parent().addClass("active");
+		$("#vbd").parent().removeClass("active"); 
+
+		graph_function = net_graph;
+		graph_function();
+	});
+});
+</script>
+
+{% endblock %}
