@@ -3,5 +3,5 @@
 {% block title %}{{ service.name }} - Servers{% endblock %}
 
 {% block component %}
-
+<iframe src="{{ url_for('.console_real', vps=service.id) }}" style="width: 100%; height: 700px;"></iframe>
 {% endblock %}

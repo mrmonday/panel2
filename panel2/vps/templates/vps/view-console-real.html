@@ -1,0 +1,78 @@
+<html>
+<head>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="/static/vt100.js"></script>
+	<link rel="stylesheet" href="/static/vt100-styles.css" type="text/css">
+</head>
+<body>
+<script>
+var thisConsole = null;
+var thisWebsocket = null;
+
+function extend(subClass, baseClass) {
+  function inheritance() { }
+  inheritance.prototype          = baseClass.prototype;
+  subClass.prototype             = new inheritance();
+  subClass.prototype.constructor = subClass;
+  subClass.prototype.superClass  = baseClass.prototype;
+};
+
+function RemoteConsole(URI) {
+  thisConsole = this;
+
+  this.uri = URI;
+
+  this.superClass.constructor.call(this);
+}
+extend(RemoteConsole, VT100);
+
+/* disable some unneeded behaviours */
+RemoteConsole.prototype.beep = function() { };
+RemoteConsole.prototype.showCurrentSize = function() { };
+
+/* override keypress event */
+RemoteConsole.prototype.keysPressed = function(ch) {
+  if (thisWebsocket)
+     thisWebsocket.send(ch);
+};
+
+function wsconn() {
+    if ('WebSocket' in window) {
+        try {
+            thisWebsocket = new WebSocket(thisConsole.uri);
+        } catch (err) {
+            alert('Error: ' + err);
+            return;
+        }
+
+        if (typeof thisWebsocket.protocol == 'undefined') {
+            thisWebsocket.close();
+            alert('WebSockets implementation is too old, sorry');
+            return;
+        }
+
+        thisWebsocket.onopen = function(e) {
+            window.onbeforeunload = function() {
+                try { return thisWebsocket.close(); } catch (err) { return null; }
+            };
+        };
+
+        thisWebsocket.onclose = function(e) {
+            thisWebsocket = null;
+        };
+
+        thisWebsocket.onmessage = function(e) {
+            thisConsole.vt100(e.data);
+        };
+    } else {
+        alert('WebSockets are not supported by your browser, sorry');
+    }
+}
+
+$(document).ready(function() {
+  new RemoteConsole("wss://{{ service.node.name }}.cloud.tortois.es:9393/{{ service.name }}/{{ service.console_key() }}");
+  wsconn();
+});
+</script>
+</body>
+</html>
