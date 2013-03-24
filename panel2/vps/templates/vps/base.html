@@ -32,6 +32,7 @@
 						<li{{ ' class="active"'|safe if subtitle == 'Clone' else '' }}><a href="{{ url_for('.clone', vps=service.id) }}">Clone</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Profiler' else '' }}><a href="{{ url_for('.profiler', vps=service.id) }}">Profiler</a></li>
+						<li{{ ' class="active"'|safe if subtitle == 'Console' else '' }}><a href="{{ url_for('.console', vps=service.id) }}">Serial Console</a></li>
 					</ul>
 				<li>
 			{% else %}

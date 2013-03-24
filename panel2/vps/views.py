@@ -296,6 +296,14 @@ def profiler(vps):
         abort(403)
     return render_template_or_json('vps/view-profiler.html', service=vps)
 
+@vps.route('/<vps>/console')
+@login_required
+def profiler(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template_or_json('vps/view-console.html', service=vps)
+
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
 def clone(vps):
