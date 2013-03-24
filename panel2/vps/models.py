@@ -15,6 +15,7 @@ from the use of this software.
 
 import time
 import rrdtool
+import hashlib
 
 from panel2 import app, db
 from panel2.service import Service, IPRange
@@ -134,6 +135,10 @@ class XenVPS(Service):
 
     def api(self, constructor=QueueingProxy):
         return self.node.api(constructor, self.id)
+
+    def console_key(self):
+        payload = '{0}:{1}'.format(self.name, self.node.secret)
+        return hashlib.sha512(payload).hexdigest()
 
     def suspend(self):
         self.destroy()
