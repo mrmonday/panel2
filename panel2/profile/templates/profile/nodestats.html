@@ -15,6 +15,8 @@
 <th>Free IPs</th>
 <th>Memory Allocated</th>
 <th>Disk Allocated</th>
+<th>Memory Free</th>
+<th>Disk Free</th>
 <th>
 	<div class="pull-right">Options</div>
 </th>
@@ -29,6 +31,8 @@
 <td>{{ node.available_ips(ipv4_only=True) | count }}</td>
 <td>{{ node.memory_allocated() }} MB</td>
 <td>{{ node.disk_allocated() }} GB</td>
+<td>{{ node.memorycap - node.memory_allocated() }} MB</td>
+<td>{{ node.diskcap - node.disk_allocated() }} GB</td>
 <td>
 	<div class="pull-right">
 		<a href="{{ url_for('.node_info', node=node.id) }}" class="btn btn-primary">View</a>

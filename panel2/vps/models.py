@@ -39,9 +39,7 @@ class Region(db.Model):
         return "<Region: '%s'>" % self.name
 
     def available_node(self, memory, disk):
-        for node in self.nodes:
-            if len(node.available_ips()) > 0 and node.locked == False:
-                return node
+        return filter(lambda node: node.allocatable(memory, disk, 1) and node.locked == False, self.nodes)[0]
 
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,6 +47,8 @@ class Node(db.Model):
     ipaddr = db.Column(db.String(255))
     secret = db.Column(db.String(255))
     locked = db.Column(db.Boolean, default=False)
+    memorycap = db.Column(db.Integer)
+    diskcap = db.Column(db.Integer)
 
     region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
     region = db.relationship('Region', backref='nodes')
@@ -82,10 +82,17 @@ class Node(db.Model):
         return [ip for iprange in self.ipranges for ip in iprange.available_ips()]
 
     def disk_allocated(self):
-        return sum([x.swap for x in self.vps]) + sum([x.disk for x in self.vps])
+        return sum([(x.swap / 1024) for x in self.vps]) + sum([x.disk for x in self.vps])
 
     def memory_allocated(self):
         return sum([x.memory for x in self.vps])
+
+    def allocatable(self, memory, disk, ips):
+        memory_free = self.memorycap - self.memory_allocated()
+        disk_free = self.diskcap - self.disk_allocated()
+        ips_free = len(self.available_ips(ipv4_only=True))
+
+        return (memory <= memory_free and disk <= disk_free and ips <= ips_free)
 
     def gen_keypair(self):
         api = self.api(ServerProxy)
