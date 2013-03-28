@@ -75,8 +75,17 @@ class Node(db.Model):
             return constructor(self.ipaddr, 5959, self.secret, iterations=15)
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
 
-    def available_ips(self):
+    def available_ips(self, ipv4_only=False):
+        if ipv4_only:
+            return [ip for iprange in filter(lambda x: x.is_ipv6() == False, self.ipranges) for ip in iprange.available_ips()]
+
         return [ip for iprange in self.ipranges for ip in iprange.available_ips()]
+
+    def disk_allocated(self):
+        return sum([x.swap for x in self.vps]) + sum([x.disk for x in self.vps])
+
+    def memory_allocated(self):
+        return sum([x.memory for x in self.vps])
 
     def gen_keypair(self):
         api = self.api(ServerProxy)
