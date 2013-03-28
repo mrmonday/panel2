@@ -13,6 +13,9 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+from flask import redirect, url_for
+
+from panel2 import db
 from panel2.profile import profile
 from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
@@ -60,6 +63,18 @@ def node_stats():
 def node_info(node):
     node = Node.query.filter_by(id=node).first_or_404()
     return render_template_or_json('profile/nodeinfo.html', node=node)
+
+@profile.route('/_statistics/node/<node>/_togglelock')
+@admin_required
+def node_lock(node):
+    node = Node.query.filter_by(id=node).first_or_404()
+    if node.locked:
+        node.locked = False
+    else:
+        node.locked = True
+    db.session.add(node)
+    db.session.commit()
+    return redirect(url_for('.node_stats'))
 
 @profile.route('/<username>')
 @profile.route('/<username>/index')

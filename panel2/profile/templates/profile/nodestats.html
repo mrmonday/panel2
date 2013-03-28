@@ -3,7 +3,7 @@
 {% block content %}
 {{ super() }}
 
-<h3>Revenue by Node</h3>
+<h3>Node Administration</h3>
 
 <table class="table table-striped">
 <tr>
@@ -11,6 +11,7 @@
 <th>Revenue</th>
 <th>Active VPS</th>
 <th>Locked</th>
+<th>Region</th>
 <th>
 	<div class="pull-right">Options</div>
 </th>
@@ -21,9 +22,11 @@
 <td>${{ revenue[node.name] | strf("{0:.2f}") }}</td>
 <td>{{ node.vps | count }}</td>
 <td>{{ node.locked }}</td>
+<td>{{ node.region.name }}</td>
 <td>
-	<div class="btn-group pull-right">
+	<div class="pull-right">
 		<a href="{{ url_for('.node_info', node=node.id) }}" class="btn btn-primary">View</a>
+		<a href="{{ url_for('.node_lock', node=node.id) }}" class="btn btn-danger">{{ "Unlock" if node.locked else "Lock" }}</a>
 	</div>
 </td>
 </tr>
