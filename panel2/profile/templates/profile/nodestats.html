@@ -10,6 +10,7 @@
 <th>Node</th>
 <th>Revenue</th>
 <th>Active VPS</th>
+<th>Locked</th>
 <th>
 	<div class="pull-right">Options</div>
 </th>
@@ -19,6 +20,7 @@
 <td>{{ node.name }}</td>
 <td>${{ revenue[node.name] | strf("{0:.2f}") }}</td>
 <td>{{ node.vps | count }}</td>
+<td>{{ node.locked }}</td>
 <td>
 	<div class="btn-group pull-right">
 		<a href="{{ url_for('.node_info', node=node.id) }}" class="btn btn-primary">View</a>
