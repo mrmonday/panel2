@@ -1,12 +1,15 @@
 // Sticky sidebar w/jQuery
-$(document).load(function() {
-	sidebarwidth = $(".row-fluid .span2").css('width');
+function setup_sidebar() {
+	cellwidth = ($(document).width() / 12) - 35;
+	sidebarwidth = cellwidth * 2 + (cellwidth / 2);
 	bodypaddingtop = $("header").css('height');
-	sidebarheight = $("body").css('height');
+	sidebarheight = $(window).height() - $("header").height();
 	$('#sidebar').css('width', sidebarwidth);
 	$('#sidebar').css('height', sidebarheight);
-	contentmargin = parseInt(sidebarwidth);
 	$('#container-base').css('paddingTop', bodypaddingtop);
-	$('.contentfix').css('marginLeft', contentmargin + 20);
+	$('.contentfix').css('marginLeft', sidebarwidth);
 	$('.contentfix').css('marginRight', 0);
-});
+}
+
+$(document).ready(setup_sidebar);
+$(window).resize(setup_sidebar);

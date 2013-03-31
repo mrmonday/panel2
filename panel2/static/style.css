@@ -85,6 +85,7 @@ h1 .btn, h2 .btn, h3 .btn {
 	border-right: 1px #ccc solid;
 	margin-top: 1em;
 	padding-top: 1em;
+	overflow-y: auto;
 }
 
 .contentfix {
