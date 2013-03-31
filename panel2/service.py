@@ -82,7 +82,8 @@ class Service(db.Model):
 @invoice_item_paid_signal.connect_via(app)
 def service_update_expiry(*args, **kwargs):
     service = kwargs.get('service', None)
-    service.update_expiry()
+    if service:
+        service.update_expiry()
 
 class IPAddress(db.Model):
     __tablename__ = 'ips'

@@ -128,16 +128,21 @@ class InvoiceItem(db.Model):
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
     invoice = db.relationship('Invoice', backref='items')
 
-    def __init__(self, service, invoice, price):
-        self.description = '{} renewal'.format(service.name)
+    def __init__(self, service, invoice, price, description=None):
+        if not description and service:
+            self.description = '{} renewal'.format(service.name)
+        else:
+            self.description = description
+
         self.entry_ts = time.time()
         self.price = price
 
         self.invoice_id = invoice.id
         self.invoice = invoice
 
-        self.service_id = service.id
-        self.service = service
+        if service:
+            self.service_id = service.id
+            self.service = service
 
         db.session.add(self)
         db.session.commit()
