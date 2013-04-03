@@ -99,6 +99,8 @@ class IPAddress(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     service = db.relationship('Service', backref='ips')
 
+    reserved = db.Column(db.Boolean, default=False)
+
     def __init__(self, ip, user=None, service=None, ipnet=None):
         self.ip = ip
         self.ipnet = ipnet
@@ -192,7 +194,7 @@ class IPRange(db.Model):
                 ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
                 if ip_obj is None:
                     iplist.append(str(host))
-                elif ip_obj.service is None:
+                elif ip_obj.service is None and not ip_obj.reserved:
                     iplist.append(str(host))
         else:
             for i in xrange(32):
@@ -202,7 +204,7 @@ class IPRange(db.Model):
                 ip_obj = IPAddress.query.filter_by(ip=str(host)).first()
                 if ip_obj is None:
                     iplist.append(str(host))
-                elif ip_obj.service is None:
+                elif ip_obj.service is None and not ip_obj.reserved:
                     iplist.append(str(host))
         return iplist
 
