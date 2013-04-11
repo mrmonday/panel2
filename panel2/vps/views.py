@@ -16,13 +16,13 @@ from the use of this software.
 import json
 import time
 
-from flask import redirect, url_for, abort, flash, jsonify, make_response, request
+from flask import redirect, url_for, abort, flash, jsonify, make_response, request, session
 from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region
-from panel2.user import login_required, admin_required, get_session_user
+from panel2.user import login_required, admin_required, get_session_user, User, Session
 from panel2.invoice import Invoice
 from panel2.utils import render_template_or_json
 from ediarpc.rpc_client import ServerProxy
@@ -67,7 +67,24 @@ def signup():
 
     if request.method == 'POST':
         if user is None:
-            abort(403)
+            try:
+                username = request.form['username'].strip().rstrip()
+                password = request.form['password'].strip().rstrip()
+                email = request.form['email'].strip().rstrip()
+                if len(username) == 0:
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No username provided')
+                if len(password) == 0: 
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No password provided')
+                if len(email) == 0:
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No email provided')
+                user = User(username, password, email)
+            except Exception as e:
+                return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Exception: ' + repr(e))
+
+            if user is not None:
+                sess = Session(user)
+                session['session_id'] = sess.id
+                session['session_challenge'] = sess.challenge
 
         vpsname = user.next_service_name()
 
