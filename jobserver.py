@@ -30,6 +30,7 @@ def wait(timeout=5):
         return lst
 
 def run(job):
+    print 'running job', job.id
     job.checkout()
 
     sock = socket.create_connection((job.target_ip, int(job.target_port)))
