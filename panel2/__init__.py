@@ -76,16 +76,16 @@ from panel2.profile import profile
 
 app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
-                 subdomain='manage',
+                 subdomain='manage.edge',
                  view_func=app.send_static_file)
 
-app.register_blueprint(dns, subdomain='manage', url_prefix='/dns')
-app.register_blueprint(support, subdomain='manage', url_prefix='/support')
-app.register_blueprint(vps, subdomain='manage', url_prefix='/vps')
-app.register_blueprint(invoice, subdomain='manage', url_prefix='/invoice')
+app.register_blueprint(dns, subdomain='manage.edge', url_prefix='/dns')
+app.register_blueprint(support, subdomain='manage.edge', url_prefix='/support')
+app.register_blueprint(vps, subdomain='manage.edge', url_prefix='/vps')
+app.register_blueprint(invoice, subdomain='manage.edge', url_prefix='/invoice')
 
 app.register_blueprint(status, subdomain='status')
-app.register_blueprint(profile, subdomain='manage', url_prefix='/account')
+app.register_blueprint(profile, subdomain='manage.edge', url_prefix='/account')
 
 app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
