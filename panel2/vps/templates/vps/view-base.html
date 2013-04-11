@@ -35,7 +35,7 @@
 <div class="row-fluid pushdown">
 	<div class="span6">
 		<h4>IPv4:</h4>
-		<span class="specification">{{ service.ips[0].ip }}</span>
+		<span class="specification">{{ service.ips[0].ip if service.ips[0] }}</span>
 	</div>
 
 	<div class="span6">
