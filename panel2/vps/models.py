@@ -202,13 +202,15 @@ class XenVPS(Service):
     def unpause(self):
         return self.api().unpause(domname=self.name)
 
-    def reimage(self, template, password):
+    def reimage(self, template, password, create=False):
         self.destroy()
         self.format()
         self.image(template)
         self.rootpass(password)
+        if create:
+            self.create()
 
-    def clone(self, template, targetip):
+    def clone(self, template, targetip, create=False):
         eth0 = {
            'address': self.ips[0].ip,
            'netmask': str(self.ips[0].ipnet.ipnet().netmask),
@@ -218,6 +220,8 @@ class XenVPS(Service):
         self.destroy()
         self.format()
         self.api().vps_clone(domname=self.name, eth0=eth0, image=template, targetip=targetip)
+        if create:
+            self.create()
 
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)

@@ -217,8 +217,9 @@ def deploy(vps):
     if can_access_vps(vps) is False:
         abort(403)
     if request.method == 'POST':
+        create = 'startvps' in request.form
         flash('Your deployment request is in progress, check back later.')
-        vps.reimage(request.form['imagename'], request.form['rootpass'])
+        vps.reimage(request.form['imagename'], request.form['rootpass'], create=create)
         return redirect(url_for('.jobs', vps=vps.id))
     else:
         return render_template_or_json('vps/view-deploy.html', service=vps, templates=template_map)
@@ -337,8 +338,9 @@ def clone(vps):
     if can_access_vps(vps) is False:
         abort(403)
     if request.method == 'POST':
+        create = 'startvps' in request.form
         flash('Your clone is in progress, check back later.')
-        vps.clone(request.form['imagename'], request.form['targetip'])
+        vps.clone(request.form['imagename'], request.form['targetip'], create=create)
         return redirect(url_for('.jobs', vps=vps.id))
     return render_template_or_json('vps/view-clone.html', service=vps, templates=template_map)
 
