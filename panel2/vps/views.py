@@ -90,10 +90,7 @@ def signup():
 
         return redirect(url_for('.view', vps=vps.id))
 
-    for service in user.services:
-        if vpsname == service.name:
-            vpsname += '-{:.0f}'.format(time.time())
-    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, vpsname=vpsname)
+    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans)
 
 @vps.route('/<vps>')
 @login_required
