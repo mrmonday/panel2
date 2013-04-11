@@ -2,7 +2,9 @@
 {% if service %}
 	{% set svclist = service.user.services %}
 {% else %}
-	{% set svclist = user.services %}
+	{% if user %}
+		{% set svclist = user.services %}
+	{% endif %}
 {% endif %}
 
 {% block serversidebar %}

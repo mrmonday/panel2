@@ -60,13 +60,17 @@ def list_all():
     return render_template_or_json('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
 
 @vps.route('/signup', methods=['GET', 'POST'])
-@login_required
 def signup():
     user = get_session_user()
     regions = Region.query.all()
     resource_plans = ResourcePlan.query.all()
-    vpsname = user.next_service_name()
+
     if request.method == 'POST':
+        if user is None:
+            abort(403)
+
+        vpsname = user.next_service_name()
+
         region = Region.query.filter_by(id=int(request.form['region'])).first()
         if not region:
             abort(404)
