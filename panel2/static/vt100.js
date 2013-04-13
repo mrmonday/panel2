@@ -2825,6 +2825,7 @@ VT100.prototype.fixEvent = function(event) {
     case 186: /* ; -> : */ u = 59; s =  58; break;
     case 187: /* = -> + */ u = 61; s =  43; break;
     case 188: /* , -> < */ u = 44; s =  60; break;
+    case 173: /* - -> _ */ u = 45; s =  95; break;
     case 189: /* - -> _ */ u = 45; s =  95; break;
     case 190: /* . -> > */ u = 46; s =  62; break;
     case 191: /* / -> ? */ u = 47; s =  63; break;
