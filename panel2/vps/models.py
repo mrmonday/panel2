@@ -215,8 +215,10 @@ class XenVPS(Service):
         self.api().vps_destroy(domname=self.name)
         Service.delete(self)
 
-    def create(self):
-        bootargs = self.profile.render_config(self)
+    def create(self, profile=None):
+        if not profile:
+            profile = self.profile
+        bootargs = profile.render_config(self)
         return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], **bootargs)
 
     def format(self):

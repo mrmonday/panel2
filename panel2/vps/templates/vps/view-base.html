@@ -68,6 +68,24 @@
 	</div>
 </div>
 
+<h4 class="service-hdr">Kernel Profiles</h4>
+
+{% for prof in profiles %}
+<div class="row-fluid">
+	<div class="span9">
+		{{ prof.name }}{% if prof.id == service.profile.id %} (selected){% endif %}
+	</div>
+	<div class="span3">
+		<span class="pull-right">
+			<form method="POST" action="{{ url_for('.create', vps=service.id) }}">
+				<input type="hidden" name="profid" value="{{ prof.id }}">
+				<button type="submit" class="btn btn-primary">Boot</button>
+			</form>
+		</span>
+	</div>
+</div>
+{% endfor %}
+
 <script type="text/javascript">
 $(function() {
     var __tmf = "%H:%M";

@@ -21,7 +21,7 @@ from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
-from panel2.vps.models import XenVPS, ResourcePlan, Region
+from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile
 from panel2.user import login_required, admin_required, get_session_user, User, Session
 from panel2.invoice import Invoice
 from panel2.utils import render_template_or_json
@@ -121,7 +121,7 @@ def view(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template_or_json('vps/view-base.html', service=vps)
+    return render_template_or_json('vps/view-base.html', service=vps, profiles=KernelProfile.query.all())
 
 @vps.route('/<vps>/graphs')
 @login_required
@@ -155,7 +155,7 @@ def adm_delete(vps):
     flash('Your VPS has been deleted.')
     return redirect(url_for('.list'))
 
-@vps.route('/<vps>/create')
+@vps.route('/<vps>/create', methods=['GET', 'POST'])
 @login_required
 def create(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
@@ -164,7 +164,14 @@ def create(vps):
     if can_access_vps(vps) is False:
         abort(403)
 
-    job = vps.create()
+    if request.method == 'POST':
+        prof = KernelProfile.query.filter_by(id=int(request.form['profid'])).first()
+        job = vps.create(profile=prof)
+        flash('Your request has been queued.  Job ID: {}'.format(job.id))
+        return redirect(url_for('.view', vps=vps.id))
+    else:
+        job = vps.create()
+
     flash('Your request has been queued.  Job ID: {}'.format(job.id))
     return jsonify({'job': job.id})
 
