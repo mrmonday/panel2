@@ -35,8 +35,8 @@ def ipn_post(invoice_id):
        .format(arg=arg)
 
     r = requests.get(validate_url)
-#    if 'VERIFIED' not in r.text:
-#        return r.text
+    if 'VERIFIED' not in r.text:
+        return r.text
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     invoice.mark_paid()
