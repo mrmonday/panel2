@@ -25,6 +25,51 @@ from ediarpc.rpc_client import ServerProxy
 
 from collections import OrderedDict
 
+class KernelProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+
+    def __init__(self, name):
+        self.name = name
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<KernelProfile: '%s'>" % self.name
+
+    def render_config(self, domain):
+        keys = {
+            'domname': domain.name,
+            'eth0_ip': domain.ips[0].ip,
+            'eth0_gateway': domain.ips[0].ipnet.gateway(),
+            'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
+            'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
+        }
+        return {s.key: s.value.format(**keys) for s in self.arguments}
+
+class KernelProfileArgument(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    key = db.Column(db.String(255))
+    value = db.Column(db.String(255))
+
+    profile_id = db.Column(db.Integer, db.ForeignKey('kernel_profile.id'))
+    profile = db.relationship('KernelProfile', backref='arguments')
+
+    def __init__(self, profile, key, value):
+        self.key = key
+        self.value = value
+
+        self.profile_id = profile.id
+        self.profile = profile
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<KernelProfileArgument: '%s'='%s' ('%s')>" % (self.key, self.value, self.profile.name)
+
 class Region(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -126,6 +171,9 @@ class XenVPS(Service):
     node_id = db.Column(db.Integer, db.ForeignKey('node.id'))
     node = db.relationship('Node', backref='vps')
 
+    profile_id = db.Column(db.Integer, db.ForeignKey('kernel_profile.id'))
+    profile = db.relationship('KernelProfile')
+
     name = db.Column(db.String(255))
 
     def __init__(self, name, memory, swap, disk, price, node, user):
@@ -168,7 +216,8 @@ class XenVPS(Service):
         Service.delete(self)
 
     def create(self):
-        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips])
+        bootargs = self.profile.render_config(self)
+        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], **bootargs)
 
     def format(self):
         return self.api().vps_format(domname=self.name)
