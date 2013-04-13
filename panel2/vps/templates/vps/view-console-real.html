@@ -27,7 +27,6 @@ function RemoteConsole(URI) {
 extend(RemoteConsole, VT100);
 
 /* disable some unneeded behaviours */
-RemoteConsole.prototype.beep = function() { };
 RemoteConsole.prototype.showCurrentSize = function() { };
 
 /* override keypress event */

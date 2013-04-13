@@ -887,21 +887,6 @@ VT100.prototype.initializeElements = function(container) {
                         '</div>';
   }
 
-  // Find the object used for playing the "beep" sound, if any.
-  if (typeof suppressAllAudio != 'undefined' && suppressAllAudio) {
-    this.beeper                = undefined;
-  } else {
-    this.beeper                = this.getChildById(this.container,
-                                                   'beep_embed');
-    if (!this.beeper || !this.beeper.Play) {
-      this.beeper              = this.getChildById(this.container,
-                                                   'beep_bgsound');
-      if (!this.beeper || typeof this.beeper.src == 'undefined') {
-        this.beeper            = undefined;
-      }
-    }
-  }
-
   // Initialize the variables for finding the text console and the
   // cursor.
   this.reconnectBtn            = this.getChildById(this.container,'reconnect');
@@ -3111,18 +3096,7 @@ VT100.prototype.flashScreen = function() {
 };
 
 VT100.prototype.beep = function() {
-  if (this.visualBell) {
-    this.flashScreen();
-  } else {
-    try {
-      this.beeper.Play();
-    } catch (e) {
-      try {
-        this.beeper.src = 'beep.wav';
-      } catch (e) {
-      }
-    }
-  }
+  this.flashScreen();
 };
 
 VT100.prototype.bs = function() {
