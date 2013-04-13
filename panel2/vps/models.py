@@ -41,6 +41,7 @@ class KernelProfile(db.Model):
     def render_config(self, domain):
         keys = {
             'domname': domain.name,
+            'domid': domain.id,
             'eth0_ip': domain.ips[0].ip,
             'eth0_gateway': domain.ips[0].ipnet.gateway(),
             'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
