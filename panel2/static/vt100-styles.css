@@ -232,7 +232,7 @@
   }
 }
 
-* DEFINES_COLORS */
+/* DEFINES_COLORS */
 #vt100 .ansi0               {                            }
 #vt100 .ansi1               { color:            #cd0000; }
 #vt100 .ansi2               { color:            #00cd00; }
@@ -265,6 +265,20 @@
 #vt100 .bgAnsi12            { background-color: #5c5cff; }
 #vt100 .bgAnsi13            { background-color: #ff00ff; }
 #vt100 .bgAnsi14            { background-color: #00ffff; }
-#vt100 .bgAnsi15            { background-color: #ffffff; }
+#vt100 .bgAnsi15            {                            }
+
+#vt100 #cursor.bright {
+  background-color: white;
+  color:            black;
+}
+
+#vt100 #scrollable          { color:            #ffffff;
+                              background-color: #262626; }
+
+#vt100 #scrollable.inverted { color:            #262626;
+                              background-color: #ffffff; }
+
+#vt100 .ansiDefault         { color:            #ffffff; }
+#vt100 .bgAnsiDefault       { background-color: #262626; }
 
 
