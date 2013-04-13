@@ -2708,6 +2708,7 @@ VT100.prototype.handleKey = function(event) {
       case 186: /* ;            */ ch = this.applyModifiers(59, event); break;
       case 187: /* =            */ ch = this.applyModifiers(61, event); break;
       case 188: /* ,            */ ch = this.applyModifiers(44, event); break;
+      case 173: /* -            */ ch = this.applyModifiers(45, event); break;
       case 189: /* -            */ ch = this.applyModifiers(45, event); break;
       case 190: /* .            */ ch = this.applyModifiers(46, event); break;
       case 191: /* /            */ ch = this.applyModifiers(47, event); break;
