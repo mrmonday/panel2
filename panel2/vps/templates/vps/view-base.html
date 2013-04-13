@@ -72,16 +72,19 @@
 
 {% for prof in profiles %}
 <div class="row-fluid">
-	<div class="span9">
-		{{ prof.name }}{% if prof.id == service.profile.id %} (selected){% endif %}
+	<div class="span6">
+		{{ prof.name }}{% if prof.id == service.profile.id %} [selected default]{% endif %}
 	</div>
-	<div class="span3">
-		<span class="pull-right">
-			<form method="POST" action="{{ url_for('.create', vps=service.id) }}">
-				<input type="hidden" name="profid" value="{{ prof.id }}">
-				<button type="submit" class="btn btn-primary">Boot</button>
-			</form>
-		</span>
+	<div class="span6">
+		<form class="pull-right" method="POST" action="{{ url_for('.setprofile', vps=service.id) }}">
+			<input type="hidden" name="profid" value="{{ prof.id }}">
+			<button type="submit" class="btn">Set Default</button>
+		</form>
+
+		<form class="pull-right" method="POST" action="{{ url_for('.create', vps=service.id) }}">
+			<input type="hidden" name="profid" value="{{ prof.id }}">
+			<button type="submit" class="btn btn-primary">Boot</button>&nbsp;
+		</form>
 	</div>
 </div>
 {% endfor %}

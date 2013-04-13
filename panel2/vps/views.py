@@ -123,6 +123,18 @@ def view(vps):
         abort(403)
     return render_template_or_json('vps/view-base.html', service=vps, profiles=KernelProfile.query.all())
 
+@vps.route('/<vps>/setprofile', methods=['POST'])
+@login_required
+def setprofile(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    profile = KernelProfile.query.filter_by(id=int(request.form['profid'])).first()
+    if vps is None or profile is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.set_profile(profile)
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/graphs')
 @login_required
 def graphs(vps):
