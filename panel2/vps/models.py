@@ -191,6 +191,9 @@ class XenVPS(Service):
         self.user_id = user.id
         self.user = user
 
+        self.profile = KernelProfile.query.first()
+        self.profile_id = self.profile.id
+
         db.session.add(self)
         db.session.commit()
 
