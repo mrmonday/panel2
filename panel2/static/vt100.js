@@ -870,11 +870,6 @@ VT100.prototype.initializeElements = function(container) {
                        '<div id="keyboard" unselectable="on">' +
                        '</div>' +
                        '<div id="scrollable">' +
-                         '<table id="kbd_button">' +
-                           '<tr><td width="100%">&nbsp;</td>' +
-                           '<td><img id="kbd_img" src="keyboard.png" /></td>' +
-                           '<td>&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>' +
-                         '</table>' +
                          '<pre id="lineheight">&nbsp;</pre>' +
                          '<pre id="console">' +
                            '<pre></pre>' +
@@ -889,10 +884,6 @@ VT100.prototype.initializeElements = function(container) {
                          '<pre><div><span id="space"></span></div></pre>' +
                          '<input type="textfield" id="input" />' +
                          '<input type="textfield" id="cliphelper" />' +
-                         (typeof suppressAllAudio != 'undefined' &&
-                          suppressAllAudio ? "" :
-                         embed + '<bgsound id="beep_bgsound" loop=1 />') +
-                          '<iframe id="layout" src="keyboard.html" />' +
                         '</div>';
   }
 
