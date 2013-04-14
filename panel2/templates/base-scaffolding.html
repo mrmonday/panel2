@@ -12,14 +12,18 @@
 				<ul class="menu-list">
 					{% block links %}
 					{% endblock %}
-					<li class="menu-item">
-						{% if user %}
-						<a href="{{ url_for('logout') }}"><i class="icon-user icon-white"></i> {{ user.username }}</a>
-						{% else %}
-						<a href="{{ url_for('login') }}">Login</a>
-						{% endif %}
-					</li>
 				</ul>
+				<span class="loginbox">
+					{% if user %}
+					<div class="logintext">
+						<strong>{{ user.username }}</strong><br>
+						<a href="{{ url_for('logout') }}">Logout</a>
+					</div>
+					<img class="loginavatar" src="{{ user.email | gravatar(42) }}">
+					{% else %}
+					<a href="{{ url_for('login') }}">Login</a>
+					{% endif %}
+				</span>
 			</div>
 		</div>
 	</header>

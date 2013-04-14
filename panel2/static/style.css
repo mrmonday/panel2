@@ -28,6 +28,23 @@ h1 .btn, h2 .btn, h3 .btn {
 	min-height: 70px;
 }
 
+.loginbox {
+	float: right;
+	margin-top: 0.75em;
+	margin-right: -1em;
+}
+
+.logintext {
+	text-align: right;
+	float: left;
+	margin-right: 0.5em;
+}
+
+.loginavatar {
+	border-radius: 5px;
+	float: right;
+}
+
 .menu-item {
 	display: block;
 	float: left;
