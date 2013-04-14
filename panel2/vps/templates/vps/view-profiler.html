@@ -32,6 +32,7 @@ $(function() {
 	var dataqueue_pos = 0;
 	var refresh_timer_id = 0;
 	var graph_function = null;
+	var sock = null;
 
 	function reset() {
 		dataqueue = [];
@@ -265,12 +266,46 @@ $(function() {
 
 	$("#start").click(function (event) {
 		reset();
-		fetch();
-		refresh_timer_id = setInterval(fetch, 1000);
+
+		/* fall back to v1 profiler api if websocket is unavailable */
+		if ('WebSocket' in window) {
+			try { 
+				sock = new WebSocket("wss://{{ service.node.name }}.cloud.tortois.es:9393/stats/{{ service.name }}/{{ service.console_key() }}");
+			} catch (err) {
+				alert('Error: ' + err);
+				return;
+			}
+
+			sock.onopen = function(e) {
+				window.onbeforeunload = function() {
+					try { return sock.close(); } catch (err) { return null; }
+				};
+			};
+
+			sock.onclose = function(e) {
+				sock = null;
+			};
+			
+			sock.onmessage = function(e) {
+				/* compose a v1 api frame */
+				data = {
+					stats: $.parseJSON(e.data),
+				};
+				on_log_data_received(data);
+			};
+		} else {
+			fetch();
+			refresh_timer_id = setInterval(fetch, 1000);
+		}
 	});
 
 	$("#stop").click(function (event) {
-		clearInterval(refresh_timer_id);
+		if ('WebSocket' in window) {
+			sock.close();
+			sock = null;
+		} else {
+			clearInterval(refresh_timer_id);
+		}
 	});
 
 	$("#cpu").click(function (event) {
