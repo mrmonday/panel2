@@ -69,7 +69,7 @@ function wsconn() {
 }
 
 $(document).ready(function() {
-  new RemoteConsole("wss://{{ service.node.name }}.cloud.tortois.es:9393/{{ service.name }}/{{ service.console_key() }}");
+  new RemoteConsole("wss://{{ service.node.name }}.cloud.tortois.es:9393/console/{{ service.name }}/{{ service.console_key() }}");
   wsconn();
 });
 </script>
