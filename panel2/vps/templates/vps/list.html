@@ -4,7 +4,31 @@
 
 {% block subcontent %}
 
-<h3>Server List</h3>
+<h3 class="service-hdr">{{ user.username }}'s Cluster</h3>
+
+<div class="row-fluid">
+
+<div class="span12"><h4>Network Usage</h4></div>
+
+</div>
+
+<div class="row-fluid">
+<div id="net-graph" class="span12" style="height: 250px"></div>
+</div>
+
+<div class="row-fluid">
+
+<div class="span6"><h4>CPU Usage (%)</h4></div>
+<div class="span6"><h4>IO Usage (requests per second)</h4></div>
+
+</div>
+
+<div class="row-fluid">
+<div id="cpu-graph" class="span6" style="height: 250px"></div>
+<div id="vbd-graph" class="span6" style="height: 250px"></div>
+</div>
+
+<h4 class="service-hdr">Cluster Servers</h4>
 
 <table class="table table-striped">
 <tr>
@@ -41,5 +65,152 @@
 {% endfor %}
 
 </table>
+
+<script type="text/javascript">
+$(function() {
+    var __tmf = "%H:%M";
+    var __start = 3600 * 4;
+    var __step = 60;
+    var __baseuri = "";
+    var __callback = null;
+    var __cpudata = [];
+    var __vbddata = [];
+    var __netindata = [];
+    var __netoutdata = [];
+
+    function cpu_data_received(newdata, tmf, svsid, label) {
+        var colors = ['#336633', '#333366', '#663333', '#336666', '#666633', '#663366'];
+        var placeholder = $("#cpu-graph");
+        var options = {
+            series: { stack: true },
+            legend: { noColumns: 3 },
+            lines: { show: true, fill: 0.7, stack: true, lineWidth: 0 },
+    	    points: { show: false },
+   	    grid: { show: true, borderColor: '#dddddd', borderWidth: 1, aboveData: false },
+	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
+            yaxis: { min: 0, label: "CPU usage (%)", tickFormatter: function(num, obj) { return num.toFixed(2) + "%"; } }
+        }
+
+        newdata.color = colors[svsid % colors.length];
+        newdata.label = label;
+        __cpudata.push(newdata);
+        $.plot(placeholder, __cpudata, options);
+    }
+
+    function net_data_received(newdata, tmf, svsid, label) {
+        var colors = ['#336633', '#333366'];
+        var placeholder = $("#net-graph");
+        var options = {
+            series: { stack: true },
+            lines: { show: true, fill: 0.7, stack: true, lineWidth: 0 },
+    	    points: { show: false },
+   	    grid: { show: true, borderColor: '#dddddd', borderWidth: 1, aboveData: false },
+	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
+            yaxis: { min: 0, tickFormatter: function(num, obj) {
+                    if (num <= 1) { return num.toFixed(2); }
+                    var suffix = ['', 'K', 'M', 'G'];
+                    var i = parseInt(Math.floor(Math.log(num) / Math.log(1000)));
+                    num /= Math.pow(1024, i);
+                    return num.toFixed(2) + suffix[i];
+                }
+            }
+        }
+
+        cmbdata = [];
+        for (i = 0; i < newdata[0].data.length; i++) {
+           if (__netindata[i])
+               cmbdata.push([newdata[0].data[i][0], (__netindata[i][1] + newdata[0].data[i][1])]);
+           else
+               cmbdata.push([newdata[0].data[i][0], newdata[0].data[i][1]]);
+        }
+        __netindata = cmbdata;
+
+        indata = {
+            data: __netindata,
+            label: "Bytes received",
+            color: '#336633',
+        };
+
+        cmbdata = [];
+        for (i = 0; i < newdata[1].data.length; i++) {
+           if (__netoutdata[i])
+               cmbdata.push([newdata[1].data[i][0], (__netoutdata[i][1] + newdata[1].data[i][1])]);
+           else
+               cmbdata.push([newdata[1].data[i][0], newdata[1].data[i][1]]);
+        }
+        __netoutdata = cmbdata;
+
+        outdata = {
+            data: __netindata,
+            label: "Bytes sent",
+            color: '#333366',
+        };
+
+        $.plot(placeholder, [indata, outdata], options);
+    }
+
+    function vbd_data_received(newdata, tmf, svsid, label) {
+        var colors = ['#336633', '#333366', '#663333', '#336666', '#666633', '#663366'];
+        var placeholder = $("#vbd-graph");
+        var options = {
+            series: { stack: true },
+            legend: { noColumns: 3 },
+            lines: { show: true, fill: 0.7, stack: true, lineWidth: 0 },
+    	    points: { show: false },
+   	    grid: { show: true, borderColor: '#dddddd', borderWidth: 1, aboveData: false },
+	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
+            yaxis: { min: 0 }
+        }
+
+        cmbdata = [];
+
+        for (i = 0; i < newdata[0].data.length; i++) {
+           cmbdata.push([newdata[0].data[i][0], (newdata[0].data[i][1] + newdata[1].data[i][1] + newdata[2].data[i][1])]);
+        }
+
+        pushdata = {
+            data: cmbdata,
+            label: label,
+            color: colors[svsid % colors.length],
+            fillColor: colors[svsid % colors.length],
+        };
+
+        __vbddata.push(pushdata);
+        $.plot(placeholder, __vbddata, options);
+    }
+
+    function get_uri(svsid, topic) {
+        return '/vps/' + svsid + '/' + topic + '/' + __start + '/' + __step;
+    }
+
+    {% set i = 0 %}
+    {% for service in vpslist %}
+    {% if service.is_entitled and service.type == 'xenvps' %}
+    $.ajax({
+        url: get_uri({{ service.id }}, 'cpustats'),
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) { cpu_data_received(d, __tmf, {{ i }}, "{{ service.name }}"); }
+    });
+
+    $.ajax({
+        url: get_uri({{ service.id }}, 'vbdstats'),
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) { vbd_data_received(d, __tmf, {{ i }}, "{{ service.name }}"); }
+    });
+
+    __start = 3600 * 8;
+    $.ajax({
+        url: get_uri({{ service.id }}, 'netstats'),
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) { net_data_received(d, __tmf, {{ i }}, "{{ service.name }}"); }
+    });
+    {% set i = i + 1 %}
+    {% endif %}
+    {% endfor %}
+});
+</script>
 
 {% endblock %}
