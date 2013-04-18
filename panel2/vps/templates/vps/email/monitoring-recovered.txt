@@ -1,0 +1,8 @@
+{% extends "email/base-message.txt" %}
+{% block message %}The following service check has recovered:
+
+VPS {{ service.name }}:
+{{ check.describe() }}
+
+To modify your checks, visit the management panel at:
+https://manage.tortois.es/{% endblock %}
