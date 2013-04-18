@@ -37,9 +37,6 @@
 						<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Profiler' else '' }}><a href="{{ url_for('.profiler', vps=service.id) }}">Profiler</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Console' else '' }}><a href="{{ url_for('.console', vps=service.id) }}">Serial Console</a></li>
-
-						<li class="nav-header">Properties</li>
-						<li><a href="#admDelete" role="button" data-toggle="modal">Delete</a></li>
 					</ul>
 				<li>
 			{% else %}
