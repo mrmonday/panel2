@@ -20,7 +20,7 @@ from panel2.cron import MONITORING
 from ediarpc.rpc_client import ServerProxy
 
 class MonitorTrigger(db.Model):
-    __tablename__ = 'monitorprobes'
+    __tablename__ = 'monitortriggers'
 
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(255))
@@ -43,7 +43,7 @@ class MonitorProbe(db.Model):
     type = db.Column(db.String(50))
     active = db.Column(db.Boolean)
 
-    vps_id = db.Column(db.Integer, db.ForeignKey('xenvps.id'))
+    vps_id = db.Column(db.Integer, db.ForeignKey('xenvps.vps_id'))
     vps = db.relationship('XenVPS', backref='probes')
 
     __mapper_args__ = {'polymorphic_on': type}
