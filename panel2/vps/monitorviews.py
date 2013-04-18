@@ -13,13 +13,13 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import Blueprint
+import rrdtool, os, time, subprocess, socket
+from flask import render_template
+from panel2 import app, db, cron
+from panel2.vps.models import Node, XenVPS
+from panel2.cron import MONITORING
+from panel2.utils import send_simple_email
+from ediarpc.rpc_client import ServerProxy
+from panel2.vps.monitorengine import *
 
-vps = Blueprint('vps', __name__, template_folder='templates')
 
-import panel2.vps.models
-import panel2.vps.views
-import panel2.vps.rrdcrawl
-import panel2.vps.watchdog
-import panel2.vps.monitorengine
-import panel2.vps.monitorviews
