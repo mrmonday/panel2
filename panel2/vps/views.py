@@ -142,6 +142,32 @@ def setprofile(vps):
     vps.set_profile(profile)
     return redirect(url_for('.view', vps=vps.id))
 
+@vps.route('/<vps>/monitoring/disable')
+@login_required
+def stop_monitoring(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.watchdog = False
+    db.session.add(vps)
+    db.session.commit()
+    return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/monitoring/enable')
+@login_required
+def start_monitoring(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.watchdog = True
+    db.session.add(vps)
+    db.session.commit()
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/graphs')
 @login_required
 def graphs(vps):
