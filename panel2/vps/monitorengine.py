@@ -156,7 +156,7 @@ class PingProbe(MonitorProbe):
         return subprocess.call(['ping', '-c', '1', '-W', '2', self.ip]) == 0
 
 class TCPConnectProbe(MonitorProbe):
-    __tablename__ = 'monitor_pingprobe'
+    __tablename__ = 'monitor_tcpprobe'
     __mapper_args__ = {'polymorphic_identity': 'tcp'}
 
     id = db.Column(db.Integer, primary_key=True)
@@ -186,10 +186,12 @@ class TCPConnectProbe(MonitorProbe):
 
     def check(self):
         try:
-            sock = socket.create_connection((self.ip, self.port))
+            sock = socket.create_connection((str(self.ip), int(self.port)), timeout=0.5)
             if not self.banner:
                 return True
-            data = sock.read(2048)
+            sock.settimeout(0.5)
+            sock.send('\r\n')
+            data = sock.recv(2048)
             if self.banner in data:
                 return True
         except:
