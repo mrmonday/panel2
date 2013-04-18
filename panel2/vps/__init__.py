@@ -20,3 +20,4 @@ vps = Blueprint('vps', __name__, template_folder='templates')
 import panel2.vps.models
 import panel2.vps.views
 import panel2.vps.rrdcrawl
+import panel2.vps.watchdog
