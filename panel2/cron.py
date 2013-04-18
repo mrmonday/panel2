@@ -15,11 +15,12 @@ from the use of this software.
 
 from functools import wraps
 
-MINUTELY = 'minutely'
-HOURLY   = 'hourly'
-DAILY    = 'daily'
-WEEKLY   = 'weekly'
-MONTHLY  = 'monthly'
+MINUTELY   = 'minutely'
+MONITORING = 'monitoring'
+HOURLY     = 'hourly'
+DAILY      = 'daily'
+WEEKLY     = 'weekly'
+MONTHLY    = 'monthly'
 
 class CronManager(object):
     """
@@ -34,11 +35,12 @@ class CronManager(object):
             print 'hourly event'
     """
     taskqueues = {
-        MINUTELY: list(),
-        HOURLY:   list(),
-        DAILY:    list(),
-        WEEKLY:   list(),
-        MONTHLY:  list()
+        MINUTELY:   list(),
+        MONITORING: list(),
+        HOURLY:     list(),
+        DAILY:      list(),
+        WEEKLY:     list(),
+        MONTHLY:    list()
     }
 
     def task(self, queue):
