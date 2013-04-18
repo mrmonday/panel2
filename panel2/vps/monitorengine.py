@@ -104,6 +104,26 @@ class MonitorProbe(db.Model):
 
         return result
 
+class DebugProbe(MonitorProbe):
+    __mapper_args__ = {'polymorphic_identity': 'debug'}
+
+    def __init__(self, nickname, vps):
+        self.nickname = nickname
+        self.type = 'debug'
+        self.active = True
+
+        self.vps_id = vps.vps_id
+        self.vps = vps
+
+        db.session.add(self)
+        db.session.commit()
+
+    def check(self):
+        if not self.failed:
+            return False
+
+        return True
+
 @cron.task(MONITORING)
 def monitor_task():
     print 'running monitoring probes'
