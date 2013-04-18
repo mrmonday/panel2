@@ -32,6 +32,9 @@ class MonitorTrigger(db.Model):
 
     __mapper_args__ = {'polymorphic_on': type}
 
+    def __repr__(self):
+        return '<MonitorTrigger: {0} {1}>'.format(self.type, repr(self.probe))
+
     def run(self, check):
         print '{0}: trigger for probe type {1} is unimplemented'.format(self.nickname, self.type)
 
@@ -82,6 +85,9 @@ class MonitorProbe(db.Model):
     vps = db.relationship('XenVPS', backref='probes')
 
     __mapper_args__ = {'polymorphic_on': type}
+
+    def __repr__(self):
+        return '<MonitorProbe: {0} [{1}]>'.format(self.type, self.vps.name)
 
     def describe(self):
         return 'There is no description for probe type: {1}'.format(self.type)
