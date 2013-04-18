@@ -1,10 +1,15 @@
 {% extends "vps/base.html" %}
+{% if vpslist[0] %}
+	{% set username=vpslist[0].user.username %}
+{% else %}
+	{% set username=user.username %}
+{% endif %}
 {% set vpslist=vpslist or user.services %}
 {% block title %}Server List{% endblock %}
 
 {% block subcontent %}
 
-<h3 class="service-hdr">{{ user.username }}'s Cluster</h3>
+<h3 class="service-hdr">{{ username }}'s Cluster</h3>
 
 <div class="row-fluid">
 
