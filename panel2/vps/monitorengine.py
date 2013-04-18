@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-import rrdtool, os, time, subprocess, socket
+import rrdtool, os, time, subprocess, socket, requests
 from flask import render_template
 from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
@@ -259,6 +259,51 @@ class TCPConnectProbe(MonitorProbe):
             sock.send('\r\n')
             data = sock.recv(2048)
             if self.banner in data:
+                return True
+        except:
+            pass
+
+        return False
+
+class HTTPProbe(MonitorProbe):
+    __tablename__ = 'monitor_httpprobe'
+    __mapper_args__ = {'polymorphic_identity': 'http'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    probe_id = db.Column(db.Integer, db.ForeignKey('monitorprobes.id'))
+
+    uri = db.Column(db.String(255))
+    banner = db.Column(db.String(255))
+
+    def __repr__(self):
+        return '<MonitorProbe: {0} ({1}) [{2}]>'.format(self.type, self.uri, self.vps.name)
+
+    def __init__(self, nickname, vps, uri, banner=None):
+        self.nickname = nickname
+        self.type = 'http'
+        self.active = True
+
+        self.vps_id = vps.vps_id
+        self.vps = vps
+
+        self.uri = uri
+        self.banner = banner
+
+        db.session.add(self)
+        db.session.commit()
+
+    def describe(self):
+        if self.banner:
+            return 'Fetch {0} and look for {1} in the returned data'.format(self.uri, self.banner)
+
+        return 'Fetch {0}'.format(self.uri)
+
+    def check(self):
+        try:
+            r = requests.get(self.uri)
+            if not self.banner:
+                return True
+            if self.banner in r.text:
                 return True
         except:
             pass
