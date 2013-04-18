@@ -21,3 +21,4 @@ import panel2.vps.models
 import panel2.vps.views
 import panel2.vps.rrdcrawl
 import panel2.vps.watchdog
+import panel2.vps.monitorengine
