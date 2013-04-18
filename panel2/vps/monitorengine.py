@@ -35,6 +35,40 @@ class MonitorTrigger(db.Model):
     def run(self, check):
         print '{0}: trigger for probe type {1} is unimplemented'.format(self.nickname, self.type)
 
+class RebootServiceTrigger(MonitorTrigger):
+    __mapper_args__ = {'polymorphic_identity': 'reboot'}
+
+    def __init__(self, probe):
+        self.type = 'reboot'
+        self.active = True
+
+        self.probe_id = probe.id
+        self.probe = probe
+
+        db.session.add(self)
+        db.session.commit()
+
+    def run(self, check):
+        print '{0}: check failed, rebooting {1}'.format(self.probe.nickname, self.probe.vps.name)
+        check.vps.destroy()
+        check.vps.create()
+
+class DebugTrigger(MonitorTrigger):
+    __mapper_args__ = {'polymorphic_identity': 'debug'}
+
+    def __init__(self, probe):
+        self.type = 'reboot'
+        self.active = True
+
+        self.probe_id = probe.id
+        self.probe = probe
+
+        db.session.add(self)
+        db.session.commit()
+
+    def run(self, check):
+        print '{0}: check failed'.format(self.probe.nickname)
+
 class MonitorProbe(db.Model):
     __tablename__ = 'monitorprobes'
 
@@ -42,11 +76,15 @@ class MonitorProbe(db.Model):
     nickname = db.Column(db.String(255))
     type = db.Column(db.String(50))
     active = db.Column(db.Boolean)
+    failed = db.Column(db.Boolean)
 
     vps_id = db.Column(db.Integer, db.ForeignKey('xenvps.vps_id'))
     vps = db.relationship('XenVPS', backref='probes')
 
     __mapper_args__ = {'polymorphic_on': type}
+
+    def describe(self):
+        return 'There is no description for probe type: {1}'.format(self.type)
 
     def check(self):
         print '{0}: check for probe type {1} is unimplemented'.format(self.nickname, self.type)
@@ -54,8 +92,16 @@ class MonitorProbe(db.Model):
 
     def verify(self):
         result = self.check()
-        if not result:
+
+        if not result and not self.failed:
             [trigger.run(self) for trigger in self.triggers]
+            self.failed = True
+        elif result:
+            self.failed = False
+
+        db.session.add(self)
+        db.session.commit()
+
         return result
 
 @cron.task(MONITORING)
