@@ -57,7 +57,14 @@ def list():
 @login_required
 @admin_required
 def list_all():
-    return render_template_or_json('vps/list.html', vpslist=XenVPS.query.order_by(XenVPS.id))
+    return render_template_or_json('vps/list-all.html', vpslist=XenVPS.query.order_by(XenVPS.id))
+
+@vps.route('/list/u/<user>')
+@login_required
+@admin_required
+def list_user(user):
+    u = User.query.filter_by(username=user).first()
+    return render_template_or_json('vps/list.html', vpslist=filter(lambda x: x.type == 'xenvps', u.services))
 
 @vps.route('/signup', methods=['GET', 'POST'])
 def signup():
