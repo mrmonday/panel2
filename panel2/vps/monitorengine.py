@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-import rrdtool, os, time
+import rrdtool, os, time, subprocess
 from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
 from panel2.cron import MONITORING
@@ -57,7 +57,7 @@ class DebugTrigger(MonitorTrigger):
     __mapper_args__ = {'polymorphic_identity': 'debug'}
 
     def __init__(self, probe):
-        self.type = 'reboot'
+        self.type = 'debug'
         self.active = True
 
         self.probe_id = probe.id
@@ -123,6 +123,31 @@ class DebugProbe(MonitorProbe):
             return False
 
         return True
+
+class PingProbe(MonitorProbe):
+    __tablename__ = 'monitor_pingprobe'
+    __mapper_args__ = {'polymorphic_identity': 'ping'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    probe_id = db.Column(db.Integer, db.ForeignKey('monitorprobes.id'))
+
+    ip = db.Column(db.String(255))
+
+    def __init__(self, nickname, vps, ip):
+        self.nickname = nickname
+        self.type = 'ping'
+        self.active = True
+
+        self.vps_id = vps.vps_id
+        self.vps = vps
+
+        self.ip = ip
+
+        db.session.add(self)
+        db.session.commit()
+
+    def check(self):
+        return subprocess.call(['ping', '-c', '1', '-W', '2', self.ip]) == 0
 
 @cron.task(MONITORING)
 def monitor_task():
