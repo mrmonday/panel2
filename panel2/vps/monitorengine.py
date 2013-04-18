@@ -37,6 +37,9 @@ class MonitorTrigger(db.Model):
     def __repr__(self):
         return '<MonitorTrigger: {0} {1}>'.format(self.type, repr(self.probe))
 
+    def describe(self):
+        return 'Do nothing'
+
     def run(self, check):
         print '{0}: trigger for probe type {1} is unimplemented'.format(self.nickname, self.type)
 
@@ -52,6 +55,9 @@ class RebootServiceTrigger(MonitorTrigger):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        return 'Reboot the VPS on failure'
 
     def run(self, check):
         if not check.failed:
@@ -72,6 +78,9 @@ class DebugTrigger(MonitorTrigger):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        return 'Log a debug message'
 
     def run(self, check):
         print '{0}: check {1}'.format(self.probe.nickname, 'failed' if check.failed else 'recovered')
@@ -99,6 +108,9 @@ class EMailTrigger(MonitorTrigger):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        return 'Send an e-mail to {}'.format(self.email)
 
     def run(self, check):
         subject = None
@@ -131,7 +143,7 @@ class MonitorProbe(db.Model):
         return '<MonitorProbe: {0} [{1}]>'.format(self.type, self.vps.name)
 
     def describe(self):
-        return 'There is no description for probe type: {1}'.format(self.type)
+        return 'Do nothing'
 
     def check(self):
         print '{0}: check for probe type {1} is unimplemented'.format(self.nickname, self.type)
@@ -165,6 +177,9 @@ class DebugProbe(MonitorProbe):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        return 'Negate the status of the last check'
 
     def check(self):
         if not self.failed:
@@ -228,6 +243,12 @@ class TCPConnectProbe(MonitorProbe):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        if self.banner:
+            return 'Connect to {0} port {1} and look for {2} in the returned data'.format(self.ip, self.port, self.banner)
+
+        return 'Connect to {0} port {1}'.format(self.ip, self.port)
 
     def check(self):
         try:
