@@ -100,7 +100,7 @@ $(function() {
     function cpu_data_received(newdata, tmf) {
         var placeholder = $("#cpu-graph");
         var options = {
-            lines: { show: true, fill: false },
+            lines: { show: true, fill: 0.7, lineWidth: 0 },
     	    points: { show: false },
    	    grid: { show: true, borderColor: '#dddddd', borderWidth: 1 },
 	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
@@ -115,7 +115,7 @@ $(function() {
         var options = {
             series: { stack: true },
             legend: { show: true },
-            lines: { show: true, fill: false, stack: false },
+            lines: { show: true, fill: 0.7, stack: false, lineWidth: 0 },
     	    points: { show: false },
    	    grid: { show: true, borderColor: '#dddddd', borderWidth: 1 },
 	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },

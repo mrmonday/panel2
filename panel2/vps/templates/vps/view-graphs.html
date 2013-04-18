@@ -35,7 +35,7 @@ $(function() {
     function cpu_data_received(newdata, tmf) {
         var placeholder = $("#placeholder");
         var options = {
-            lines: { show: true, fill: false },
+            lines: { show: true, fill: 0.7, lineWidth: 0 },
     	    points: { show: false },
    	    grid: { show: true, borderColor: null, borderWidth: 0 },
 	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
@@ -48,8 +48,9 @@ $(function() {
     function net_data_received(newdata, tmf) {
         var placeholder = $("#placeholder");
         var options = {
+            series: { stack: true },
             legend: { show: true },
-            lines: { show: true, fill: false },
+            lines: { show: true, fill: 0.7, lineWidth: 0 },
     	    points: { show: false },
    	    grid: { show: true, borderColor: null, borderWidth: 0 },
 	    xaxis: { mode: "time", timeformat: tmf, timezone: "browser" },
