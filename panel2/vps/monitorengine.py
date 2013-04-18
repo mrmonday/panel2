@@ -14,9 +14,11 @@ from the use of this software.
 """
 
 import rrdtool, os, time, subprocess, socket
+from flask import render_template
 from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
 from panel2.cron import MONITORING
+from panel2.utils import send_simple_email
 from ediarpc.rpc_client import ServerProxy
 
 class MonitorTrigger(db.Model):
@@ -52,6 +54,8 @@ class RebootServiceTrigger(MonitorTrigger):
         db.session.commit()
 
     def run(self, check):
+        if not check.failed:
+            return
         print '{0}: check failed, rebooting {1}'.format(self.probe.nickname, self.probe.vps.name)
         check.vps.destroy()
         check.vps.create()
@@ -70,7 +74,44 @@ class DebugTrigger(MonitorTrigger):
         db.session.commit()
 
     def run(self, check):
-        print '{0}: check failed'.format(self.probe.nickname)
+        print '{0}: check {1}'.format(self.probe.nickname, 'failed' if check.failed else 'recovered')
+
+class EMailTrigger(MonitorTrigger):
+    __tablename__ = 'monitor_emailtrigger'
+    __mapper_args__ = {'polymorphic_identity': 'email'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    trigger_id = db.Column(db.Integer, db.ForeignKey('monitortriggers.id'))
+
+    email = db.Column(db.String(255))
+
+    def __init__(self, probe, email=None):
+        self.type = 'email'
+        self.active = True
+
+        self.probe_id = probe.id
+        self.probe = probe
+
+        if not email:
+            self.email = probe.vps.user.email
+        else:
+            self.email = email
+
+        db.session.add(self)
+        db.session.commit()
+
+    def run(self, check):
+        subject = None
+        message = None
+
+        if check.failed:
+            subject = '*** FAILED: {0} on {1} ***'.format(self.probe.nickname, self.probe.vps.name)
+            message = render_template('vps/email/monitoring-failed.txt', user=self.probe.vps.user, service=self.probe.vps, check=self.probe)
+        else:
+            subject = '*** RECOVERY: {0} on {1} ***'.format(self.probe.nickname, self.probe.vps.name)
+            message = render_template('vps/email/monitoring-recovered.txt', user=self.probe.vps.user, service=self.probe.vps, check=self.probe)
+
+        send_simple_email(recipient=self.email, subject=subject, message=message)
 
 class MonitorProbe(db.Model):
     __tablename__ = 'monitorprobes'
@@ -100,10 +141,11 @@ class MonitorProbe(db.Model):
         result = self.check()
 
         if not result and not self.failed:
-            [trigger.run(self) for trigger in self.triggers]
             self.failed = True
-        elif result:
+            [trigger.run(self) for trigger in self.triggers]
+        elif result and self.failed:
             self.failed = False
+            [trigger.run(self) for trigger in self.triggers]
 
         db.session.add(self)
         db.session.commit()
@@ -151,6 +193,9 @@ class PingProbe(MonitorProbe):
 
         db.session.add(self)
         db.session.commit()
+
+    def describe(self):
+        return 'Send an ICMP ping to {} and wait 2 seconds for a response'.format(self.ip)
 
     def check(self):
         return subprocess.call(['ping', '-c', '1', '-W', '2', self.ip]) == 0
@@ -201,6 +246,11 @@ class TCPConnectProbe(MonitorProbe):
 
 @cron.task(MONITORING)
 def monitor_task():
+    ctx = app.test_request_context()
+    ctx.push()
+
     print 'running monitoring probes'
     for probe in MonitorProbe.query.filter_by(active=True):
         probe.verify()
+
+    ctx.pop()
