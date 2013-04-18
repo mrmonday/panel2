@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-import rrdtool, os, time, subprocess
+import rrdtool, os, time, subprocess, socket
 from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
 from panel2.cron import MONITORING
@@ -154,6 +154,48 @@ class PingProbe(MonitorProbe):
 
     def check(self):
         return subprocess.call(['ping', '-c', '1', '-W', '2', self.ip]) == 0
+
+class TCPConnectProbe(MonitorProbe):
+    __tablename__ = 'monitor_pingprobe'
+    __mapper_args__ = {'polymorphic_identity': 'tcp'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    probe_id = db.Column(db.Integer, db.ForeignKey('monitorprobes.id'))
+
+    ip = db.Column(db.String(255))
+    port = db.Column(db.Integer)
+    banner = db.Column(db.String(255))
+
+    def __repr__(self):
+        return '<MonitorProbe: {0} ({1}/{2}) [{3}]>'.format(self.type, self.ip, self.port, self.vps.name)
+
+    def __init__(self, nickname, vps, ip, port, banner=None):
+        self.nickname = nickname
+        self.type = 'tcp'
+        self.active = True
+
+        self.vps_id = vps.vps_id
+        self.vps = vps
+
+        self.ip = ip
+        self.port = port
+        self.banner = banner
+
+        db.session.add(self)
+        db.session.commit()
+
+    def check(self):
+        try:
+            sock = socket.create_connection((self.ip, self.port))
+            if not self.banner:
+                return True
+            data = sock.read(2048)
+            if self.banner in data:
+                return True
+        except:
+            pass
+
+        return False
 
 @cron.task(MONITORING)
 def monitor_task():
