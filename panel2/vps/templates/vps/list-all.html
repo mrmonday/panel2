@@ -1,0 +1,45 @@
+{% extends "vps/base.html" %}
+{% set vpslist=vpslist or user.services %}
+{% block title %}Server List{% endblock %}
+
+{% block subcontent %}
+
+<h3>All Servers</h3>
+
+<table class="table table-striped">
+<tr>
+	<th class="span2">VPS</th>
+	<th class="span1">Memory</th>
+	<th class="span1">Disk</th>
+	<th class="span2">Primary IP</th>
+	<th class="span1">Host</th>
+	<th class="span3">Location</th>
+	<th class="span2">
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+
+{% for service in vpslist %}
+{% if service.is_entitled and service.type == 'xenvps' %}
+<tr>
+	<td>{{ service.name }}</td>
+	<td>{{ service.memory }} MB</td>
+	<td>{{ service.disk }} GB</td>
+	<td>{{ service.ips[0].ip }}</td>
+	<td>{{ service.node.name }}</td>
+	<td>{{ service.node.region.name }}</td>
+	<td>
+		<span class="pull-right">
+			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-primary">View</a>
+			{% if user.is_admin %}
+				<a href="{{ url_for('.ip_admin', vps=service.id) }}" class="btn btn-danger">Admin</a>
+			{% endif %}
+		</span>
+	</td>
+</tr>
+{% endif %}     
+{% endfor %}
+
+</table>
+
+{% endblock %}
