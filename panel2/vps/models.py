@@ -175,6 +175,8 @@ class XenVPS(Service):
     profile_id = db.Column(db.Integer, db.ForeignKey('kernel_profile.id'))
     profile = db.relationship('KernelProfile')
 
+    watchdog = db.Column(db.Boolean)
+
     name = db.Column(db.String(255))
 
     def __init__(self, name, memory, swap, disk, price, node, user):
@@ -193,6 +195,8 @@ class XenVPS(Service):
 
         self.profile = KernelProfile.query.first()
         self.profile_id = self.profile.id
+
+        self.watchdog = False
 
         db.session.add(self)
         db.session.commit()
