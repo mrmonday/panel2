@@ -1,0 +1,53 @@
+{% extends "vps/view-hdr.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Monitoring' %}
+
+{% block subcontent %}
+{{ super() }}
+
+<form method="POST">
+	<table class="table table-striped">
+	<tr>
+		<th>Name</th>
+		<td><input class="input-block-level" type="text" name="nickname" required="true"></td>
+		<td>The name of the monitor.</td>
+	</tr>
+	<tr>
+		<th>Type</th>
+		<td>
+			<select name="type" class="input-block-level">
+				<option value="ping">ICMP Ping</option>
+				<option value="tcp">TCP Connection</option>
+				<option value="uri">URI</option>
+			</select>
+		</td>
+		<td>The type of the monitor.  This may be ICMP Ping, TCP Connection or URI.</td>
+	</tr>
+	<tr class="nonuri">
+		<th>IP</th>
+		<td><input class="input-block-level" type="text" name="ip" value="{{ service.ips[0].ip }}"></td>
+		<td>The IP address of the service to be checked.</td>
+	</tr>
+	<tr class="nonuri">
+		<th>Port</th>
+		<td><input class="input-block-level" type="text" name="port" value=""></td>
+		<td>For TCP connections, the port of the service to be checked.</td>
+	</tr>
+	<tr class="uri">
+		<th>URI</th>
+		<td><input class="input-block-level" type="text" name="uri" value=""></td>
+		<td>For URI monitor, the URI to be checked, else blank.</td>
+	</tr>
+	<tr>
+		<th>Containing</th>
+		<td><input class="input-block-level" type="text" name="content"></td>
+		<td>If this field is anything other than blank, the service check will fail if the response body does not contain the data.</td>
+	</tr>
+	<tr>
+		<th></th>
+		<td colspan="2"><button class="btn btn-primary" type="submit">Create</button></td>
+	</tr>
+	</table>
+</form>
+
+{% endblock %}

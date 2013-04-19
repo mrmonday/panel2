@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 import rrdtool, os, time, subprocess, socket
-from flask import render_template
+from flask import render_template, request, url_for, redirect
 from panel2 import app, db, cron
 from panel2.vps import vps
 from panel2.vps.models import Node, XenVPS
@@ -43,4 +43,46 @@ def monitor_rules(vps, monitor):
     if monitor not in vps.probes:
         abort(403)
     return render_template_or_json('vps/monitoring-details.html', service=vps, monitor=monitor)
+
+@vps.route('/<vps>/monitor/<monitor>/enable')
+@login_required
+def monitor_enable(vps, monitor):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    monitor = MonitorProbe.query.filter_by(id=monitor).first_or_404()
+    if monitor not in vps.probes:
+        abort(403)
+    monitor.set_active(True)
+    return redirect(url_for('.monitor_rules', vps=vps.id, monitor=monitor.id))
+
+@vps.route('/<vps>/monitor/<monitor>/disable')
+@login_required
+def monitor_disable(vps, monitor):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    monitor = MonitorProbe.query.filter_by(id=monitor).first_or_404()
+    if monitor not in vps.probes:
+        abort(403)
+    monitor.set_active(False)
+    return redirect(url_for('.monitor_rules', vps=vps.id, monitor=monitor.id))
+
+montypes = {
+    'ping': lambda vps: PingProbe(request.form['nickname'], vps, request.form['ip']),
+    'tcp':  lambda vps: TCPConnectProbe(request.form['nickname'], vps, request.form['ip'], request.form['port'], request.form['content'] if len(request.form['content']) > 0 else None),
+    'uri':  lambda vps: HTTPProbe(request.form['nickname'], vps, request.form['uri'], request.form['content'] if len(request.form['content']) > 0 else None),
+};
+
+@vps.route('/<vps>/monitor/new', methods=['GET', 'POST'])
+@login_required
+def monitor_new(vps):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    if request.method == 'POST':
+        probe = montypes[request.form['type']](vps)
+        probe.verify()
+        return redirect(url_for('.monitor_rules', vps=vps.id, monitor=probe.id))
+    return render_template_or_json('vps/monitoring-new.html', service=vps)
 
