@@ -142,6 +142,12 @@ class MonitorProbe(db.Model):
     def __repr__(self):
         return '<MonitorProbe: {0} [{1}]>'.format(self.type, self.vps.name)
 
+    def set_active(self, active):
+        self.active = active
+
+        db.session.add(self)
+        db.session.commit()
+
     def describe(self):
         return 'Do nothing'
 
