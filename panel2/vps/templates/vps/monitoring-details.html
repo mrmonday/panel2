@@ -1,0 +1,94 @@
+{% extends "vps/view-hdr.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Monitoring' %}
+
+{% block subcontent %}
+
+<h3 class="service-hdr">
+	{{ monitor.nickname }} ({{ service.name }})
+	<span class="pull-right">
+		<a href="#" class="btn btn-success">New Monitor</a>
+	</span>
+</h3>
+
+<table class="table table-striped">
+<tr>
+	<th>Status</th>
+	<th>Monitor Name</th>
+	<th>Monitor Type</th>
+	<th>Resource</th>
+	<th>Content</th>
+	<th>
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+<tr>
+	<td>
+		{% if monitor.active %}
+
+		{% if monitor.failed %}
+			<span class="text-error"><strong>DOWN</strong></span>
+		{% else %}
+			<span class="text-success"><strong>OK</strong></span>
+		{% endif %}
+
+		{% else %}
+			<span class="muted"><strong>INACTIVE</strong></span>
+		{% endif %}
+	</td>
+	<td>{{ monitor.nickname }}</td>
+	<td>{{ monitor.type }}</td>
+	<td>
+		{% if monitor.uri %}
+		{{ monitor.uri }}
+		{% else %}
+		{{ monitor.ip }}{% if monitor.port %}:{{ monitor.port }}{% endif %}
+		{% endif %}
+	</td>
+	<td>{{ monitor.banner }}</td>
+	<td>
+		<span class="pull-right">
+			{% if monitor.active %}
+			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-danger">Disable</a>
+			{% else %}
+			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-success">Enable</a>
+			{% endif %}
+			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-warning">Delete</a>
+		</span>
+	</td>
+</tr>
+
+</table>
+
+<h3 class="service-hdr">
+	Triggers
+	<small>actions to run when the monitor state changes</small>
+	<span class="pull-right">
+		<a href="#" class="btn btn-success">New Trigger</a>
+	</span>
+</h3>
+
+<table class="table table-striped">
+<tr>
+	<th>Trigger Type</th>
+	<th>Action</th>
+	<th>
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+{% for trigger in monitor.triggers %}
+<tr>
+	<td>{{ trigger.type }}</td>
+	<td>{{ trigger.describe() }}</td>
+	<td>
+		<span class="pull-right">
+			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-warning">Delete</a>
+		</span>
+	</td>
+</tr>
+{% endfor %}
+
+</table>
+
+
+{% endblock %}
