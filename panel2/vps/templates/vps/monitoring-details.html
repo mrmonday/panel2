@@ -64,7 +64,7 @@
 	Triggers
 	<small>actions to run when the monitor state changes</small>
 	<span class="pull-right">
-		<a href="#" class="btn btn-success">New Trigger</a>
+		<a href="{{ url_for('.monitor_new_trigger', vps=service.id, monitor=monitor.id) }}" class="btn btn-success">New Trigger</a>
 	</span>
 </h3>
 
@@ -82,7 +82,7 @@
 	<td>{{ trigger.describe() }}</td>
 	<td>
 		<span class="pull-right">
-			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-warning">Delete</a>
+			<a href="{{ url_for('.monitor_del_trigger', vps=service.id, monitor=monitor.id, trigger=trigger.id) }}" class="btn btn-warning">Delete</a>
 		</span>
 	</td>
 </tr>

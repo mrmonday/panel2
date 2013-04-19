@@ -86,3 +86,37 @@ def monitor_new(vps):
         return redirect(url_for('.monitor_rules', vps=vps.id, monitor=probe.id))
     return render_template_or_json('vps/monitoring-new.html', service=vps)
 
+trigtypes = {
+    'reboot': lambda monitor: RebootServiceTrigger(monitor),
+    'email':  lambda monitor: EMailTrigger(monitor, request.form['email'] if len(request.form['email']) > 0 else None),
+}
+
+@vps.route('/<vps>/monitor/<monitor>/trigger/new', methods=['GET', 'POST'])
+@login_required
+def monitor_new_trigger(vps, monitor):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    monitor = MonitorProbe.query.filter_by(id=monitor).first_or_404()
+    if monitor not in vps.probes:
+        abort(403)
+    if request.method == 'POST':
+        trigger = trigtypes[request.form['type']](monitor)
+        return redirect(url_for('.monitor_rules', vps=vps.id, monitor=monitor.id))
+    return render_template_or_json('vps/monitoring-trigger-new.html', service=vps, monitor=monitor)
+
+@vps.route('/<vps>/monitor/<monitor>/trigger/<trigger>/delete')
+@login_required
+def monitor_del_trigger(vps, monitor, trigger):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    monitor = MonitorProbe.query.filter_by(id=monitor).first_or_404()
+    if monitor not in vps.probes:
+        abort(403)
+    trigger = MonitorTrigger.query.filter_by(id=trigger).first_or_404()
+    if trigger not in monitor.triggers:
+        abort(403)
+    db.session.delete(trigger)
+    db.session.commit()
+    return redirect(url_for('.monitor_rules', vps=vps.id, monitor=monitor.id))

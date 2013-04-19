@@ -1,0 +1,32 @@
+{% extends "vps/view-hdr.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+{% set subtitle='Monitoring' %}
+
+{% block subcontent %}
+{{ super() }}
+
+<form method="POST">
+	<table class="table table-striped">
+	<tr>
+		<th>Type</th>
+		<td>
+			<select name="type" class="input-block-level">
+				<option value="reboot">Reboot Server</option>
+				<option value="email">Send E-Mail</option>
+			</select>
+		</td>
+		<td>The type of action.  This may be Reboot Server or Send E-Mail.</td>
+	</tr>
+	<tr>
+		<th>E-Mail</th>
+		<td><input class="input-block-level" type="text" name="email"></td>
+		<td>If the requested action is to send an e-mail, this allows for the customization of the e-mail address.</td>
+	</tr>
+	<tr>
+		<th></th>
+		<td colspan="2"><button class="btn btn-primary" type="submit">Create</button></td>
+	</tr>
+	</table>
+</form>
+
+{% endblock %}
