@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-import rrdtool, os, time, subprocess, socket, requests
+import rrdtool, os, time, subprocess, socket, requests, json
 from flask import render_template
 from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
@@ -125,6 +125,44 @@ class EMailTrigger(MonitorTrigger):
 
         send_simple_email(recipient=self.email, subject=subject, message=message)
 
+class WebHookTrigger(MonitorTrigger):
+    __tablename__ = 'monitor_webhooktrigger'
+    __mapper_args__ = {'polymorphic_identity': 'webhook'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    trigger_id = db.Column(db.Integer, db.ForeignKey('monitortriggers.id'))
+
+    uri = db.Column(db.String(255))
+
+    def __init__(self, probe, uri):
+        self.type = 'webhook'
+        self.active = True
+
+        self.probe_id = probe.id
+        self.probe = probe
+
+        self.uri = uri
+
+        db.session.add(self)
+        db.session.commit()
+
+    def describe(self):
+        return 'Post a JSON structure to {} describing the event'.format(self.uri)
+
+    def run(self, check):
+        payload = {
+            'name': self.probe.nickname,
+            'status': 'ok' if not self.failed else 'down',
+            'time': time.time() * 1000,
+            'resource': self.probe.resource_dict(),
+            'description': self.probe.describe(),
+        }
+        message = json.dumps(payload)
+        try:
+            requests.post(self.uri, message, timeout=2.0)
+        except:
+            pass
+
 class MonitorProbe(db.Model):
     __tablename__ = 'monitorprobes'
 
@@ -147,6 +185,9 @@ class MonitorProbe(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def resource_dict(self):
+        return dict(type=self.type)
 
     def describe(self):
         return 'Do nothing'
@@ -215,6 +256,9 @@ class PingProbe(MonitorProbe):
         db.session.add(self)
         db.session.commit()
 
+    def resource_dict(self):
+        return dict(type=self.type, ip=self.ip)
+
     def describe(self):
         return 'Send an ICMP ping to {} and wait 2 seconds for a response'.format(self.ip)
 
@@ -249,6 +293,9 @@ class TCPConnectProbe(MonitorProbe):
 
         db.session.add(self)
         db.session.commit()
+
+    def resource_dict(self):
+        return dict(type=self.type, ip=self.ip, port=self.port, banner=self.banner)
 
     def describe(self):
         if self.banner:
@@ -298,6 +345,9 @@ class HTTPProbe(MonitorProbe):
         db.session.add(self)
         db.session.commit()
 
+    def resource_dict(self):
+        return dict(type=self.type, uri=self.uri, banner=self.banner)
+
     def describe(self):
         if self.banner:
             return 'Fetch {0} and look for {1} in the returned data'.format(self.uri, self.banner)
@@ -306,7 +356,7 @@ class HTTPProbe(MonitorProbe):
 
     def check(self):
         try:
-            r = requests.get(self.uri)
+            r = requests.get(self.uri, timeout=2.0)
             if not self.banner:
                 return True
             if self.banner in r.text:
