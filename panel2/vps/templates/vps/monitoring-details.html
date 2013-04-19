@@ -53,7 +53,7 @@
 			{% else %}
 			<a href="{{ url_for('.monitor_enable', vps=service.id, monitor=monitor.id) }}" class="btn btn-success">Enable</a>
 			{% endif %}
-			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-warning">Delete</a>
+			<a href="{{ url_for('.monitor_del', vps=service.id, monitor=monitor.id) }}" class="btn btn-warning">Delete</a>
 		</span>
 	</td>
 </tr>
