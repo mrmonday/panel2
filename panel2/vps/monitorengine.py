@@ -258,10 +258,10 @@ class TCPConnectProbe(MonitorProbe):
 
     def check(self):
         try:
-            sock = socket.create_connection((str(self.ip), int(self.port)), timeout=0.5)
+            sock = socket.create_connection((str(self.ip), int(self.port)), timeout=2.0)
             if not self.banner:
                 return True
-            sock.settimeout(0.5)
+            sock.settimeout(2.0)
             sock.send('\r\n')
             data = sock.recv(2048)
             if self.banner in data:
