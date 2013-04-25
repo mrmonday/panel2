@@ -242,14 +242,14 @@ class XenVPS(Service):
     def init(self):
         return self.api().vps_create(domname=self.name, size=self.disk, swap=self.swap, is_hvm=False)
 
-    def image(self, template):
+    def image(self, template, arch='x86_64'):
         eth0 = {
            'address': self.ips[0].ip,
            'netmask': str(self.ips[0].ipnet.ipnet().netmask),
            'broadcast': str(self.ips[0].ipnet.broadcast()),
            'gateway': str(self.ips[0].ipnet.gateway()),
         }
-        return self.api().vps_image(domname=self.name, eth0=eth0, image=template)
+        return self.api().vps_image(domname=self.name, eth0=eth0, image=template, arch=arch)
 
     # XXX: presently MD5 Crypt is still the lowest common denominator...
     def rootpass(self, rootpass):
@@ -268,10 +268,10 @@ class XenVPS(Service):
     def unpause(self):
         return self.api().unpause(domname=self.name)
 
-    def reimage(self, template, password, create=False):
+    def reimage(self, template, password, create=False, arch='x86_64'):
         self.destroy()
         self.format()
-        self.image(template)
+        self.image(template, arch=arch)
         self.rootpass(password)
         if create:
             self.create()
