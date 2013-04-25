@@ -271,7 +271,7 @@ def deploy(vps):
     if request.method == 'POST':
         create = 'startvps' in request.form
         flash('Your deployment request is in progress, check back later.')
-        vps.reimage(request.form['imagename'], request.form['rootpass'], create=create)
+        vps.reimage(request.form['imagename'], request.form['rootpass'], create=create, arch=request.form['arch'])
         return redirect(url_for('.jobs', vps=vps.id))
     else:
         return render_template_or_json('vps/view-deploy.html', service=vps, templates=template_map)
