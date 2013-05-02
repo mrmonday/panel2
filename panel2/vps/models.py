@@ -25,6 +25,21 @@ from ediarpc.rpc_client import ServerProxy
 
 from collections import OrderedDict
 
+class HVMISOImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    file = db.Column(db.String(255))
+
+    def __init__(self, name, file):
+        self.name = name
+        self.file = file
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<HVMISOImage: '{0}' ['{1}']>".format(self.name, self.file)
+
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
