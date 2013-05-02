@@ -35,6 +35,7 @@ template_map = {
     'ubuntu12.04_login.xml': 'Ubuntu Server 12.04 LTS (minimal)',
     'alpine2.5_login.xml': 'Alpine 2.5 (minimal)',
     'centos6_login.xml': 'CentOS 6 (minimal)',
+    'arch_login.xml': 'Arch Linux (minimal)',
 }
 
 def can_access_vps(vps, user=None):
