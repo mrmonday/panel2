@@ -61,6 +61,7 @@ class KernelProfile(db.Model):
             'eth0_gateway': domain.ips[0].ipnet.gateway(),
             'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
             'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
+            'isopath': domain.hvmiso.file,
         }
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
@@ -190,6 +191,9 @@ class XenVPS(Service):
     profile_id = db.Column(db.Integer, db.ForeignKey('kernel_profile.id'))
     profile = db.relationship('KernelProfile')
 
+    hvmiso_id = db.Column(db.Integer, db.ForeignKey('hvmiso_image.id'))
+    hvmiso = db.relationship('HVMISOImage')
+
     watchdog = db.Column(db.Boolean)
 
     name = db.Column(db.String(255))
@@ -210,6 +214,8 @@ class XenVPS(Service):
 
         self.profile = KernelProfile.query.first()
         self.profile_id = self.profile.id
+
+        self.hvmiso_id = 1
 
         self.watchdog = False
 
