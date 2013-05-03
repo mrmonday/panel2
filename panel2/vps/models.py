@@ -16,6 +16,7 @@ from the use of this software.
 import time
 import rrdtool
 import hashlib
+import random
 
 from panel2 import app, db
 from panel2.service import Service, IPRange
@@ -197,6 +198,7 @@ class XenVPS(Service):
     watchdog = db.Column(db.Boolean)
 
     name = db.Column(db.String(255))
+    mac = db.Column(db.String(255))
 
     def __init__(self, name, memory, swap, disk, price, node, user):
         self.name = name
@@ -222,9 +224,18 @@ class XenVPS(Service):
         db.session.add(self)
         db.session.commit()
 
+        self.generate_mac()
+
     def _serialize(self):
         return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
-                    user=self.user.username, ips=[ip._serialize() for ip in self.ips])
+                    user=self.user.username, ips=[ip._serialize() for ip in self.ips], mac=self.mac)
+
+    def generate_mac(self):
+        octets = [random.randint(0, 255) for x in range(3)]
+        self.mac = '00:16:3e:{0:2x}:{1:2x}:{2:2x}'.format(*octets)
+
+        db.session.add(self)
+        db.session.commit()
 
     def set_hvmiso(self, hvmiso):
         self.hvmiso_id = hvmiso.id
@@ -262,7 +273,7 @@ class XenVPS(Service):
         if not profile:
             profile = self.profile
         bootargs = profile.render_config(self)
-        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], **bootargs)
+        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
 
     def format(self):
         return self.api().vps_format(domname=self.name)
