@@ -36,7 +36,11 @@
 						<li{{ ' class="active"'|safe if subtitle == 'Clone' else '' }}><a href="{{ url_for('.clone', vps=service.id) }}">Clone</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
 						<li{{ ' class="active"'|safe if subtitle == 'Profiler' else '' }}><a href="{{ url_for('.profiler', vps=service.id) }}">Profiler</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'Console' else '' }}><a href="{{ url_for('.console', vps=service.id) }}">Serial Console</a></li>
+						{% if service.profile.name != 'HVM' %}
+							<li{{ ' class="active"'|safe if subtitle == 'Console' else '' }}><a href="{{ url_for('.console', vps=service.id) }}">Serial Console</a></li>
+						{% else %}
+							<li{{ ' class="active"'|safe if subtitle == 'HVM' else '' }}><a href="{{ url_for('.hvmvnc', vps=service.id) }}">HVM Configuration</a></li>
+						{% endif %}
 						<li{{ ' class="active"'|safe if subtitle == 'Monitoring' else '' }}><a href="{{ url_for('.monitor_list', vps=service.id) }}">Monitoring</a></li>
 					</ul>
 				<li>

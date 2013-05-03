@@ -21,7 +21,7 @@ from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
-from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile
+from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile, HVMISOImage
 from panel2.user import login_required, admin_required, get_session_user, User, Session
 from panel2.invoice import Invoice
 from panel2.utils import render_template_or_json
@@ -383,6 +383,24 @@ def console_real(vps):
     if can_access_vps(vps) is False:
         abort(403)
     return render_template_or_json('vps/view-console-real.html', service=vps)
+
+@vps.route('/<vps>/hvm')
+@login_required
+def hvmvnc(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    return render_template_or_json('vps/view-hvm.html', service=vps, isolist=HVMISOImage.query)
+
+@vps.route('/<vps>/hvm/setiso', methods=['POST'])
+@login_required
+def hvmisoset(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    hvmiso = HVMISOImage.query.filter_by(id=int(request.form['isoid'])).first_or_404()
+    vps.set_hvmiso(hvmiso)
+    return redirect(url_for('.hvmvnc', vps=vps.id))
 
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required

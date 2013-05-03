@@ -226,6 +226,13 @@ class XenVPS(Service):
         return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
                     user=self.user.username, ips=[ip._serialize() for ip in self.ips])
 
+    def set_hvmiso(self, hvmiso):
+        self.hvmiso_id = hvmiso.id
+        self.hvmiso = hvmiso
+
+        db.session.add(self)
+        db.session.commit()
+
     def set_profile(self, profile):
         self.profile_id = profile.id
         self.profile = profile

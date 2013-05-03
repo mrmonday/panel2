@@ -1,0 +1,47 @@
+{% extends "vps/view-hdr.html" %}
+{% set subtitle='HVM' %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+
+{% block component %}
+
+<h4>VNC Credentials</h4>
+
+<div class="row-fluid">
+	<div class="span3"><strong>Host:</strong></div>
+	<div class="span9">{{ service.node.ipaddr }} ({{ service.node.name }})</div>
+</div>
+
+<div class="row-fluid">
+	<div class="span3"><strong>Port:</strong></div>
+	<div class="span9">{{ 5900 + service.id }}</div>
+</div>
+
+<div class="row-fluid">
+	<div class="span3"><strong>Password:</strong></div>
+	<div class="span9">{{ service.name }}</div>
+</div>
+
+<h4>Boot ISO</h4>
+
+<p>You may select a boot ISO from the list of ISO images below.  These images are used to install an OS on your server.
+   If you need another image, contact support.</p>
+
+<form method="POST" action="{{ url_for('.hvmisoset', vps=service.id) }}">
+{% for iso in isolist %}
+<div class="row-fluid">
+	<div class="span1 text-center">
+		<input type="radio" name="isoid" value="{{ iso.id }}"{% if iso.id == service.hvmiso_id %} checked="checked"{% endif %}>
+	</div>
+	<div class="span11">
+		{{ iso.name }}
+	</div>
+</div>
+{% endfor %}
+<div class="row-fluid">
+	<div class="span11 offset1">
+		<button type="submit" class="btn btn-primary">Select Boot ISO</button>
+	</div>
+</div>
+</form>
+
+{% endblock %}
