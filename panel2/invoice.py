@@ -128,6 +128,9 @@ class InvoiceItem(db.Model):
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
     invoice = db.relationship('Invoice', backref='items')
 
+    def __repr__(self):
+        return "<InvoiceItem {0}: {1} (${2})>".format(self.id, self.description, self.price)
+
     def __init__(self, service, invoice, price, description=None):
         if not description and service:
             self.description = '{} renewal'.format(service.name)
