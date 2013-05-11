@@ -55,6 +55,7 @@ def view(invoice_id):
 @invoice.route('/<invoice_id>/credit')
 @admin_required
 def credit(invoice_id):
+    user = get_session_user()
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     if not invoice:
         abort(404)

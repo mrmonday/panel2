@@ -39,6 +39,6 @@ def ipn_post(invoice_id):
         return r.text
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
-    invoice.credit(values['mc_gross'], 'PayPal Payment - {}'.format(values['txn_id']))
+    invoice.credit(int(values['mc_gross']), 'PayPal Payment - {}'.format(values['txn_id']))
 
     return r.text
