@@ -58,7 +58,7 @@ def credit(invoice_id):
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     if not invoice:
         abort(404)
-    invoice.mark_paid()
+    invoice.credit(invoice.total_due(), "Service credit (per {})".format(user.username))
     return redirect(url_for('.view', invoice_id=invoice.id))
 
 @invoice.route('/unpaid')

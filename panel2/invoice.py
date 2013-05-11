@@ -83,6 +83,12 @@ class Invoice(db.Model):
         [item.mark_paid() for item in self.items]
         invoice_paid_signal.send(app, invoice=self)
 
+    def credit(self, amount, description='Payment'):
+        item = InvoiceItem(None, self, -amount, description)
+        if self.total_due() == 0:
+            self.mark_paid()
+        return item
+
     def total_due(self):
         return sum([child.price for child in self.items])
 
