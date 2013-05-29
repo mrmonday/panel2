@@ -24,11 +24,16 @@
 
 	<div class="span6">
 		<h4>Expiry:</h4>
+		<span class="specification">
 		{% if service.expiry %}
-		<span class="specification">{{ service.expiry | strftime('%m/%d/%Y') }} (${{ service.price | strf("{0:.2f}") }} per month)</span>
+		{{ service.expiry | strftime('%m/%d/%Y') }} (${{ service.price | strf("{0:.2f}") }} per month)
 		{% else %}
-		<span class="specification">Inactive</span>
+		Inactive
 		{% endif %}
+		</span>
+		<span class="pull-right">
+			<a href="{{ url_for('.renew', vps=service.id) }}" class="btn btn-success">Renew</a>
+		</span>
 	</div>
 </div>
 

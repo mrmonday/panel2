@@ -201,6 +201,24 @@ def adm_delete(vps):
     flash('Your VPS has been deleted.')
     return redirect(url_for('.list'))
 
+@vps.route('/<vps>/renew')
+@login_required
+def renew(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    inv = Invoice(vps.user)
+    vps.invoice(inv)
+    inv.mark_ready()
+
+    if not inv.payment_ts:
+        return redirect(url_for('invoice.view', invoice_id=inv.id))
+
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/create', methods=['GET', 'POST'])
 @login_required
 def create(vps):
