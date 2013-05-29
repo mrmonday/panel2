@@ -22,11 +22,9 @@
 		{% endblock head %}
 	</head>
 
-	<body>
+	<body class="container-fluid">
 		{% block body %}
-		<div class="page-content-wrapper">
-			{% block content %}{% endblock content %}
-		</div>
+		{% block content %}{% endblock content %}
 		{% endblock body %}
 	</body>
 </html>

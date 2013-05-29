@@ -28,9 +28,7 @@
 		</div>
 	</header>
 
-	<div class="container-fluid" id="container-base">
-    <div class="row-fluid">
-        <div class="span2" id="sidebar">
+        <nav id="sidebar">
 		{% block sidebar %}
 		<ul class="nav nav-list">
 		{% if user %}
@@ -45,20 +43,17 @@
 		{% endif %}
 		</ul>
 		{% endblock %}
-        </div>
+        </nav>
 
-	<div class="span10 contentfix">
-	{% block content %}{% endblock %}
-	</div>
-    </div>
+	<section class="container-fluid" id="container-base">
+		{% block content %}{% endblock %}
+	</section>
 
 	<div class="row-fluid">
           <div class='notifications top-right'></div>
           <div class='notifications bottom-right'></div>
           <div class='notifications top-left'></div>
           <div class='notifications bottom-left'></div>
-	</div>
-
 	</div>
 
 {% endblock body %}

@@ -11,5 +11,5 @@ function setup_sidebar() {
 	$('.contentfix').css('marginRight', 0);
 }
 
-$(document).ready(setup_sidebar);
-$(window).resize(setup_sidebar);
+//$(document).ready(setup_sidebar);
+//$(window).resize(setup_sidebar);
