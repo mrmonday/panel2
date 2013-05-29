@@ -39,6 +39,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
 </tr>
 </table>
 
+{% if not invoice.payment_ts %}
 <!-- PayPal button -->
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 	<input type="hidden" name="business" value="{{ config['PAYPAL_EMAIL'] }}">
@@ -57,5 +58,6 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
 		<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
 	{% endif %}
 </h4>
+{% endif %}
 
 {% endblock %}
