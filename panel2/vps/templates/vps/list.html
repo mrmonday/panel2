@@ -9,7 +9,12 @@
 
 {% block subcontent %}
 
-<h3 class="service-hdr">{{ username }}'s Cluster</h3>
+<h3 class="service-hdr">
+	{{ username }}'s Cluster
+	<span class="pull-right">
+		<a href="{{ url_for('.signup') }}" class="btn btn-success">Add a Server</a>
+	</span>
+</h3>
 
 <div class="row-fluid">
 
