@@ -32,20 +32,22 @@
 		{% block sidebar %}
 		<ul class="nav nav-list">
 		{% if user %}
-		<li><a href="{{ url_for('dns.list') }}">DNS</a>{% block dnssidebar %}{% endblock %}</li>
-		<li><a href="{{ url_for('vps.list') }}">Servers</a>{% block serversidebar %}{% endblock %}</li>
-		<li><a href="{{ url_for('support.list') }}">Support</a>{% block supportsidebar %}{% endblock %}</li>
-		<li><a href="{{ url_for('profile_index') }}">Preferences</a></li>
-		<li><a href="{{ url_for('invoice.index') }}">Invoices</a>{% block invoicesidebar %}{% endblock %}</li>
+		<li><a href="{{ url_for('dns.list') }}"><i class="bigicon icon-globe"></i>DNS</a></li>
+		<li{% if section == 'vps' %} class="active"{% endif %}><a href="{{ url_for('vps.list') }}"><i class="bigicon icon-cloud"></i>vServers</a></li>
+		<li><a href="{{ url_for('support.list') }}"><i class="bigicon icon-phone"></i>Support</a></li>
+		<li><a href="{{ url_for('profile_index') }}"><i class="bigicon icon-cog"></i>Settings</a></li>
+		<li><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Invoices</a></li>
 		{% if user.is_admin %}
-		<li><a href="{{ url_for('profile.list') }}"><i class="icon-lock"></i> Accounting</a>{% block accountingsidebar %}{% endblock accountingsidebar %}</li>
+		<li><a href="{{ url_for('profile.list') }}"><i class="bigicon icon-dashboard"></i>Admin</a></li>
 		{% endif %}
 		{% endif %}
 		</ul>
 		{% endblock %}
         </nav>
 
-	<section class="container-fluid" id="container-base">
+	{% block subnav %}{% endblock %}
+
+	<section class="container-base container-fluid" id="{% block containertype %}container-base-type{% endblock %}">
 		{% block content %}{% endblock %}
 	</section>
 
