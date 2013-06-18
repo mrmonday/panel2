@@ -1,4 +1,5 @@
 {% extends "base-scaffolding.html" %}
+{% set section = 'vps' %}
 {% if service %}
 	{% set svclist = service.user.services %}
 {% else %}
@@ -7,9 +8,13 @@
 	{% endif %}
 {% endif %}
 
-{% block serversidebar %}
+{% block containertype %}container-subnav-type{% endblock %}
+
+{% block subnav %}
+<nav id="subnav">
 	<ul class="nav nav-list">
-		<li{{ ' class="active"'|safe if subtitle == 'New Server' else '' }}><a href="{{ url_for('.signup') }}">New Server</a></li>
+		<li style="display: block; text-align: center;"><i class="bigicon icon-cloud"></i></li>
+		<li><a href="{{ url_for('.signup') }}" class="btn btn-success" style="margin: 0">New Server</a></li>
 		{% if user.is_admin %}
 		<li><a href="{{ url_for('.list_all') }}"><i class="icon-lock"></i> View All Servers</a></li>
 		{% endif %}
@@ -18,7 +23,7 @@
 		{% if vps.is_entitled %}
 			{% if service and vps.name == service.name %}
 				<li class="active">
-					<a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a>
+					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>
 				</li>
 				<li>
 					<ul class="nav nav-list">
@@ -45,11 +50,14 @@
 					</ul>
 				<li>
 			{% else %}
-				<li><a href="{{ url_for('.view', vps=vps.id) }}">{{ vps.name }}</a></li>
+				<li>
+					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>
+				</li>
 			{% endif %}
 		{% endif %}
 		{% endfor %}
 	</ul>
+</nav>
 {% endblock %}
 
 {% block content %}
