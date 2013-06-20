@@ -32,13 +32,13 @@
 		{% block sidebar %}
 		<ul class="nav nav-list">
 		{% if user %}
-		<li><a href="{{ url_for('dns.list') }}"><i class="bigicon icon-globe"></i>DNS</a></li>
+		<li{% if section == 'dns' %} class="active"{% endif %}><a href="{{ url_for('dns.list') }}"><i class="bigicon icon-globe"></i>DNS</a></li>
 		<li{% if section == 'vps' %} class="active"{% endif %}><a href="{{ url_for('vps.list') }}"><i class="bigicon icon-cloud"></i>vServers</a></li>
-		<li><a href="{{ url_for('support.list') }}"><i class="bigicon icon-phone"></i>Support</a></li>
-		<li><a href="{{ url_for('profile_index') }}"><i class="bigicon icon-cog"></i>Settings</a></li>
-		<li><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Invoices</a></li>
+		<li{% if section == 'support' %} class="active"{% endif %}><a href="{{ url_for('support.list') }}"><i class="bigicon icon-phone"></i>Support</a></li>
+		<li{% if section == 'profile' %} class="active"{% endif %}><a href="{{ url_for('profile_index') }}"><i class="bigicon icon-cog"></i>Settings</a></li>
+		<li{% if section == 'invoice' %} class="active"{% endif %}><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Invoices</a></li>
 		{% if user.is_admin %}
-		<li><a href="{{ url_for('profile.list') }}"><i class="bigicon icon-dashboard"></i>Admin</a></li>
+		<li{% if section == 'admin' %} class="active"{% endif %}><a href="{{ url_for('profile.list') }}"><i class="bigicon icon-dashboard"></i>Admin</a></li>
 		{% endif %}
 		{% endif %}
 		</ul>

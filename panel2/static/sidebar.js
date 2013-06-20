@@ -1,15 +1,4 @@
-// Sticky sidebar w/jQuery
-function setup_sidebar() {
-	cellwidth = ($(document).width() / 12) - 35;
-	sidebarwidth = cellwidth * 2 + (cellwidth / 2);
-	bodypaddingtop = $("header").css('height');
-	sidebarheight = $(window).height() - $("header").height();
-	$('#sidebar').css('width', sidebarwidth);
-	$('#sidebar').css('height', sidebarheight);
-	$('#container-base').css('paddingTop', bodypaddingtop);
-	$('.contentfix').css('marginLeft', sidebarwidth);
-	$('.contentfix').css('marginRight', 0);
-}
+$(document).ready(function() {
+	$(".row-equalize").eqHeight(".span1, .span2, .span3, .span4, .span5, .span6, .span7, .span8, .span9, .span10, .span11, .span12");
+});
 
-//$(document).ready(setup_sidebar);
-//$(window).resize(setup_sidebar);

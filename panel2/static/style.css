@@ -19,8 +19,10 @@ h1, h2, h3, h4 {
 	font-family: 'Signika Negative', sans-serif;
 }
 
-h1 .btn, h2 .btn, h3 .btn {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+.btn {
+	font-family: 'Signika Negative', sans-serif;
+	font-weight: bold;
+	text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.3);
 }
 
 .menu-list {
@@ -85,6 +87,19 @@ h1 .btn, h2 .btn, h3 .btn {
 
 .pushdown {
 	padding-bottom: 1em;
+}
+
+.box {
+	background: #fff url('/static/gray-noise.png');
+	border: 1px #ddd solid;
+	border-radius: 3px;
+	margin-bottom: 1em;
+	padding: 1em;
+	height: auto;
+}
+
+.box h4 {
+	margin: -0.25em;
 }
 
 .alert {
@@ -169,10 +184,10 @@ h1 .btn, h2 .btn, h3 .btn {
 .btn-group .btn, .btn,
 .btn-group > .btn:first-child,
 .btn-group > .btn:last-child {
-	border-radius: 0;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
-	-o-border-radius: 0;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-o-border-radius: 3px;
 }
 
 .btn, .btn-danger, .btn-warning, .btn-primary, .btn-success {
@@ -183,12 +198,22 @@ h1 .btn, h2 .btn, h3 .btn {
 	font-size: 450%;
 }
 
+.largeicon {
+	font-size: 2vw;
+}
+
+.btn-icon {
+	font-size: 0.75vw;
+	overflow: hidden;
+}
+
 #sidebar .nav-list li a {
 	font-size: 75%;
 }
 
 #sidebar .nav-list li a, #subnav .nav-list li a {
 	color: #555;
+	text-shadow: none;
 }
 
 #subnav .nav-list > .btn {
@@ -197,11 +222,16 @@ h1 .btn, h2 .btn, h3 .btn {
 
 #sidebar .nav-list li a:hover, #sidebar .nav-list li a:focus,
 #subnav .nav-list li a:hover, #subnav .nav-list li a:focus {
+	background: transparent;
 	color: #666;
+	text-shadow: none;
 }
 
 #sidebar .nav-list .active > a,
-#subnav .nav-list .active > a {
+#subnav .nav-list .active > a,
+#sidebar .nav-list .active > a:hover, #sidebar .nav-list .active > a:focus,
+#subnav .nav-list .active > a:hover, #subnav .nav-list .active > a:focus {
 	background: transparent;
-	color: #069;
+	color: #3587ad;
+	text-shadow: none;
 }
