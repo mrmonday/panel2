@@ -33,9 +33,10 @@ ssl = LocalSSLify(app)
 if app.config['SEND_DEBUG_EMAILS'] is True:
     import logging
     from logging.handlers import SMTPHandler
-    mail_handler = SMTPHandler('127.0.0.1',
+    mail_handler = SMTPHandler((app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
                                app.config['NOREPLY_MAIL'],
-                               app.config['DEBUG_EMAIL_TARGETS'], __name__ + ' failed')
+                               app.config['DEBUG_EMAIL_TARGETS'], __name__ + ' failed',
+			       credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD']))
     mail_handler.setLevel(logging.ERROR)
     mail_handler.setFormatter(logging.Formatter('''
 Message type:       %(levelname)s
