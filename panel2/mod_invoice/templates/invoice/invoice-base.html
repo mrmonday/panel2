@@ -1,9 +1,16 @@
 {% extends "base-scaffolding.html" %}
 
-{% block invoicesidebar %}
+{% set section = 'invoice' %}
 
+{% block content %}
+
+<h2>
+	Invoices
 {% if user.is_admin %}
-<li><a href="{{ url_for('.list_unpaid') }}"><i class="icon-lock"></i> Unpaid Invoices</a></li>
+	<span class="pull-right">
+		<a href="{{ url_for('.list_unpaid') }}" class="btn btn-warning"><i class="icon-lock"></i> Unpaid Invoices</a>
+	</span>
 {% endif %}
+</h2>
 
 {% endblock %}

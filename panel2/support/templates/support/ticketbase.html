@@ -1,12 +1,21 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}Tickets{% endblock %}
+{% set section = 'support' %}
 
-{% block supportsidebar %}
-<ul class="nav nav-list">
-	<li><a href="{{ url_for('.new') }}">New Ticket</a></li>
-	{% if user.is_admin %}
-	<li><a href="{{ url_for('.list_all') }}"><i class="icon-lock"></i> View All Tickets</a></li>
-	{% endif %}
-	</span>
-</ul>
+{% block content %}
+<h2>
+	Support
+
+	<span class="pull-right">
+		<a href="{{ url_for('.new') }}" class="btn btn-primary">
+			<i class="icon-bullhorn"></i> Open Ticket
+		</a>
+		<a href="{{ url_for('status.list') }}" class="btn btn-success">
+			<i class="icon-sitemap"></i> Network Status
+		</a>
+		{% if user.is_admin %}
+		<a href="{{ url_for('.list_all') }}" class="btn btn-warning"><i class="icon-lock"></i> View All Tickets</a>
+	        {% endif %}
+        </span>
+</h2>
 {% endblock %}
