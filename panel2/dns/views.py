@@ -25,7 +25,10 @@ def is_valid_host(host):
     '''IDN compatible domain validator'''
     if '.arpa' in host:
         return True
-    host = host.encode('idna').lower()
+    try:
+        host = host.encode('idna').lower()
+    except:
+        return False
     if not hasattr(is_valid_host, '_re'):
         import re
         is_valid_host._re = re.compile(r'^([0-9a-z_][-\w]*[0-9a-z_]\.)+[a-z0-9\-_]{1,15}$')
@@ -55,7 +58,7 @@ def list_all():
 @dns.route('/zone/<zone_id>')
 @login_required
 def view_domain(zone_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
     return render_template_or_json('dns/view-zone.html', zone=domain)
@@ -63,10 +66,10 @@ def view_domain(zone_id):
 @dns.route('/zone/<zone_id>/record/<record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_record(zone_id, record_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
-    record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first()
+    record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first_or_404()
     if request.method == 'POST':
         record_obj.update_name(record_obj.domain.full_name(request.form['subdomain']))
         record_obj.update_content(request.form['content'])
@@ -98,7 +101,7 @@ def new_domain():
 @dns.route('/zone/<zone_id>/record/new', methods=['GET', 'POST'])
 @login_required
 def new_record(zone_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
     if request.method == 'POST':
@@ -117,7 +120,7 @@ def new_record(zone_id):
 @dns.route('/zone/<zone_id>/record/<record_id>/delete')
 @login_required
 def delete_record(zone_id, record_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
     Record.query.filter_by(domain_id=domain.id, id=record_id).delete()
@@ -128,7 +131,7 @@ def delete_record(zone_id, record_id):
 @dns.route('/zone/<zone_id>/delete')
 @login_required
 def delete_domain(zone_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
 
@@ -148,7 +151,7 @@ def delete_domain(zone_id):
 @dns.route('/zone/<zone_id>/axfr-import', methods=['GET', 'POST'])
 @login_required
 def import_domain(zone_id):
-    domain = Domain.query.filter_by(id=zone_id).first()
+    domain = Domain.query.filter_by(id=zone_id).first_or_404()
     if user_can_access_domain(domain) is False:
         abort(403)
     if request.method == 'POST':
@@ -156,7 +159,10 @@ def import_domain(zone_id):
             domain.add_record(pname, content, qtype, prio, ttl)
 
         if len(request.form['nameserver']) != 0:
-            do_axfr(request.form['nameserver'], domain.name, record_callback)
+            try:
+                do_axfr(request.form['nameserver'], domain.name, record_callback)
+            except:
+                pass
 
         return redirect(url_for('.view_domain', zone_id=domain.id))
 
