@@ -6,16 +6,18 @@
 	<link href="{{ url_for('.syndicate') }}" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
 {% endblock %}
 
-{% block links %}
-	<li class="menu-item">
-		<a href="{{ url_for('.syndicate') }}">Syndicate (Atom)</a>
+{% block sidebar %}
+	<ul class="nav nav-list">
+	<li>
+		<a href="{{ url_for('.syndicate') }}"><i class="icon-rss-sign bigicon"></i> Atom</a>
 	</li>
+	</ul>
 {% endblock %}
 
 {% block content %}
 <h2>
 	Service Status
-	<span class="btn-group pull-right">
+	<span class="pull-right">
 		{% if user and user.is_admin %}
 			<a href="{{ url_for('.new') }}" class="btn btn-success">New Incident</a>
 		{% endif %}

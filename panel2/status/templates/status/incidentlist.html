@@ -23,7 +23,7 @@
 		<td class="span1">{{ incident.user.username }}</td>
 		<td class="span1">{{ "Closed" if incident.closed_at != None else "Open" }}</td>
 		<td class="span2">
-			<div class="btn-group pull-right">
+			<div class="pull-right">
 				<a href="{{ url_for('.view', incident_id=incident.id) }}" class="btn btn-primary">View</a>
 				{% if user and user.is_admin %}
 					<a href="{{ url_for('.close', incident_id=incident.id) }}" class="btn">Close</a>
