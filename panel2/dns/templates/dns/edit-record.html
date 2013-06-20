@@ -1,10 +1,9 @@
-{% extends "dns/base.html" %}
-{% block title %}{{ zone.name }} - DNS Zones{% endblock %}
+{% extends "dns/zone-base.html" %}
 
 {% block content %}
 {{ super() }}
 
-<h3>{{ zone.name }} -- {{ record.name }}</h3>
+<h3>{{ record.name }}</h3>
 
 <form method="POST">
 	<table class="table table-striped">
