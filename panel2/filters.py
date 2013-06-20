@@ -84,11 +84,11 @@ def pretty_date(time=False):
     return str(day_diff/365) + " years ago"
 
 @app.template_filter('truncate')
-def truncate(data):
-    if len(data) < 51:
+def truncate(data, length=50):
+    if len(data) < (length + 1):
         return data
 
-    return data[0:50] + '...'
+    return data[0:length] + '...'
 
 @app.template_filter('strf')
 def strf(data, fmt):
