@@ -5,6 +5,12 @@
 
 <h3 class="service-hdr">
 	{{ service.name }}
+	<span class="pull-right">
+		<a class="jsonify btn btn-success" href="{{ url_for('.create', vps=service.id) }}">Start</a>
+		<a class="jsonify btn btn-warning" href="{{ url_for('.shutdown', vps=service.id) }}">Shutdown</a>
+		<a class="jsonify btn btn-danger" href="{{ url_for('.destroy', vps=service.id) }}">Forceful Shutdown</a>
+		<a class="jsonify btn btn-primary" href="{{ url_for('.powercycle', vps=service.id) }}">Powercycle</a>
+	</span>
 </h3>
 
 {% block component %}{% endblock %}
