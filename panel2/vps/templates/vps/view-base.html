@@ -49,14 +49,14 @@
 		</a>
 	</div>
 	<div class="span1">
-		<a href="{{ url_for('.deploy', vps=service.id) }}" class="btn btn-block btn-icon btn-info">
+		<a href="{{ url_for('.console', vps=service.id) }}" class="btn btn-block btn-icon btn-info">
 			<i class="largeicon icon-terminal"></i><br>
 			Console
 		</a>
 	</div>
 	{% else %}
 	<div class="span1">
-		<a href="{{ url_for('.deploy', vps=service.id) }}" class="btn btn-block btn-icon btn-info">
+		<a href="{{ url_for('.hvmvnc', vps=service.id) }}" class="btn btn-block btn-icon btn-info">
 			<i class="largeicon icon-terminal"></i><br>
 			VNC
 		</a>
