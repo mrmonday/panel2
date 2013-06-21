@@ -41,6 +41,9 @@ class HVMISOImage(db.Model):
     def __repr__(self):
         return "<HVMISOImage: '{0}' ['{1}']>".format(self.name, self.file)
 
+    def _serialize(self):
+        return dict(id=self.id, name=self.name)
+
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -65,6 +68,9 @@ class KernelProfile(db.Model):
             'isopath': domain.hvmiso.file,
         }
         return {s.key: s.value.format(**keys) for s in self.arguments}
+
+    def _serialize(self):
+        return dict(id=self.id, name=self.name)
 
 class KernelProfileArgument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -103,6 +109,9 @@ class Region(db.Model):
 
     def available_node(self, memory, disk):
         return filter(lambda node: node.allocatable(memory, disk, 1) and node.locked == False, self.nodes)[0]
+
+    def _serialize(self):
+        return dict(id=self.id, name=self.name)
 
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -477,6 +486,10 @@ class ResourcePlan(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def _serialize(self):
+        return dict(id=self.id, name=self.name, memory=self.memory, disk=self.disk, swap=self.swap, price_usd=self.price,
+                    price_btc=self.bitcoin_cost())
 
     def __repr__(self):
         return "<ResourcePlan: {}>".format(self.name)

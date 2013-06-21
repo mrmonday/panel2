@@ -30,6 +30,7 @@ def can_access_invoice(invoice, user=None):
     return True
 
 @invoice.route('/')
+@invoice.route('/list')
 @login_required
 def index():
     return render_template_or_json("invoice/invoice-list.html", invoices=get_session_user().invoices)

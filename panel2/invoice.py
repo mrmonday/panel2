@@ -164,8 +164,11 @@ class InvoiceItem(db.Model):
         invoice_item_paid_signal.send(app, invoice=self.invoice, service=self.service, invoice_item=self)
 
     def _serialize(self):
-        return dict(line_item=self.id, invoice=self.invoice_id, service=self.service.name, price=self.price,
-                    btc_price=self.bitcoin_cost(), entry_ts=self.entry_ts)
+        base = dict(line_item=self.id, invoice=self.invoice_id, price=self.price,
+                    btc_price=self.bitcoin_cost(), entry_ts=self.entry_ts, description=self.description)
+        if self.service:
+            base['service'] = self.service.name
+        return base
 
 @invoice_create_signal.connect_via(app)
 def invoice_paid_sig_hdl(*args, **kwargs):
