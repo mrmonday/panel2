@@ -31,7 +31,7 @@ def monitor_list(vps):
     vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template_or_json('vps/monitoring-base.html', service=vps)
+    return render_template_or_json('vps/monitoring-base.html', service=vps, monitors=vps.probes)
 
 @vps.route('/<vps>/monitor/<monitor>')
 @login_required
