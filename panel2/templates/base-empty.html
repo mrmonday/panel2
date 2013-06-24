@@ -24,9 +24,11 @@
 		{% endblock head %}
 	</head>
 
+	{% block base %}
 	<body class="container-fluid">
 		{% block body %}
 		{% block content %}{% endblock content %}
 		{% endblock body %}
 	</body>
+	{% endblock base %}
 </html>
