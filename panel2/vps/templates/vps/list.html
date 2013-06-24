@@ -18,24 +18,25 @@
 
 <div class="row-fluid">
 
-<div class="span12"><h4>Network Usage</h4></div>
+<div class="span12 box">
+	<h4 class="pushdown">Network usage</h4>
+	<div id="net-graph" style="height: 250px"></div>
+</div>
 
 </div>
 
 <div class="row-fluid">
-<div id="net-graph" class="span12" style="height: 250px"></div>
+
+<div class="span6 box">
+	<h4 class="pushdown">CPU usage</h4>
+	<div id="cpu-graph" style="height: 250px"></div>
 </div>
 
-<div class="row-fluid">
-
-<div class="span6"><h4>CPU Usage (%)</h4></div>
-<div class="span6"><h4>IO Usage (requests per second)</h4></div>
-
+<div class="span6 box">
+	<h4 class="pushdown">I/O usage</h4>
+	<div id="vbd-graph" style="height: 250px"></div>
 </div>
 
-<div class="row-fluid">
-<div id="cpu-graph" class="span6" style="height: 250px"></div>
-<div id="vbd-graph" class="span6" style="height: 250px"></div>
 </div>
 
 <h4 class="service-hdr">Cluster Servers</h4>
