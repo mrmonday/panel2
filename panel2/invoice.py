@@ -25,6 +25,13 @@ import json
 invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
 invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
 
+class DummyDiscountCode(object):
+    def __repr__(self):
+        return '<DummyDiscountCode>'
+
+    def translate_price(self, price):
+        return price
+
 class DiscountCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -49,6 +56,12 @@ class DiscountCode(db.Model):
             return price - self.amount
 
         return price
+
+def get_discount_code(codename):
+    code = DiscountCode.query.filter_by(name=codename).first()
+    if not code:
+        return DummyDiscountCode()
+    return code
 
 class ExchangeRate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
