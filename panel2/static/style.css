@@ -235,3 +235,7 @@ h1, h2, h3, h4 {
 	color: #3587ad;
 	text-shadow: none;
 }
+
+.modal form {
+	margin: 0;
+}

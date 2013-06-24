@@ -26,22 +26,6 @@
 				<li class="active">
 					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>
 				</li>
-				<li>
-					<ul class="nav nav-list">
-						<li{{ ' class="active"'|safe if subtitle == 'Dashboard' else '' }}><a href="{{ url_for('.view', vps=service.id) }}">Dashboard</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'Graphs' else '' }}><a href="{{ url_for('.graphs', vps=service.id) }}">Graphs</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'IP Admin' else '' }}><a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Management</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'Clone' else '' }}><a href="{{ url_for('.clone', vps=service.id) }}">Clone</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'Jobs' else '' }}><a href="{{ url_for('.jobs', vps=service.id) }}">Jobs</a></li>
-						<li{{ ' class="active"'|safe if subtitle == 'Profiler' else '' }}><a href="{{ url_for('.profiler', vps=service.id) }}">Profiler</a></li>
-						{% if service.profile.name != 'HVM' %}
-							<li{{ ' class="active"'|safe if subtitle == 'Deploy' else '' }}><a href="{{ url_for('.deploy', vps=service.id) }}">Deploy / Reinstall OS</a></li>
-						{% else %}
-							<li{{ ' class="active"'|safe if subtitle == 'HVM' else '' }}><a href="{{ url_for('.hvmvnc', vps=service.id) }}">HVM Configuration</a></li>
-						{% endif %}
-						<li{{ ' class="active"'|safe if subtitle == 'Monitoring' else '' }}><a href="{{ url_for('.monitor_list', vps=service.id) }}">Monitoring</a></li>
-					</ul>
-				<li>
 			{% else %}
 				<li>
 					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>

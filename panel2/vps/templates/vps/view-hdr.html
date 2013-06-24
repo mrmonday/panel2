@@ -3,13 +3,46 @@
 
 {% block subcontent %}
 
-<h3 class="service-hdr">
+<h3>
 	{{ service.name }}
 	<span class="pull-right">
-		<a class="jsonify btn btn-success" href="{{ url_for('.create', vps=service.id) }}">Start</a>
-		<a class="jsonify btn btn-warning" href="{{ url_for('.shutdown', vps=service.id) }}">Shutdown</a>
-		<a class="jsonify btn btn-danger" href="{{ url_for('.destroy', vps=service.id) }}">Forceful Shutdown</a>
-		<a class="jsonify btn btn-primary" href="{{ url_for('.powercycle', vps=service.id) }}">Powercycle</a>
+		<div class="dropdown">
+			<button class="btn btn-primary" data-toggle="dropdown" role="button"><i class="icon-cloud"></i> Manage <i class="caret"></i></button>
+			<ul class="dropdown-menu pull-right" style="font-size: 50%" role="menu">
+			<li>
+				<a href="{{ url_for('.view', vps=service.id) }}"><i class="icon-dashboard"></i> Dashboard</a>
+			</li>
+			{% if service.profile.name != 'HVM' %}
+			<li>
+				<a class="launchconsole" href="{{ url_for('.console', vps=service.id) }}" target="_blank"><i class="icon-terminal"></i> Console</a>
+			</li>
+			{% endif %}
+			<li class="divider"></li>
+			<li>
+				<a class="jsonify" href="{{ url_for('.create', vps=service.id) }}"><i class="icon-play"></i> Start</a>
+			</li>
+			<li>
+				<a class="jsonify" href="{{ url_for('.shutdown', vps=service.id) }}"><i class="icon-stop"></i> Safe Shutdown</a>
+			</li>
+			<li class="divider"></li>
+			<li>
+				<a class="jsonify" href="{{ url_for('.destroy', vps=service.id) }}"><i class="icon-stop"></i> Forceful Shutdown</a>
+			</li>
+			<li>
+				<a class="jsonify" href="{{ url_for('.powercycle', vps=service.id) }}"><i class="icon-refresh"></i> Forceful Restart</a>
+			</li>
+			<li class="divider"></li>
+			<li>
+				<a href="{{ url_for('.jobs', vps=service.id) }}">Task Log</a>
+			</li>
+			<li>
+				<a href="{{ url_for('.graphs', vps=service.id) }}">Graphs</a>
+			</li>
+			<li>
+				<a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Management</a>
+			</li>
+			</ul>
+		</div>
 	</span>
 </h3>
 

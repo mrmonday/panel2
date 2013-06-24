@@ -34,6 +34,55 @@
         </div>
 </div>
 
+{% if service.profile.name != 'HVM' %}
+<div id="admDeploy" class="modal hide" tabindex="-1" role="dialog">
+	<form method="POST" action="{{ url_for('.deploy', vps=service.id) }}">
+        <div class="modal-header">
+                <a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+                <h3>Deploy</h3>
+        </div>
+        <div class="modal-body">
+		<p style="text-align: justify">Deploying will (re)initialize your VPS to a clean slate and install a new OS on it.  If you have already deployed an OS,
+		   please note this operation is <strong>destructive</strong>.  Our staff will be unable to recover any data which is destroyed
+		   as a result of installing a new OS.</p>
+
+		<div class="row-fluid" style="margin-bottom: 1em;">
+			<div class="span4"><strong class="pull-right">OS Image:</strong></div>
+			<div class="span8">
+			{% for imagename, template in templates.items() %}
+				<input type="radio" name="imagename" id="dist-{{ imagename }}" value="{{ imagename }}"> {{ template }}<br>
+			{% endfor %}
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span4"><strong class="pull-right">Root Password:</strong></div>
+			<div class="span8">
+				<input type="password" name="rootpass" class="span12">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span4"><strong class="pull-right">Architecture:</strong></div>
+			<div class="span8">
+				<input type="radio" name="arch" value="x86_64" checked="checked"> 64-bit (recommended)<br>
+				<input type="radio" name="arch" value="i386"> 32-bit (experimental)
+			</div>
+		</div>
+		<div class="row-fluid" style="margin-top: 1em;">
+			<div class="span4"><strong class="pull-right">Start VPS:</strong></div>
+			<div class="span8">
+				<input type="checkbox" name="startvps" value="true" checked="checked"><br>
+				Start the VPS when the installation is finished.
+			</div>
+		</div>
+        </div>
+        <div class="modal-footer">
+		<button type="submit" class="btn btn-primary">Deploy</button>
+                <a href="#"  class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+        </div>
+	</form>
+</div>
+{% endif %}
+
 <div class="row-fluid pushdown iconbar">
 	<div class="span1">
 		<a href="#admBoot" role="button" class="btn btn-block btn-icon btn-primary" data-toggle="modal">
@@ -43,13 +92,13 @@
 	</div>
 	{% if service.profile.name != 'HVM' %}
 	<div class="span1">
-		<a href="{{ url_for('.deploy', vps=service.id) }}" class="btn btn-block btn-icon btn-success">
+		<a href="#admDeploy" role="button" class="btn btn-block btn-icon btn-success" data-toggle="modal">
 			<i class="largeicon icon-magic"></i><br>
 			Install
 		</a>
 	</div>
 	<div class="span1">
-		<a href="{{ url_for('.console', vps=service.id) }}" class="btn btn-block btn-icon btn-info" target="_blank" id="launchconsole">
+		<a href="{{ url_for('.console', vps=service.id) }}" class="btn btn-block btn-icon btn-info" target="_blank" class="launchconsole">
 			<i class="largeicon icon-terminal"></i><br>
 			Console
 		</a>

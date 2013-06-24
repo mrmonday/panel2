@@ -10,7 +10,7 @@
    please note this operation is <strong>destructive</strong>.  Our staff will be unable to recover any data which is destroyed
    as a result of installing a new OS.</p>
 
-<form method="POST">
+<form method="POST" action="{{ url_for('.deploy', vps=service.id) }}">
 
 <div class="row-fluid" style="margin-bottom: 1em;">
 	<div class="span3"><strong class="pull-right">OS Image:</strong></div>

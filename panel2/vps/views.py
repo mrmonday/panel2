@@ -132,7 +132,7 @@ def view(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template_or_json('vps/view-base.html', service=vps, profiles=KernelProfile.query.all())
+    return render_template_or_json('vps/view-base.html', service=vps, profiles=KernelProfile.query.all(), templates=template_map)
 
 @vps.route('/<vps>/setprofile', methods=['POST'])
 @login_required
