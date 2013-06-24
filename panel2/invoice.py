@@ -32,6 +32,9 @@ class DummyDiscountCode(object):
     def translate_price(self, price):
         return price
 
+    def is_valid(self):
+        return False
+
 class DiscountCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -56,6 +59,9 @@ class DiscountCode(db.Model):
             return price - self.amount
 
         return price
+
+    def is_valid(self):
+        return True
 
 def get_discount_code(codename):
     code = DiscountCode.query.filter_by(name=codename).first()
