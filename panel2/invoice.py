@@ -25,6 +25,31 @@ import json
 invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
 invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
 
+class DiscountCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    amount = db.Column(db.Float)
+    type = db.Column(db.Enum('percent', 'amount'))
+
+    def __repr__(self):
+        return '<DiscountCode: {}>'.format(self.name)
+
+    def __init__(self, name, amount, type):
+        self.name = name
+        self.amount = amount
+        self.type = type
+
+        db.session.add(self)
+        db.session.commit()
+
+    def translate_price(self, price):
+        if self.type == 'percent':
+            return price - (price * (self.amount / 100.))
+        elif self.type == 'amount':
+            return price - self.amount
+
+        return price
+
 class ExchangeRate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     currency_name = db.Column(db.String(3))
