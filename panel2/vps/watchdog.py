@@ -26,7 +26,7 @@ def watchdog():
     for node in nodes:
         api = node.api(ServerProxy)
         dl = api.domain_list()
-        checklist = XenVPS.query.filter_by(node_id=node.id).filter_by(watchdog=True).all()
+        checklist = XenVPS.query.filter_by(node_id=node.id).filter_by(watchdog=True).filter_by(is_entitled=True).all()
         deadlist = filter(lambda x: x.name not in dl, checklist)
 
         print 'dead:', deadlist
