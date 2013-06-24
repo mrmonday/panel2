@@ -23,7 +23,7 @@ from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile, HVMISOImage
 from panel2.user import login_required, admin_required, get_session_user, User, Session
-from panel2.invoice import Invoice
+from panel2.invoice import Invoice, get_discount_code
 from panel2.utils import render_template_or_json
 from ediarpc.rpc_client import ServerProxy
 
@@ -72,8 +72,11 @@ def signup():
     user = get_session_user()
     regions = Region.query.all()
     resource_plans = ResourcePlan.query.all()
+    discount = get_discount_code(request.args.get('c', 'DEFAULT'))
 
     if request.method == 'POST':
+        discount = get_discount_code(request.form.get('c', 'DEFAULT'))
+
         if user is None:
             try:
                 username = request.form['username'].strip().rstrip()
@@ -103,7 +106,7 @@ def signup():
         if not resource_plan:
             abort(404)
 
-        vps = resource_plan.create_vps(user, region, vpsname)
+        vps = resource_plan.create_vps(user, region, vpsname, discount)
         vps.expiry_ts = time.time()
         if user.is_admin:
             vps.price = 0.00
@@ -119,7 +122,7 @@ def signup():
 
         return redirect(url_for('.view', vps=vps.id))
 
-    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans)
+    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, discount=discount)
 
 @vps.route('/<vps>')
 @login_required

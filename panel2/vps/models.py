@@ -494,13 +494,13 @@ class ResourcePlan(db.Model):
     def __repr__(self):
         return "<ResourcePlan: {}>".format(self.name)
 
-    def bitcoin_cost(self):
+    def bitcoin_cost(self, discount):
         btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
-        return btc.convert_to(self.price)
+        return btc.convert_to(discount.translate_price(self.price))
 
-    def create_vps(self, user, region, name):
+    def create_vps(self, user, region, name, discount):
         node = region.available_node(self.memory, self.disk)
-        vps = XenVPS(name, self.memory, self.swap, self.disk, self.price, node, user)
+        vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user)
         ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
             return vps

@@ -58,8 +58,8 @@
 	<td>{{ plan.disk }} GB</td>
 	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed<sup>1</sup></td>
 	<td>{{ (plan.memory / 512) | strf("{0:.0f}") }}<sup>2</sup></td>
-	<td>${{ plan.price | strf("{0:.2f}") }}</td>
-	<td>{{ plan.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
+	<td>${{ discount.translate_price(plan.price) | strf("{0:.2f}") }}</td>
+	<td>{{ plan.bitcoin_cost(discount) | strf("{0:.4f}") }} BTC</td>
 </tr>
 {% endfor %}
 </table>
@@ -76,7 +76,24 @@
 {% endfor %}
 </p>
 
-<p>To add a new server, click below.  You will be invoiced immediately.  Upon payment of the invoice, your server will be available for use.</p>
+{% if not discount.is_valid() %}
+<h3>Promotional Code</h3>
+
+<p>If you have a valid promotional code, you can apply it to receive a discount.</p>
+
+<div class="row-fluid">
+	<div class="span3"><strong>Promo code:</strong></div>
+	<div class="span9"><input class="input-block-level" type="text" name="c"></div>
+</div>
+{% else %}
+<h3>Congratulations!</h3>
+
+<p>You will be receiving a <strong>{% if discount.type == 'percent' %}{{ discount.amount | strf("{0:.0f}") }}%{% else %}${{ discount.amount | strf("{0:.2f}") }}{% endif %} discount</strong> on your order with us today!</p>
+
+<p>We look forward to serving you as a valued customer.</p>
+
+<input type="hidden" name="c" value="{{ discount.name }}">
+{% endif %}
 
 {% if user %}
 <button class="btn btn-primary btn-large" type="submit">Add New Server</button>
