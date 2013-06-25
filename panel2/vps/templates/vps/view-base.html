@@ -207,6 +207,12 @@
 	</div>
 </div>
 
+{% if service.has_pending_work() %}
+<div class="row-fluid row-equalize pushdown">
+	{% include "vps/view-base-tasks-and-monitoring.html" %}
+</div>
+{% endif %}
+
 <div class="row-fluid pushdown">
 	<div class="span12 box">
 		<div id="cpu-graph" class="minigraph"></div>
@@ -219,50 +225,11 @@
 	</div>
 </div>
 
+{% if not service.has_pending_work() %}
 <div class="row-fluid row-equalize">
-	<div class="span6 box">
-		<h4 class="pushdown">
-			Recent Tasks
-			<span class="pull-right">
-				<a href="{{ url_for('.jobs', vps=service.id) }}" class="btn btn-warning"><i class="icon-refresh"></i> Task Log</a>
-			</span>
-		</h4>
-		<div id="tasklog"></div>
-	</div>
-
-	<div class="span6 box">
-		<h4 class="pushdown">
-			Monitor Status
-		</h4>
-<table class="table table-striped">
-{% for monitor in service.probes %}
-<tr>
-        <td style="width: 20px">
-                {% if monitor.active %}
-
-                {% if monitor.failed %}
-                        <span class="text-error"><i class="icon-remove-sign"></i></span>
-                {% else %}
-                        <span class="text-success"><i class="icon-ok-sign"></i></span>
-                {% endif %}
-
-                {% else %}
-                        <span class="muted"><i class="icon-circle-blank"></i></span>
-                {% endif %}
-        </td>
-        <td>{{ monitor.nickname }}</td>
-	<td>
-		<span class="pull-right">
-			<a href="{{ url_for('.monitor_rules', vps=service.id, monitor=monitor.id) }}" class="btn btn-primary">
-				<i class="icon-pencil"></i> Properties
-			</a>
-		</span>
-	</td>
-</tr>
-{% endfor %}
-</table>
-	</div>
+	{% include "vps/view-base-tasks-and-monitoring.html" %}
 </div>
+{% endif %}
 
 <script type="text/javascript">
 $(function() {
