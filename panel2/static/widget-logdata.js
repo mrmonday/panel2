@@ -63,3 +63,12 @@ function logdata_fetch(url, target) {
 		success: function (data) { on_log_data_received(data, target); },
 	});
 }
+
+function logdata_setup(url, target, refresh) {
+	function __fetch() {
+		logdata_fetch(url, target);
+	}
+
+	__fetch();
+	setInterval(__fetch, refresh);
+}

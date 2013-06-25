@@ -4,75 +4,13 @@
 
 {% block component %}
 
-<h3>Jobs</h3>
+<h3>Task Log</h3>
 
 <div id="placeholder"></div>
 
 <script>
 $(function() {
-	function on_log_data_received(json_data) {
-		$("#placeholder").html("");
-
-		var table = $('<table></table>').addClass('table table-striped');
-		var header_row = $('<tr></tr>');
-                var headers = ['Job ID', 'Start Time', 'End Time', 'Request', 'Result'];
-
-                for (i = 0; i < headers.length; i++) {
-                    header_row.append($('<th>' + headers[i] + '</th>'));
-		}
-
-                table.append(header_row);
-
-		if (json_data)
-		{
-			for (i = 0; i < json_data.length; i++) {
-				var row = $('<tr></tr>');
-
-				row.append($('<td>' + json_data[i].id + '</td>'));
-
-				if (json_data[i].start_ts) {
-	                                var start_ts = new Date(json_data[i].start_ts);
-					row.append($('<td>' + start_ts.toLocaleString() + '</td>'));
-				} else {
-					row.append($('<td></td>'));
-				}
-
-				if (json_data[i].end_ts) {
-	                                var end_ts = new Date(json_data[i].end_ts);
-					row.append($('<td>' + end_ts.toLocaleString() + '</td>'));
-				} else {
-					row.append($('<td></td>'));
-				}
-
-				row.append($('<td>' + json_data[i].req_env.method + ' ' + json_data[i].req_env.params.domname + '</td>'));
-				if (!json_data[i].rsp_env) {
-					row.append($('<td>In Progress</td>'));
-				} else if (json_data[i].rsp_env.params.success) {
-					row.append($('<td>Success</td>'));
-				} else if (json_data[i].rsp_env.params.error) {
-					row.append($('<td>Error: ' + json_data[i].rsp_env.params.error + '</td>'));
-				}
-
-				table.append(row);
-			}
-		}
-
-                $("#placeholder").append(table);
-	}
-
-        on_log_data_received(null);
-
-	function fetch() {
-		$.ajax({
-			url: '{{ url_for('.jobs_json', vps=service.id) }}',
-			type: 'GET',
-			dataType: 'json',
-			success: on_log_data_received,
-		});
-	}
-
-	fetch();
-	setInterval(fetch, 1000);
+	logdata_setup('{{ url_for('.jobs_json', vps=service.id) }}', $("#placeholder"), 1000);
 });
 </script>
 

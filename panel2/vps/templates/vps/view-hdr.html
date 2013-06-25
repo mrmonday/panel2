@@ -1,4 +1,10 @@
 {% extends "vps/base.html" %}
+
+{% block head %}
+{{ super() }}
+	<script src="/static/widget-logdata.js" type="text/javascript"></script>
+{% endblock %}
+
 {% block title %}{{ service.name }} - Servers{% endblock %}
 
 {% block subcontent %}
