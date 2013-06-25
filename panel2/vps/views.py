@@ -454,3 +454,15 @@ def rawstats(vps):
     data = vps.node.api(ServerProxy).domain_list()[vps.name]
     if data:
         return jsonify({'stats': data})
+
+@vps.route('/<vps>/status.json')
+@login_required
+def status_json(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if can_access_vps(vps) is False:
+        abort(403)
+    data = vps.node.api(ServerProxy).domain_list()
+    if data.has_key(vps.name):
+        return jsonify({"running": True})
+    return jsonify({"running": False})
+
