@@ -7,6 +7,11 @@
 {% set vpslist=vpslist or user.services %}
 {% block title %}Server List{% endblock %}
 
+{% block head %}
+{{ super() }}
+	<script src="/static/widget-vps-status.js" type="text/javascript"></script>
+{% endblock %}
+
 {% block subcontent %}
 
 <h3 class="service-hdr">
@@ -43,6 +48,7 @@
 
 <table class="table table-striped">
 <tr>
+	<th style="width: 16px"></th>
 	<th class="span2">VPS</th>
 	<th class="span1">Memory</th>
 	<th class="span1">Disk</th>
@@ -57,6 +63,7 @@
 {% for service in vpslist %}
 {% if service.is_entitled and service.type == 'xenvps' %}
 <tr>
+	<td id="vps{{ service.id }}" style="width: 16px"></td>
 	<td>{{ service.name }}</td>
 	<td>{{ service.memory }} MB</td>
 	<td>{{ service.disk }} GB</td>
@@ -196,6 +203,7 @@ $(function() {
 
     {% set i = 0 %}
     {% for service in vpslist %}
+    status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vps{{ service.id }}"));
     {% if service.is_entitled and service.type == 'xenvps' %}
     $.ajax({
         url: get_uri({{ service.id }}, 'cpustats'),
