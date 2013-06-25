@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 	<script src="/static/widget-logdata.js" type="text/javascript"></script>
+	<script src="/static/widget-vps-status.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %}{{ service.name }} - Servers{% endblock %}
@@ -11,6 +12,7 @@
 
 <h3>
 	{{ service.name }}
+	<span id="vpsstatus"></span>
 	<span class="pull-right">
 		<div class="dropdown">
 			<button class="btn btn-primary" data-toggle="dropdown" role="button"><i class="icon-cloud"></i> Manage <i class="caret"></i></button>
@@ -53,5 +55,11 @@
 </h3>
 
 {% block component %}{% endblock %}
+
+<script>
+$(document).ready(function() {
+	status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vpsstatus"));
+});
+</script>
 
 {% endblock %}
