@@ -1,4 +1,4 @@
-function logdata_fetch(url, target) {
+function logdata_fetch(url, target, header) {
 	var method_names = {
 		vps_create: "Initialize VPS image",
 		vps_format: "Initialize VPS filesystem",
@@ -18,7 +18,8 @@ function logdata_fetch(url, target) {
                     header_row.append($('<th>' + headers[i] + '</th>'));
 		}
 
-                table.append(header_row);
+		if (header != false)
+	                table.append(header_row);
 
 		if (json_data) {
 			for (i = 0; i < json_data.length; i++) {
@@ -64,9 +65,9 @@ function logdata_fetch(url, target) {
 	});
 }
 
-function logdata_setup(url, target, refresh) {
+function logdata_setup(url, target, refresh, header) {
 	function __fetch() {
-		logdata_fetch(url, target);
+		logdata_fetch(url, target, header);
 	}
 
 	__fetch();

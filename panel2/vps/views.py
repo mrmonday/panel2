@@ -350,7 +350,8 @@ def jobs_json(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    joblist = vps.jobs().order_by(Job.id.desc()).limit(100)
+    limit = int(request.args.get('limit', 100))
+    joblist = vps.jobs().order_by(Job.id.desc()).limit(limit)
     lst = []
     javascript_time = lambda f: f * 1000 if f is not None else None
     for job in joblist:
