@@ -274,6 +274,10 @@ class XenVPS(Service):
     def jobs(self):
         return Job.query.filter_by(refid=self.id)
 
+    def has_pending_work(self):
+        lastjob = self.jobs().order_by(Job.id.desc()).first()
+        return not lastjob.end_ts
+
     def delete(self):
         self.api().vps_destroy(domname=self.name)
         Service.delete(self)
