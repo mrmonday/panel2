@@ -465,4 +465,3 @@ def status_json(vps):
     if data.has_key(vps.name):
         return jsonify({"running": True})
     return jsonify({"running": False})
-
