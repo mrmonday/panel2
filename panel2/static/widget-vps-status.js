@@ -15,12 +15,7 @@ function status_setup(url, target) {
 				tg.html(icon_stopped);
 		}
 
-		$.ajax({
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			success: __data_received,
-		});
+		$.getJSON(url + "?callback=?", null, __data_received);
 	}
 
 	__fetch();
