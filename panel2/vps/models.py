@@ -209,6 +209,8 @@ class XenVPS(Service):
     name = db.Column(db.String(255))
     mac = db.Column(db.String(255))
 
+    online = db.Column(db.Boolean)
+
     def __init__(self, name, memory, swap, disk, price, node, user):
         self.name = name
 

@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 import rrdtool, os, time
-from panel2 import app, cron
+from panel2 import app, db, cron
 from panel2.vps.models import Node, XenVPS
 from panel2.cron import MONITORING
 from ediarpc.rpc_client import ServerProxy
@@ -31,3 +31,10 @@ def watchdog():
 
         print 'dead:', deadlist
         [vps.create() for vps in deadlist]
+        for vps in node.vps:
+            vps.online = vps.name in dl
+            print "vps:", vps.name, vps.online
+            db.session.add(vps)
+
+    print "committing vps state --"
+    db.session.commit()
