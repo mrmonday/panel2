@@ -107,6 +107,8 @@ def signup():
             abort(404)
 
         vps = resource_plan.create_vps(user, region, vpsname, discount)
+        if not vps:
+            return redirect(url_for('.nostock'))
         vps.expiry_ts = time.time()
         if user.is_admin:
             vps.price = 0.00
@@ -123,6 +125,11 @@ def signup():
         return redirect(url_for('.view', vps=vps.id))
 
     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, discount=discount)
+
+@vps.route('/nostock')
+@login_required
+def nostock():
+    return render_template_or_json('vps/nostock.html')
 
 @vps.route('/<vps>')
 @login_required

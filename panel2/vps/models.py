@@ -108,7 +108,10 @@ class Region(db.Model):
         return "<Region: '%s'>" % self.name
 
     def available_node(self, memory, disk):
-        return filter(lambda node: node.allocatable(memory, disk, 1) and node.locked == False, self.nodes)[0]
+        list = filter(lambda node: node.allocatable(memory, disk, 1) and node.locked == False, self.nodes)
+        if len(list) == 0:
+            return None
+        return random.choice(list)
 
     def _serialize(self):
         return dict(id=self.id, name=self.name)
@@ -506,6 +509,8 @@ class ResourcePlan(db.Model):
 
     def create_vps(self, user, region, name, discount):
         node = region.available_node(self.memory, self.disk)
+        if not node:
+            return None
         vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user)
         ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
