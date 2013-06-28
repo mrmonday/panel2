@@ -15,9 +15,9 @@ function status_setup(url, target) {
 				tg.html(icon_stopped);
 		}
 
-		$.getJSON(url + "?callback=?", null, __data_received);
+		$.getJSON(url, null, __data_received);
 	}
 
 	__fetch();
-	setInterval(__fetch, 5000);
+	setInterval(__fetch, 30000);
 }

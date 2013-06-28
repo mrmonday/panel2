@@ -203,7 +203,7 @@ $(function() {
 
     {% set i = 0 %}
     {% for service in vpslist %}
-    status_setup("https://{{ service.node.name }}.cloud.tortois.es:9393/ping/{{ service.name }}/{{ service.console_key() }}", $("#vps{{ service.id }}"));
+    status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vps{{ service.id }}"));
     {% if service.is_entitled and service.type == 'xenvps' %}
     $.ajax({
         url: get_uri({{ service.id }}, 'cpustats'),
