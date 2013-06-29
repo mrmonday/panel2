@@ -64,7 +64,7 @@
 {% if service.is_entitled and service.type == 'xenvps' %}
 <tr>
 	<td id="vps{{ service.id }}" style="width: 16px"></td>
-	<td>{{ service.name }}</td>
+	<td>{{ service.nickname | default(service.name, true) }}</td>
 	<td>{{ service.memory }} MB</td>
 	<td>{{ service.disk }} GB</td>
 	<td>{{ service.ips[0].ip }}</td>

@@ -6,12 +6,12 @@
 	<script src="/static/widget-vps-status.js" type="text/javascript"></script>
 {% endblock %}
 
-{% block title %}{{ service.name }} - Servers{% endblock %}
+{% block title %}{{ service.nickname | default(service.name, true) }} - Servers{% endblock %}
 
 {% block subcontent %}
 
 <h3>
-	{{ service.name }}
+	{{ service.nickname | default(service.name, true) }}
 	<span id="vpsstatus"></span>
 	<span class="pull-right">
 		<div class="dropdown">

@@ -242,7 +242,7 @@ class XenVPS(Service):
 
     def _serialize(self):
         return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
-                    user=self.user.username, ips=[ip._serialize() for ip in self.ips], mac=self.mac)
+                    user=self.user.username, ips=[ip._serialize() for ip in self.ips], mac=self.mac, nickname=self.nickname)
 
     def generate_mac(self):
         octets = [random.randint(0, 255) for x in range(3)]
