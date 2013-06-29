@@ -424,7 +424,7 @@ def hvmvnc(vps):
 @vps.route('/<vps>/hvm/setiso', methods=['POST'])
 @login_required
 def hvmisoset(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
     hvmiso = HVMISOImage.query.filter_by(id=int(request.form['isoid'])).first_or_404()
@@ -434,7 +434,7 @@ def hvmisoset(vps):
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
 def clone(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
     if request.method == 'POST':
@@ -447,7 +447,7 @@ def clone(vps):
 @vps.route('/<vps>/keypair')
 @login_required
 def keypair(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
     return jsonify({'pubkey': vps.node.gen_keypair()})
@@ -455,7 +455,7 @@ def keypair(vps):
 @vps.route('/<vps>/rawstats.json')
 @login_required
 def rawstats(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
     data = vps.node.api(ServerProxy).domain_list()[vps.name]
@@ -465,7 +465,7 @@ def rawstats(vps):
 @vps.route('/<vps>/status.json')
 @login_required
 def status_json(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
     return jsonify({"running": vps.online})
