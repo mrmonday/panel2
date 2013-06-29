@@ -20,6 +20,7 @@ from flask import redirect, url_for, abort, flash, jsonify, make_response, reque
 from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
+from panel2.dns.views import is_valid_host
 from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile, HVMISOImage
 from panel2.user import login_required, admin_required, get_session_user, User, Session
@@ -140,6 +141,20 @@ def view(vps):
     if can_access_vps(vps) is False:
         abort(403)
     return render_template_or_json('vps/view-base.html', service=vps, profiles=KernelProfile.query.all(), templates=template_map)
+
+@vps.route('/<vps>/setnickname', methods=['POST'])
+@login_required
+def setnickname(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+
+    nickname = request.args.get('nickname', None)
+    if not is_valid_host(nickname):
+        nickname = None
+    vps.nickname = nickname
+    db.session.add(vps)
+    db.session.commit()
+
+    return jsonify({'nickname': vps.nickname})
 
 @vps.route('/<vps>/setprofile', methods=['POST'])
 @login_required
