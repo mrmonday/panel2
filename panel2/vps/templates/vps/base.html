@@ -24,11 +24,11 @@
 		{% if vps.is_entitled %}
 			{% if service and vps.name == service.name %}
 				<li class="active">
-					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>
+					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.nickname | default(vps.name, true) }}</a>
 				</li>
 			{% else %}
 				<li>
-					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.name }}</a>
+					<a href="{{ url_for('.view', vps=vps.id) }}"><i class="icon-cloud"></i> {{ vps.nickname | default(vps.name, true) }}</a>
 				</li>
 			{% endif %}
 		{% endif %}
