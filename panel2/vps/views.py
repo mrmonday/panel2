@@ -147,14 +147,14 @@ def view(vps):
 def setnickname(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
 
-    nickname = request.args.get('nickname', None)
+    nickname = request.form.get('nickname', None)
     if not is_valid_host(nickname):
         nickname = None
     vps.nickname = nickname
     db.session.add(vps)
     db.session.commit()
 
-    return jsonify({'nickname': vps.nickname})
+    return jsonify({'nickname': vps.nickname, 'name': vps.name})
 
 @vps.route('/<vps>/setprofile', methods=['POST'])
 @login_required

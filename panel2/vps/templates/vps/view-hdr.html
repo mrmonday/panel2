@@ -4,6 +4,7 @@
 {{ super() }}
 	<script src="/static/widget-logdata.js" type="text/javascript"></script>
 	<script src="/static/widget-vps-status.js" type="text/javascript"></script>
+	<script src="/static/widget-vps-rename.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %}{{ service.nickname | default(service.name, true) }} - Servers{% endblock %}
@@ -11,7 +12,7 @@
 {% block subcontent %}
 
 <h3>
-	{{ service.nickname | default(service.name, true) }}
+	<span id="vpsrename"></span>
 	<span id="vpsstatus"></span>
 	<span class="pull-right">
 		<div class="dropdown">
@@ -59,6 +60,7 @@
 <script>
 $(document).ready(function() {
 	status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vpsstatus"));
+	renamewidget("{{ url_for('.setnickname', vps=service.id) }}", "{{ service.nickname | default(service.name, true) }}", $("#vpsrename"));
 });
 </script>
 
