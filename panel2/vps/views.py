@@ -148,7 +148,7 @@ def setnickname(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
 
     nickname = request.form.get('nickname', None)
-    if not is_valid_host(nickname):
+    if not is_valid_host(nickname + '.localdomain'):
         nickname = None
     vps.nickname = nickname
     db.session.add(vps)
