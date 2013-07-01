@@ -42,15 +42,28 @@ h1, h2, h3, h4 {
 	margin-right: -1em;
 }
 
-.logintext {
-	text-align: right;
-	float: left;
-	margin-right: 0.5em;
-}
-
 .loginavatar {
 	border-radius: 5px;
-	float: right;
+	background: #eee;
+}
+
+.dropdown-toggle:hover, .dropdown-toggle:focus {
+	text-decoration: none;
+	outline: none;
+}
+
+.logincaret, .dropdown .logincaret {
+	border-top: 6px solid #aaa;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	margin-top: 18px;
+}
+
+.logincaret:hover, .dropdown .logincaret:hover {
+	border-top: 6px solid #fff;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	margin-top: 18px;
 }
 
 .menu-item {

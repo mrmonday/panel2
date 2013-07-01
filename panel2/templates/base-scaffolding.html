@@ -13,21 +13,29 @@
 					{% block links %}
 					{% endblock %}
 				</ul>
+				{% if user %}
 				<span class="loginbox">
-					{% if user %}
-					<div class="logintext">
-						<strong>{{ user.username }}</strong><br>
-						<a href="{{ url_for('logout') }}">Logout</a>
-					</div>
-					<img class="loginavatar" src="{{ user.email | gravatar(42) }}">
-					{% else %}
-					<a href="{{ url_for('login') }}">Login</a>
-					{% endif %}
+				<div class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+						<img class="loginavatar" src="{{ user.email | gravatar(42) }}">
+						<b class="caret logincaret"></b>
+					</a>
+					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel" style="font-size: 80%;">
+						<li><a href="#"><strong>{{ user.username }}</strong></a></li>
+						<li class="divider"></li>
+						<li><a href="{{ url_for('profile_index') }}">Profile</a></li>
+						<li><a href="#">Account Sessions</a></li>
+						<li class="divider"></li>
+						<li><a href="{{ url_for('logout') }}">Log out</a></li>
+					</ul>
+				</div>
 				</span>
+				{% endif %}
 			</div>
 		</div>
 	</header>
 
+	<!-- modules sidebar -->
         <nav id="sidebar">
 		{% block sidebar %}
 		<ul class="nav nav-list">
@@ -35,8 +43,7 @@
 		<li{% if section == 'dns' %} class="active"{% endif %}><a href="{{ url_for('dns.list') }}"><i class="bigicon icon-globe"></i>DNS</a></li>
 		<li{% if section == 'vps' %} class="active"{% endif %}><a href="{{ url_for('vps.list') }}"><i class="bigicon icon-cloud"></i>vServers</a></li>
 		<li{% if section == 'support' %} class="active"{% endif %}><a href="{{ url_for('support.list') }}"><i class="bigicon icon-phone"></i>Support</a></li>
-		<li{% if section == 'profile' %} class="active"{% endif %}><a href="{{ url_for('profile_index') }}"><i class="bigicon icon-cog"></i>Settings</a></li>
-		<li{% if section == 'invoice' %} class="active"{% endif %}><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Invoices</a></li>
+		<li{% if section == 'invoice' %} class="active"{% endif %}><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Billing</a></li>
 		{% if user.is_admin %}
 		<li{% if section == 'admin' %} class="active"{% endif %}><a href="{{ url_for('profile.list') }}"><i class="bigicon icon-dashboard"></i>Admin</a></li>
 		{% endif %}
