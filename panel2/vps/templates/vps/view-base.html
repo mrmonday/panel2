@@ -34,7 +34,7 @@
         </div>
 </div>
 
-{% if service.profile.name != 'HVM' %}
+{% if service.profile.type != 'hvm' %}
 <div id="admDeploy" class="modal hide" tabindex="-1" role="dialog">
 	<form method="POST" action="{{ url_for('.deploy', vps=service.id) }}">
         <div class="modal-header">
@@ -90,7 +90,7 @@
 			Launch
 		</a>
 	</div>
-	{% if service.profile.name != 'HVM' %}
+	{% if service.profile.type != 'hvm' %}
 	<div class="span1">
 		<a href="#admDeploy" role="button" class="btn btn-block btn-icon btn-success" data-toggle="modal">
 			<i class="largeicon icon-magic"></i><br>
