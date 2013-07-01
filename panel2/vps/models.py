@@ -47,9 +47,11 @@ class HVMISOImage(db.Model):
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
+    type = db.Enum('pvm', 'hvm', 'container')
 
-    def __init__(self, name):
+    def __init__(self, name, type='pvm'):
         self.name = name
+        self.type = type
 
         db.session.add(self)
         db.session.commit()
