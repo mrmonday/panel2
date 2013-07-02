@@ -30,10 +30,18 @@ class HVMISOImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     file = db.Column(db.String(255))
+    public = db.Column(db.Boolean)
 
-    def __init__(self, name, file):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='isos')
+
+    def __init__(self, user, name, file):
         self.name = name
         self.file = file
+        self.public = False
+
+        self.user = user
+        self.user_id = user.id
 	
         db.session.add(self)
         db.session.commit()
@@ -42,7 +50,7 @@ class HVMISOImage(db.Model):
         return "<HVMISOImage: '{0}' ['{1}']>".format(self.name, self.file)
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name)
+        return dict(id=self.id, name=self.name, public=self.public)
 
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -457,6 +457,19 @@ def hvmbootorder(vps):
     db.session.commit()
     return redirect(url_for('.hvmvnc', vps=vps.id))
 
+@vps.route('/<vps>/hvmiso/<isoid>/delete')
+@login_required
+def hvmiso_delete(vps, isoid):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    hvmiso = HVMISOImage.query.filter_by(id=int(isoid)).first_or_404()
+    if can_access_vps(hvmiso) is False:
+        abort(403)
+    db.session.delete(hvmiso)
+    db.session.commit()
+    return redirect(url_for('.hvmvnc', vps=vps.id))
+
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
 def clone(vps):

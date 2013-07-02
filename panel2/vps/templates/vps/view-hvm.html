@@ -68,7 +68,7 @@
 	</div>
 	{% if not iso.public %}
 	<div class="span2 text-right">
-		<a href="#" class="btn btn-danger"><i class="icon-trash"></i> Delete</a>
+		<a href="{{ url_for('.hvmiso_delete', vps=service.id, isoid=iso.id) }}" class="btn btn-danger"><i class="icon-trash"></i> Delete</a>
 	</div>
 	{% endif %}
 </div>
