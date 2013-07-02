@@ -21,11 +21,9 @@
 			<li>
 				<a href="{{ url_for('.view', vps=service.id) }}"><i class="icon-dashboard"></i> Dashboard</a>
 			</li>
-			{% if service.profile.type != 'hvm' %}
 			<li>
 				<a class="launchconsole" href="{{ url_for('.console', vps=service.id) }}" target="_blank"><i class="icon-terminal"></i> Console</a>
 			</li>
-			{% endif %}
 			<li class="divider"></li>
 			<li>
 				<a class="jsonify" href="{{ url_for('.create', vps=service.id) }}"><i class="icon-play"></i> Start</a>
