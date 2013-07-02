@@ -97,22 +97,20 @@
 			Install
 		</a>
 	</div>
+	{% else %}
+	<div class="span1">
+		<a href="{{ url_for('.hvmvnc', vps=service.id) }}" class="btn btn-block btn-icon btn-success">
+			<i class="largeicon icon-cog"></i><br>
+			Configure
+		</a>
+	</div>
+	{% endif %}
 	<div class="span1">
 		<a href="{{ url_for('.console', vps=service.id) }}" class="btn btn-block btn-icon btn-info launchconsole" target="_blank">
 			<i class="largeicon icon-terminal"></i><br>
 			Console
 		</a>
 	</div>
-	{% else %}
-	<div class="span1">
-		<a href="{{ url_for('.hvmvnc', vps=service.id) }}" class="btn btn-block btn-icon btn-info">
-			<i class="largeicon icon-terminal"></i><br>
-			VNC
-		</a>
-	</div>
-	<div class="span1">
-	</div>
-	{% endif %}
 	<div class="span1 offset5">
 	{% if service.watchdog != True %}
 		<a href="{{ url_for('.start_monitoring', vps=service.id) }}" class="btn btn-block btn-icon btn-danger">
