@@ -287,6 +287,8 @@ function init(protocols) {
             wsbt = true;
         }
     } catch (exc) {
+        // HACKHACKHACK detection is LOL BROKEN on some firefoxes, so just go with it
+        wsbt = true;
         // Just ignore failed test localhost connections
     }
 

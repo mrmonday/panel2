@@ -119,7 +119,7 @@ Util.get_logging = function () {
     return Util._log_level;
 };
 // Initialize logging level
-Util.init_logging();
+Util.init_logging('warn');
 
 
 // Set configuration default for Crockford style function namespaces

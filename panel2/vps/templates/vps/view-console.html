@@ -11,6 +11,17 @@
 		cursor: default;
 	}
 </style>
+{% if service.profile.type == 'hvm' %}
+<script src="/static/novnc/util.js"></script>
+<script src="/static/novnc/webutil.js"></script>
+<script src="/static/novnc/base64.js"></script>
+<script src="/static/novnc/websock.js"></script>
+<script src="/static/novnc/des.js"></script>
+<script src="/static/novnc/input.js"></script>
+<script src="/static/novnc/display.js"></script>
+<script src="/static/novnc/jsunzip.js"></script>
+<script src="/static/novnc/rfb.js"></script>
+{% endif %}
 <script>
 	$(document).ready(function() {
 		$("#reconnect").click(function() {
@@ -18,6 +29,60 @@
 		});
 	});
 </script>
+{% if service.profile.type == 'hvm' %}
+<script>
+	var rdb;
+
+	$(document).ready(function () {
+		var host = '{{ service.node.name }}.cloud.tortois.es';
+		var port = '{{ 5700 + service.id }}';
+		var path = '{{ service.name }}';
+		var password = '{{ service.name }}';
+
+	        console.log($D('noVNC_canvas'));
+
+		var rfb = new RFB({
+			'target': $D('thecanvas'),
+			'encrypt': 'yes',
+			'true_color': true,
+			'local_cursor': true,
+			'shared': true,
+			'view_only': false,
+		});
+				
+		rfb.connect(host, port, password, path);
+				
+		resizewindow();
+		window.setInterval(resizewindow, 1000);		
+
+		$("#ctrlaltdel").click(function() {
+			rfb.sendCtrlAltDel();
+		});
+	});
+
+	function resizewindow() {
+		var width, height;
+				
+		height = $('.navbar').height();
+		height += $('#thecanvas').height();
+		height += window.outerHeight - window.innerHeight;
+
+		width = $('#thecanvas').width();
+		width += window.outerWidth - window.innerWidth;
+				
+		// this is incase the virtual server is powered off so it doesn't snap entirely				
+		if(width < 640) {
+			width = 640;
+		} 
+				
+		if(height < 480) {
+			height = 480;
+		}
+				
+		window.resizeTo(width, height);				
+	}
+</script>
+{% endif %}
 {% endblock %}
 
 {% block base %}
@@ -45,6 +110,9 @@
 	</header>
 	{% if service.profile.type != 'hvm' %}
 	<iframe id="canvas" src="{{ url_for('.console_real', vps=service.id) }}" style="width: 100%; height: 30em; border: none;"></iframe>
+	{% else %}
+	<canvas id="thecanvas" width="640px" height="480px">
+	</canvas>
 	{% endif %}
 </div>
 {% endblock %}

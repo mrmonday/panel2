@@ -1,5 +1,16 @@
 {% extends "base-empty.html" %}
 {% block title %} Welcome {% endblock %}
+{% block head %}
+{{ super() }}
+		<script src="/static/bootstrap-notify.js"></script>
+		<script src="/static/jquery.dataTables.min.js"></script>
+		<script src="/static/bootstrap-datatables.js"></script>
+		<script src="/static/jquery.flot.js"></script>
+		<script src="/static/jquery.flot.time.js"></script>
+		<script src="/static/jquery.flot.stack.js"></script>
+		<script src="/static/sidebar.js"></script>
+		<script src="/static/notifications.js"></script>
+{% endblock %}
 
 {% block body %}
 

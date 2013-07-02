@@ -47,7 +47,7 @@ class HVMISOImage(db.Model):
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    type = db.Enum('pvm', 'hvm', 'container')
+    type = db.Column(db.Enum('pvm', 'hvm', 'container'))
 
     def __init__(self, name, type='pvm'):
         self.name = name
@@ -63,6 +63,8 @@ class KernelProfile(db.Model):
         keys = {
             'domname': domain.name,
             'domid': domain.id,
+            'vncport': domain.id,
+            'wsport': 5700 + domain.id,
             'eth0_ip': domain.ips[0].ip,
             'eth0_gateway': domain.ips[0].ipnet.gateway(),
             'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
