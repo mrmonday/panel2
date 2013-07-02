@@ -34,7 +34,7 @@ class HVMISOImage(db.Model):
     def __init__(self, name, file):
         self.name = name
         self.file = file
-
+	
         db.session.add(self)
         db.session.commit()
 
@@ -70,6 +70,7 @@ class KernelProfile(db.Model):
             'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
             'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
             'isopath': domain.hvmiso.file,
+            'bootorder': domain.hvm_bootorder,
         }
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
@@ -217,6 +218,8 @@ class XenVPS(Service):
     mac = db.Column(db.String(255))
 
     online = db.Column(db.Boolean)
+
+    hvm_bootorder = db.Column(db.String(4), default="cd")
 
     def __init__(self, name, memory, swap, disk, price, node, user):
         self.name = name

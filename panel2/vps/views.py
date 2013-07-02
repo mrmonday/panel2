@@ -446,6 +446,17 @@ def hvmisoset(vps):
     vps.set_hvmiso(hvmiso)
     return redirect(url_for('.hvmvnc', vps=vps.id))
 
+@vps.route('/<vps>/hvm/setbootorder', methods=['POST'])
+@login_required
+def hvmbootorder(vps):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.hvm_bootorder = request.form.get('bootorder', 'cd')
+    db.session.add(vps)
+    db.session.commit()
+    return redirect(url_for('.hvmvnc', vps=vps.id))
+
 @vps.route('/<vps>/clone', methods=['GET', 'POST'])
 @login_required
 def clone(vps):
