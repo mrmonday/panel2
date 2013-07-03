@@ -20,6 +20,8 @@ from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
 from panel2.utils import send_simple_email
 
+from oath.totp import accept_totp
+
 import hashlib, os
 import blinker
 import random, base64, string
@@ -129,6 +131,9 @@ class User(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def validate_totp(self, response):
+        return accept_totp(response, self.totp_key, format='dec6')
 
     def _serialize(self):
         return dict(username=self.username, email=self.email,
