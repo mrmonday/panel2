@@ -434,7 +434,8 @@ def hvmvnc(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if can_access_vps(vps) is False:
         abort(403)
-    return render_template_or_json('vps/view-hvm.html', service=vps, isolist=HVMISOImage.query)
+    user = get_session_user()
+    return render_template_or_json('vps/view-hvm.html', service=vps, isolist=HVMISOImage.query.filter((HVMISOImage.public == True) | (HVMISOImage.user_id == user.id)).all())
 
 @vps.route('/<vps>/hvm/setiso', methods=['POST'])
 @login_required
@@ -455,6 +456,23 @@ def hvmbootorder(vps):
     vps.hvm_bootorder = request.form.get('bootorder', 'cd')
     db.session.add(vps)
     db.session.commit()
+    return redirect(url_for('.hvmvnc', vps=vps.id))
+
+@vps.route('/<vps>/hvmiso/new', methods=['POST'])
+@login_required
+def hvmiso_new(vps):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    name = request.form.get('isoname', None)
+    iso = request.form.get('isouri', None)
+
+    if not name or not iso:
+        flash('missing necessary parameters')
+        return redirect(url_for('.hvmvnc', vps=vps.id))
+
+    HVMISOImage(get_session_user(), name, iso)
     return redirect(url_for('.hvmvnc', vps=vps.id))
 
 @vps.route('/<vps>/hvmiso/<isoid>/delete')

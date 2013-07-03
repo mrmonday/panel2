@@ -4,6 +4,35 @@
 
 {% block component %}
 
+<div id="admAddISO" class="modal hide" tabindex="-1" role="dialog">
+	<form method="POST" action="{{ url_for('.hvmiso_new', vps=service.id) }}" class="form-horizontal">
+        <div class="modal-header">
+                <a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+                <h3>Add New ISO</h3>
+        </div>
+        <div class="modal-body">
+		<p><strong>Note</strong>: ISO images must be on HTTP-accessible URIs.  Mounting an inaccessible ISO will
+		   result in an unbootable VM!</p>
+		<div class="control-group">
+			<label class="control-label" for="isoname">ISO Name</label>
+			<div class="controls">
+				<input type="text" id="isoname" name="isoname" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="isouri">URI</label>
+			<div class="controls">
+				<input type="text" id="isouri" name="isouri" class="input-block-level">
+			</div>
+		</div>
+        </div>
+        <div class="modal-footer">
+		<button type="submit" class="btn btn-primary">Add New ISO</button>
+                <a href="#"  class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+        </div>
+	</form>
+</div>
+
 <div class="row-fluid row-equalize pushdown">
 
 <div class="span3 text-right">
@@ -52,7 +81,7 @@
 
 	<p>Additionally, you may add ISOs to your ISO library for private use on your virtual machines.</p>
 
-	<a href="#" class="btn btn-success"><i class="icon-plus"></i> Add new ISO</a>
+	<a href="#admAddISO" data-toggle="modal" class="btn btn-success"><i class="icon-plus"></i> Add new ISO</a>
 </div>
 
 <div class="span9" style="margin-top: 1.5em">
