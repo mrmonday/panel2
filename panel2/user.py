@@ -66,12 +66,15 @@ class User(db.Model):
     salt = db.Column(db.String(32))
     is_admin = db.Column(db.Boolean)
     api_key = db.Column(db.String(255))
+    totp_key = db.Column(db.String(32))
+    require_totp = db.Column(db.Boolean)
 
     def __init__(self, username, password, email):
         self.username = username
         self.email = email
         self.assign_password(password.encode('utf-8'))
         self.set_api_key()
+        self.set_totp_key()
 
         createuser_signal.send(app, user=self)
 
@@ -116,7 +119,13 @@ class User(db.Model):
         return svsname_base       
 
     def set_api_key(self):
-        self.api_key = ''.join([random.choice(string.letters + string.digits) for i in xrange(150)])
+        self.api_key = ''.join([random.choice(string.letters + string.digits) for i in xrange(64)])
+
+        db.session.add(self)
+        db.session.commit()
+
+    def set_totp_key(self):
+        self.totp_key = ''.join([random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567") for i in xrange(16)])
 
         db.session.add(self)
         db.session.commit()
