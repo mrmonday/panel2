@@ -1,54 +1,98 @@
 {% extends "base-scaffolding.html" %}
 {% set section = 'profile' %}
 {% block title %}My Account{% endblock %}
+{% block head %}
+	{{ super() }}
+	<script src="/static/jquery.qrcode.min.js"></script>
+{% endblock %}
+
 {% block content %}
 
 <h2>
-	<img class="gravatar" src="{{ user.email | gravatar(48) }}" alt="{{ user.username }}'s gravatar">
-	{{ user.username }} &mdash; Account Settings
+	My Account
 </h2>
 
-<h3>Change Password</h3>
-
-<form action="{{ url_for('.profile_change_pw') }}" method="POST">
-	<div class="row-fluid">
-		<div class="span12">
-			<input type="password" placeholder="Old Password" class="span12" name="oldpass">
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
+		<h3>Change Password</h3>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+	<form action="{{ url_for('.profile_change_pw') }}" method="POST">
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="password" placeholder="Old Password" class="input-block-level" name="oldpass">
+			</div>
 		</div>
-	</div>
-	<div class="row-fluid">
-		<div class="span12">
-			<input type="password" placeholder="New Password" class="span12" name="newpass">
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="password" placeholder="New Password" class="input-block-level" name="newpass">
+			</div>
 		</div>
+		<button class="btn btn-primary" type="submit">Change Password</button>
+	</form>
 	</div>
-	<button class="pull-right btn btn-primary" type="submit">Change Password</button>
-</form>
+</div>
 
-<div class="pushdown"></div>
-
-<h3>Change E-Mail Address</h3>
-
-<form action="{{ url_for('.profile_change_email') }}" method="POST">
-	<p>
-		It is important to keep your e-mail address up to date so that you can receive important notifications from us.
-		Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
-		address on file for the account.
-	</p>
-	<div class="row-fluid">
-		<div class="span12">
-			<input type="text" placeholder="E-Mail Address" value="{{ user.email }}" name="new_email" class="span12">
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
+		<h3>Change E-Mail Address</h3>
+		<p>
+			It is important to keep your e-mail address up to date so that you can receive important notifications from us.
+			Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
+			address on file for the account.
+		</p>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+		<form action="{{ url_for('.profile_change_email') }}" method="POST">
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" placeholder="E-Mail Address" value="{{ user.email }}" name="new_email" class="input-block-level">
+			</div>
 		</div>
+		<button class="btn btn-primary" type="submit">Change E-Mail Address</button>
+		</form>
 	</div>
-	<button class="pull-right btn btn-primary" type="submit">Change E-Mail Address</button>
-</form>
+</div>
 
-<h3>API Key</h3>
-
-<p>
-	<div class="pull-right">
-		<a href="{{ url_for('.profile_new_key') }}" class="btn btn-primary">Change</a>
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
+		<h3>API Key</h3>
+		<p>For more information on our API, see our <a href="http://wiki.tortois.es/index/API">wiki page</a>.</p>
 	</div>
-	Your API key is presently: <code>{{ user.api_key }}</code>
-</p>
+	<div class="span9" style="margin-top: 1.5em">
+		<p>
+			Your API key is presently: <code>{{ user.api_key }}</code>
+		</p>
+		<p>
+			<a href="{{ url_for('.profile_new_key') }}" class="btn btn-primary">Change</a>
+		</p>
+	</div>
+</div>
+
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
+		<h3>Two-Factor Authentication</h3>
+		<p>Two-Factor Authentication allows you to add an additional layer of protection to your account by
+		   requiring submission of a proof of work using a pre-shared key in order to complete the login process.</p>
+		<p>To use this feature, install an application such as <a href="">Google Authenticator</a>.</p>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+		<p>Your TOTP pre-shared secret is presently: <code>{{ user.totp_key }}</code></p>
+		<div id="totp_qrcode" class="pushdown"></div>
+		<script>
+			$(document).ready(function () {
+				$("#totp_qrcode").qrcode({
+					width: 192,
+					height: 192,
+					text: "otpauth://totp/{{ user.username }}@manage.tortois.es?secret={{ user.totp_key }}",
+				});
+			});
+		</script>
+		<p>
+			<a href="{{ url_for('.profile_new_key') }}" class="btn btn-primary">Change</a>
+			<a href="{{ url_for('.profile_new_key') }}" class="btn btn-success">Enable</a>
+		</p>
+	</div>
+</div>
 
 {% endblock %}
