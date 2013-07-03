@@ -89,8 +89,12 @@
 			});
 		</script>
 		<p>
-			<a href="{{ url_for('.profile_new_key') }}" class="btn btn-primary">Change</a>
-			<a href="{{ url_for('.profile_new_key') }}" class="btn btn-success">Enable</a>
+			<a href="{{ url_for('.profile_new_totp_key') }}" class="btn btn-primary">Change</a>
+			{% if not user.require_totp %}
+			<a href="{{ url_for('.profile_totp_enable') }}" class="btn btn-success">Enable</a>
+			{% else %}
+			<a href="{{ url_for('.profile_totp_disable') }}" class="btn btn-warning">Disable</a>
+			{% endif %}
 		</p>
 	</div>
 </div>

@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from panel2 import app
+from panel2 import app, db
 from panel2.user import get_session_user
 from panel2.utils import render_template_or_json
 
@@ -48,3 +48,27 @@ def profile_new_key():
     user.set_api_key()
     flash('Your API key has been changed', 'success')
     return redirect(url_for('.profile_index'))
+
+@app.route('/profile/new-totpkey', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def profile_new_totp_key():
+    user = get_session_user()
+    user.set_totp_key()
+    flash('Your TOTP key has been changed', 'success')
+    return redirect(url_for('.profile_index'))
+
+@app.route('/profile/totp/enable', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def profile_totp_enable():
+    user = get_session_user()
+    user.require_totp = True
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('.profile_index'))
+
+@app.route('/profile/totp/disable', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def profile_totp_disable():
+    user = get_session_user()
+    user.require_totp = False
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('.profile_index'))
+
