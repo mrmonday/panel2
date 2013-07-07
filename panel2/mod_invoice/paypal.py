@@ -28,7 +28,7 @@ def ipn_post(invoice_id):
 
     arg = ''
     for x, y in values.iteritems():
-        arg += "&{x}={y}".format(x=x,y=y)
+        arg += u"&{x}={y}".format(x=unicode(x), y=unicode(y))
 
     validate_url = 'https://www.paypal.com' \
        '/cgi-bin/webscr?cmd=_notify-validate{arg}' \
