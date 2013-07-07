@@ -37,6 +37,8 @@ class Session(db.Model):
     host = db.Column(db.String(255))
     challenge = db.Column(db.String(255))
 
+    totp_completed = db.Column(db.Boolean)
+
     def __init__(self, user):
         self.user_id = user.id
         self.user = user
@@ -52,6 +54,11 @@ class Session(db.Model):
 
     def validate(self, challenge):
         return (self.challenge == challenge)
+
+    def totp_complete(self):
+        self.totp_completed = True
+        db.session.add(self)
+        db.session.commit()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -167,7 +174,21 @@ def get_session_user():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if get_session_user() is None:
+        u = get_session_user()
+        if not u:
+            return redirect(url_for('login'))
+        if u.require_totp and not is_api_session():
+            sess = Session.query.filter_by(id=session['session_id']).first()
+            if not sess or not sess.totp_completed:
+                return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def login_required_soft(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        u = get_session_user()
+        if not u:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function

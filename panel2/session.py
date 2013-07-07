@@ -18,7 +18,7 @@ import hashlib
 import blinker
 
 from panel2 import app, db
-from panel2.user import User, Session, get_session_user
+from panel2.user import User, Session, get_session_user, login_required_soft
 from panel2.utils import is_email_valid, render_template_or_json
 from flask import session, redirect, url_for, escape, request, get_flashed_messages, jsonify
 from sqlalchemy.exc import IntegrityError
@@ -58,12 +58,32 @@ def validate_login(username, password):
     login_signal.send(app, user=u)
     return True
 
+@app.route('/totp-challenge', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@login_required_soft
+def totp_challenge():
+    if request.method == 'POST':
+        user = get_session_user()
+        response = int(request.form.get('response', 0))
+        if not user.validate_totp(response):
+            return redirect(url_for('totp_challenge'))
+        sess = Session.query.filter_by(id=session['session_id']).first()
+        if not sess:
+            return redirect(url_for('login'))
+        sess.totp_complete()
+        return redirect(url_for('index'))
+
+    return render_template_or_json('challenge.html')
+
 @app.route('/login', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def login():
     if request.method == 'POST':
         user = validate_login(request.form['username'], request.form['password'])
         if user is not False:
-            return redirect(url_for('index'))
+            u = get_session_user()
+            if not u.require_totp:
+                return redirect(url_for('index'))
+            else:
+                return redirect(url_for('totp_challenge'))
         else:
             session.pop('session_id', None)
             session.pop('session_challenge', None)
