@@ -89,6 +89,8 @@ def signup():
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No password provided')
                 if len(email) == 0:
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No email provided')
+                if User.query.filter_by(username=username).first() is not None:
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Username is already taken')
                 user = User(username, password, email)
             except Exception as e:
                 return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Exception: ' + repr(e))
