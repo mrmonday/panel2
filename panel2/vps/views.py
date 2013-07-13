@@ -460,6 +460,17 @@ def hvmbootorder(vps):
     db.session.commit()
     return redirect(url_for('.hvmvnc', vps=vps.id))
 
+@vps.route('/<vps>/hvm/setnictype', methods=['POST'])
+@login_required
+def hvmnictype(vps):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.hvm_nictype = request.form.get('nictype', 'e1000')
+    db.session.add(vps)
+    db.session.commit()
+    return redirect(url_for('.hvmvnc', vps=vps.id))
+
 @vps.route('/<vps>/hvmiso/new', methods=['POST'])
 @login_required
 def hvmiso_new(vps):

@@ -79,6 +79,7 @@ class KernelProfile(db.Model):
             'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
             'isopath': domain.hvmiso.file,
             'bootorder': domain.hvm_bootorder,
+            'hvm_nictype': domain.hvm_nictype,
         }
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
@@ -228,6 +229,7 @@ class XenVPS(Service):
     online = db.Column(db.Boolean)
 
     hvm_bootorder = db.Column(db.String(4), default="cd")
+    hvm_nictype = db.Column(db.String(255), default="e1000")
 
     def __init__(self, name, memory, swap, disk, price, node, user):
         self.name = name

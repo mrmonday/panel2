@@ -169,4 +169,51 @@
 
 </div>
 
+<div class="row-fluid row-equalize pushdown">
+
+<div class="span3 text-right">
+	<h3>NIC Type</h3>
+
+	<p>You may select the type of NIC that will be used.  Some OS support virtio, which may improve
+	   performance.</p>
+</div>
+
+<div class="span9" style="margin-top: 1.5em">
+
+<form method="POST" action="{{ url_for('.hvmnictype', vps=service.id) }}">
+<div class="row-fluid">
+	<div class="span12">
+		<label class="radio">
+			<input type="radio" name="nictype" value="e1000" {% if service.hvm_nictype == "e1000" %}checked{% endif %}>
+			e1000
+		</label>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span12">
+		<label class="radio">
+			<input type="radio" name="nictype" value="virtio-net" {% if service.hvm_nictype == "virtio-net" %}checked{% endif %}>
+			virtio-net
+		</label>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span12">
+		<label class="radio">
+			<input type="radio" name="nictype" value="rtl8139" {% if service.hvm_nictype == "rtl8139" %}checked{% endif %}>
+			rtl8139
+		</label>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span12">
+		<button type="submit" class="btn btn-primary">Select NIC Type</button>
+	</div>
+</div>
+</form>
+
+</div>
+
+</div>
+
 {% endblock %}
