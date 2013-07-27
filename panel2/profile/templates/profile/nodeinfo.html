@@ -3,7 +3,38 @@
 {% block content %}
 {{ super() }}
 
-<h3>{{ node.name }} ({{ node.vps | count }})</h3>
+<h2>{{ node.name }} ({{ node.vps | count }})</h2>
+
+<h3>Networks</h3>
+
+<table class="table table-striped">
+<tr>
+	<th>Network ID</th>
+	<th>Network</th>
+	<th>Type</th>
+	<th>Classification</th>
+	<th>Free IPs</th>
+	<th>
+		<span class="pull-right">Options</span>
+	</th>
+</tr>
+{% for network in node.ipranges %}
+<tr>
+	<td>{{ network.id }}</td>
+	<td>{{ network.network }}</td>
+	<td>IPv{{ network.ipnet().version }}</td>
+	<td>{{ network.type }}</td>
+	<td>{{ network.available_ips() | count }}</td>
+	<td>
+		<span class="pull-right">
+			<a href="#" class="btn btn-primary">View</a>
+		</span>
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Services</h3>
 
 <table class="table table-striped">
 <tr>
