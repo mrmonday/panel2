@@ -37,6 +37,7 @@ template_map = {
     'alpine2.5_login.xml': 'Alpine 2.5 (minimal)',
     'centos6_login.xml': 'CentOS 6 (minimal)',
     'arch_login.xml': 'Arch Linux (minimal)',
+    'gentoo_login.xml': 'Gentoo (minimal)',
 }
 
 def can_access_vps(vps, user=None):
@@ -84,16 +85,16 @@ def signup():
                 password = request.form['password'].strip().rstrip()
                 email = request.form['email'].strip().rstrip()
                 if len(username) == 0:
-                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No username provided')
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No username provided', discount=discount)
                 if len(password) == 0: 
-                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No password provided')
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No password provided', discount=discount)
                 if len(email) == 0:
-                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No email provided')
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No email provided', discount=discount)
                 if User.query.filter_by(username=username).first() is not None:
-                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Username is already taken')
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Username is already taken', discount=discount)
                 user = User(username, password, email)
             except Exception as e:
-                return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Exception: ' + repr(e))
+                return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Exception: ' + repr(e), discount=discount)
 
             if user is not None:
                 sess = Session(user)
