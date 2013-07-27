@@ -26,13 +26,13 @@ def ipn_post(invoice_id):
     request.parameter_storage_class = ImmutableOrderedMultiDict
     values = request.form
 
-    arg = ''
+    arg = u''
     for x, y in values.iteritems():
         arg += u"&{x}={y}".format(x=unicode(x), y=unicode(y))
 
-    validate_url = 'https://www.paypal.com' \
+    validate_url = u'https://www.paypal.com' \
        '/cgi-bin/webscr?cmd=_notify-validate{arg}' \
-       .format(arg=arg)
+       .format(arg=unicode(arg).encode('utf-8'))
 
     r = requests.get(validate_url)
     if 'VERIFIED' not in r.text:
