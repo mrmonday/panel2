@@ -39,11 +39,9 @@ def ipn_post(invoice_id):
     for x, y in values.iteritems():
         arg += u"&{x}={y}".format(x=unicode(x), y=unicode(y))
 
-    validate_url = u'https://www.paypal.com' \
-       '/cgi-bin/webscr?cmd=_notify-validate{arg}' \
-       .format(arg=unicode(arg).encode('utf-8'))
+    validate_url = 'https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate' + arg
 
-    r = requests.get(validate_url)
+    r = requests.get(validate_url.encode(values['charset']))
     if 'VERIFIED' not in r.text:
         return r.text
 
