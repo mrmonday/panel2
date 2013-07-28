@@ -148,8 +148,9 @@ def view(vps):
 @vps.route('/<vps>/setnickname', methods=['POST'])
 @login_required
 def setnickname(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
-
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     nickname = request.form.get('nickname', None)
     if not is_valid_host(nickname + '.localdomain'):
         nickname = None
