@@ -326,25 +326,25 @@ def deploy(vps):
 
 @vps.route('/<vps>/cpustats/<start>/<step>')
 def cpustats(vps, start, step):
-    vps = XenVPS.query.filter_by(id=vps).first()
-    if vps is None:
-        abort(404)
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     return jsonify(vps.get_cpu_stats(start=int(start), step=int(step)))
 
 @vps.route('/<vps>/netstats/<start>/<step>')
 def netstats(vps, start, step):
-    vps = XenVPS.query.filter_by(id=vps).first()
-    if vps is None:
-        abort(404)
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     response = make_response(json.dumps(vps.get_net_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
 
 @vps.route('/<vps>/vbdstats/<start>/<step>')
 def vbdstats(vps, start, step):
-    vps = XenVPS.query.filter_by(id=vps).first()
-    if vps is None:
-        abort(404)
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     response = make_response(json.dumps(vps.get_vbd_stats(start=int(start), step=int(step))))
     response.headers['Content-Type'] = 'application/json'
     return response
