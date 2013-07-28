@@ -21,6 +21,8 @@ import time
 import blinker
 import requests
 import json
+import urllib
+import random
 
 invoice_create_signal = blinker.Signal('A signal which is fired when an invoice is created')
 invoice_paid_signal = blinker.Signal('A signal which is fired when an invoice is paid')
@@ -95,6 +97,7 @@ class Invoice(db.Model):
     creation_ts = db.Column(db.Integer)
     payment_ts = db.Column(db.Integer)
     btc_adr = db.Column(db.String(255))
+    secret = db.Column(db.String(255))
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='invoices')
@@ -106,6 +109,15 @@ class Invoice(db.Model):
         self.user_id = user.id
         self.user = user
         self.creation_ts = time.time()
+        self.gen_secret()
+
+        db.session.add(self)
+        db.session.commit()
+
+    def gen_secret(self):
+        self.secret = ''
+        for i in xrange(32):
+            self.secret += random.choice("abcdefghijklmnopqrstuvwxyz0123456789")
 
         db.session.add(self)
         db.session.commit()
@@ -147,7 +159,10 @@ class Invoice(db.Model):
         return sum([child.bitcoin_cost() for child in self.items])
 
     def btc_callback_url(self):
-        return 'https://manage.tortois.es/invoice/{0}/btc-notify'.format(self.id)
+        if not self.secret:
+            self.gen_secret()
+        urlbase = 'https://manage.tortois.es/invoice/{0}/btc-notify?secret={1}'.format(self.id, self.secret)
+        return urllib.quote_plus(urlbase)
 
     def bitcoin_address(self):
         if self.btc_adr:

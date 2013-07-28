@@ -27,22 +27,19 @@ def btc_notify(invoice_id):
     value_in_btc = int(request.args.get('value', 0)) / 100000000
     destination_address = request.args.get('destination_address', None)
     confirmations = int(request.args.get('confirmations', 0))
-    test = request.args.get('test', 'false')
+    secret = request.args.get('secret', None)
 
-    if test == 'true':
-        return '*ok*'
+    invoice = Invoice.query.filter_by(id=invoice_id).first_or_404()
+
+    if not secret or secret != invoice.secret:
+        return '*fail*'
 
     if destination_address != app.config['BITCOIN_ADDRESS']:
-        return ''
+        return '*fail*'
 
     if confirmations < 1:
-        return ''
+        return '*fail*'
 
-    invoice = Invoice.query.filter_by(id=invoice_id).first()
-
-    if value_in_btc < invoice.total_btc_due():
-        return '*not ok*'
-
-    invoice.mark_paid()
+    invoice.credit(invoice.total_due(), 'Bitcoin - {}'.format(request.args.get('input_transaction_hash', '*unknown*')))
 
     return '*ok*'
