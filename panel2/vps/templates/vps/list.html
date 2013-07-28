@@ -78,7 +78,11 @@
 	<td>{{ service.ips[0].ip }}</td>
 	<td>{{ service.node.name }}</td>
 	<td>{{ service.node.region.name }}</td>
+	{% if service.expiry %}
 	<td>{% if not service.is_entitled %}Expired: {% endif %}{{ service.expiry | strftime('%m/%d/%Y') }}</td>
+	{% else %}
+	<td>Inactive</td>
+	{% endif %}
 	<td>
 		<span class="pull-right">
 			{% if service.is_entitled %}
