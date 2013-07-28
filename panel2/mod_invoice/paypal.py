@@ -26,6 +26,9 @@ def ipn_post(invoice_id):
     request.parameter_storage_class = ImmutableOrderedMultiDict
     values = request.form
 
+    if values['receiver_email'] != app.config['PAYPAL_EMAIL']:
+        return 'INVALID'
+
     arg = u''
     for x, y in values.iteritems():
         arg += u"&{x}={y}".format(x=unicode(x), y=unicode(y))
