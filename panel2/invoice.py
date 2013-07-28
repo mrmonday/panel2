@@ -127,6 +127,13 @@ class Invoice(db.Model):
         [item.mark_paid() for item in self.items]
         invoice_paid_signal.send(app, invoice=self)
 
+    def delete(self):
+        InvoiceItem.query.filter_by(invoice_id=self.id).delete()
+        db.session.commit()
+
+        db.session.delete(self)
+        db.session.commit()
+
     def credit(self, amount, description='Payment'):
         item = InvoiceItem(None, self, -amount, description)
         if self.total_due() == 0:
