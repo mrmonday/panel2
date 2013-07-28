@@ -1,0 +1,31 @@
+{% extends "email/base-message.txt" %}
+{% block message %}{% if service.nickname %}This is a notification about {{ service.name }} ({{ service.nickname }}).{% else %}This is a notification about {{ service.name }}.{% endif %}
+
+Despite our multiple attempts to contact you about this service's expiration,
+you have not renewed this service.
+
+Thusly, in a few minutes, this service will be suspended.
+
+If your service is not renewed by the end of the day on {{ delete_ts | strftime('%m/%d/%Y') }},
+the service will be deleted and all data associated with it will be irrecoverably
+destroyed.
+
+To renew your service:
+
+1. Connect to the management portal at https://manage.tortois.es/
+2. Select the service.
+3. Click "Renew" on the service dashboard.
+4. Pay the resulting invoice.
+
+If you do not want your service anymore:
+
+1. Connect to the management portal at https://manage.tortois.es/
+2. Select the service.
+3. Click "Delete" on the service dashboard.
+4. Confirm that you wish to delete the service.
+
+Unfortunately, as your service has now been suspended, we cannot allow you to make a
+payment arrangement to restore the service.  A payment to renew the service will
+immediately restore the service.
+
+Thank you for your attention to this matter.{% endblock %}

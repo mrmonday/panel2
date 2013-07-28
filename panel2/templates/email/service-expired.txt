@@ -1,0 +1,30 @@
+{% extends "email/base-message.txt" %}
+{% block message %}{% if service.nickname %}This is a notification about {{ service.name }} ({{ service.nickname }}).{% else %}This is a notification about {{ service.name }}.{% endif %}
+
+This service has expired since {{ service.expiry | strftime('%m/%d/%Y') }}.
+
+If your service is not renewed by {{ expiry_ts | strftime('%m/%d/%Y') }},
+the service will be suspended.
+
+If your service is not renewed by {{ delete_ts | strftime('%m/%d/%Y') }},
+the service will be deleted.
+
+To renew your service:
+
+1. Connect to the management portal at https://manage.tortois.es/
+2. Select the service.
+3. Click "Renew" on the service dashboard.
+4. Pay the resulting invoice.
+
+If you do not want your service anymore:
+
+1. Connect to the management portal at https://manage.tortois.es/
+2. Select the service.
+3. Click "Delete" on the service dashboard.
+4. Confirm that you wish to delete the service.
+
+If you need additional time to make a payment, we can move your expiry date
+forward to avoid suspension.  To do this, simply open a support ticket, and
+we will be glad to assist you.
+
+Thank you for your attention to this matter.{% endblock %}

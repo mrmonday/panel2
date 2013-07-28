@@ -13,7 +13,8 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from panel2 import app, db
+from panel2 import app, db, cron
+from panel2.cron import DAILY
 from panel2.invoice import InvoiceItem, invoice_item_paid_signal
 import ipaddress
 import time
@@ -57,6 +58,9 @@ class Service(db.Model):
     def suspend(self):
         self.is_entitled = False
 
+        delete_ts = self.expiry + (86400 * 7)
+        self.user.send_email('SUSPENSION: {}'.format(self.name), 'email/service-suspended.txt', service=self, delete_ts=delete_ts)
+
         db.session.add(self)
         db.session.commit()
 
@@ -84,6 +88,51 @@ def service_update_expiry(*args, **kwargs):
     service = kwargs.get('service', None)
     if service:
         service.update_expiry()
+
+@cron.task(DAILY)
+def expiry_nag():
+    ctx = app.test_request_context()
+    ctx.push()
+
+    delinquent = Service.query.filter(Service.expiry is not None and Service.expiry < time.time())
+
+    for svc in delinquent:
+        print "{} has expired".format(svc.name)
+        expiry_ts = svc.expiry + (86400 * 3)
+        delete_ts = svc.expiry + (86400 * 7)
+        svc.user.send_email('URGENT: Service {} has expired'.format(svc.name), 'email/service-expired.txt', service=svc, expiry_ts=expiry_ts, delete_ts=delete_ts)
+
+    ctx.pop()
+
+@cron.task(DAILY)
+def expiry_suspend():
+    ctx = app.test_request_context()
+    ctx.push()
+    ts = time.time()
+
+    delinquent = Service.query.filter(Service.expiry < time.time() and Service.is_entitled == True)
+
+    for svc in delinquent:
+        expiry_ts = svc.expiry + (86400 * 3)
+        if expiry_ts < ts:
+            svc.suspend()
+
+    ctx.pop()
+
+@cron.task(DAILY)
+def expiry_autodelete():
+    ctx = app.test_request_context()
+    ctx.push()
+    ts = time.time()
+
+    delinquent = Service.query.filter(Service.expiry < time.time() and Service.is_entitled == False)
+
+    for svc in delinquent:
+        delete_ts = svc.expiry + (86400 * 7)
+        if delete_ts < ts:
+            svc.delete()
+
+    ctx.pop()
 
 class IPAddress(db.Model):
     __tablename__ = 'ips'
