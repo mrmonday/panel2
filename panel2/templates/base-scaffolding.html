@@ -1,15 +1,20 @@
+{% if not notifications and notifications != False %}
+{% set notifications=True %}
+{% endif %}
 {% extends "base-empty.html" %}
 {% block title %} Welcome {% endblock %}
 {% block head %}
 {{ super() }}
-		<script src="/static/bootstrap-notify.js"></script>
 		<script src="/static/jquery.dataTables.min.js"></script>
 		<script src="/static/bootstrap-datatables.js"></script>
 		<script src="/static/jquery.flot.js"></script>
 		<script src="/static/jquery.flot.time.js"></script>
 		<script src="/static/jquery.flot.stack.js"></script>
 		<script src="/static/sidebar.js"></script>
+		{% if notifications %}
+		<script src="/static/bootstrap-notify.js"></script>
 		<script src="/static/notifications.js"></script>
+		{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -69,11 +74,13 @@
 		{% block content %}{% endblock %}
 	</section>
 
+	{% if notifications %}
 	<div class="row-fluid">
-          <div class='notifications top-right'></div>
-          <div class='notifications bottom-right'></div>
-          <div class='notifications top-left'></div>
-          <div class='notifications bottom-left'></div>
+		<div class='notifications top-right'></div>
+		<div class='notifications bottom-right'></div>
+		<div class='notifications top-left'></div>
+		<div class='notifications bottom-left'></div>
 	</div>
+	{% endif %}
 
 {% endblock body %}
