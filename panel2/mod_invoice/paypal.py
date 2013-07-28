@@ -17,7 +17,7 @@ from flask import redirect, url_for, abort, flash, jsonify, make_response, reque
 from panel2 import app, db
 from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required
-from panel2.invoice import Invoice
+from panel2.invoice import Invoice, InvoiceItem
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import requests
 
@@ -27,6 +27,12 @@ def ipn_post(invoice_id):
     values = request.form
 
     if values['receiver_email'] != app.config['PAYPAL_EMAIL']:
+        return 'INVALID'
+
+    if values['mc_currency'] != 'USD':
+        return 'INVALID'
+
+    if values['payment_status'] != 'Completed':
         return 'INVALID'
 
     arg = u''
@@ -41,7 +47,13 @@ def ipn_post(invoice_id):
     if 'VERIFIED' not in r.text:
         return r.text
 
+    # search for conflicting paypal payment by searching description
+    reference = 'PayPal Payment - {}'.format(values['txn_id'])
+    inv_item = InvoiceItem.query.filter_by(description=reference).first()
+    if inv_item:
+        return 'INVALID'
+
     invoice = Invoice.query.filter_by(id=invoice_id).first()
-    invoice.credit(float(values['mc_gross']), 'PayPal Payment - {}'.format(values['txn_id']))
+    invoice.credit(float(values['mc_gross']), reference)
 
     return r.text
