@@ -247,7 +247,7 @@ def invoice_paid_sig_hdl(*args, **kwargs):
     invoice.user.send_email('Invoice Payment Received', 'email/invoice-paid.txt', invoice=invoice)
 
 def due_invoices(user):
-    return filter(lambda x: x.expiry is None or x.expiry - time.time() <= 604800, user.services)
+    return filter(lambda x: (x.expiry is None or x.expiry - time.time() <= 604800) and not x.disable_renew, user.services)
 
 def is_open_invoice_covering_service(user, service):
     open_invs = filter(lambda x: x.payment_ts is None, user.invoices)
