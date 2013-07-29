@@ -101,7 +101,7 @@ def expiry_nag():
     ctx = app.test_request_context()
     ctx.push()
 
-    delinquent = Service.query.filter(Service.expiry is not None and Service.expiry < time.time())
+    delinquent = Service.query.filter(Service.expiry < time.time())
 
     for svc in delinquent:
         print "{} has expired".format(svc.name)
@@ -117,7 +117,7 @@ def expiry_suspend():
     ctx.push()
     ts = time.time()
 
-    delinquent = Service.query.filter(Service.expiry < time.time() and Service.is_entitled == True)
+    delinquent = Service.query.filter_by(is_entitled=True).filter(Service.expiry < time.time())
 
     for svc in delinquent:
         expiry_ts = svc.expiry + (86400 * 3)
@@ -132,7 +132,7 @@ def expiry_autodelete():
     ctx.push()
     ts = time.time()
 
-    delinquent = Service.query.filter(Service.expiry < time.time() and Service.is_entitled == False)
+    delinquent = Service.query.filter_by(is_entitled=False).filter(Service.expiry < time.time())
 
     for svc in delinquent:
         delete_ts = svc.expiry + (86400 * 7)
