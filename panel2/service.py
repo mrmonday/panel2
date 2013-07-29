@@ -29,6 +29,7 @@ class Service(db.Model):
     expiry = db.Column(db.Integer)
     price = db.Column(db.Float)
     is_entitled = db.Column(db.Boolean, default=False)
+    disable_renew = db.Column(db.Boolean, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='services')
@@ -65,6 +66,9 @@ class Service(db.Model):
         db.session.commit()
 
     def invoice(self, invoice):
+        if self.disable_renew:
+            return None
+
         return InvoiceItem(self, invoice, self.price)
 
     def attach_ip(self, ip, ipnet=None):
@@ -78,6 +82,9 @@ class Service(db.Model):
 
     # XXX: update this when yearly is added --nenolod
     def update_expiry(self):
+        if self.disable_renew:
+            return
+
         current_expiry = list(time.gmtime(self.expiry))
         current_expiry[1] += 1
         self.expiry = time.mktime(tuple(current_expiry))

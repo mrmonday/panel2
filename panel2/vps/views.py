@@ -238,6 +238,8 @@ def renew(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
+    if vps.disable_renew:
+        abort(403)
 
     inv = Invoice(vps.user)
     vps.invoice(inv)

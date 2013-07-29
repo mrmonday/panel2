@@ -182,7 +182,11 @@
 		<h4 class="pushdown">
 			Administration
 			<span class="pull-right">
+				{% if not service.disable_renew %}
 				<a href="{{ url_for('.renew', vps=service.id) }}" class="btn btn-success"><i class="icon-refresh"></i> Renew</a>
+				{% else %}
+				<span class="btn btn-success disabled"><i class="icon-refresh"></i> Renew</span>
+				{% endif %}
 			</span>
 		</h4>
 		<div class="row-fluid">
