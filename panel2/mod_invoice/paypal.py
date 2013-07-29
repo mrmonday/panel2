@@ -19,6 +19,8 @@ from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.invoice import Invoice, InvoiceItem
 from werkzeug.datastructures import ImmutableOrderedMultiDict
+from urllib import urlencode
+from collections import OrderedDict
 import requests
 
 @invoice.route('/<invoice_id>/ipn-post', methods=['POST'])
@@ -35,13 +37,11 @@ def ipn_post(invoice_id):
     if values['payment_status'] != 'Completed':
         return 'INVALID'
 
-    arg = u''
-    for x, y in values.iteritems():
-        arg += u"&{x}={y}".format(x=unicode(x), y=unicode(y))
+    args = OrderedDict([('cmd', '_notify-validate')] + [(k, v.encode(values['charset'], 'ignore')) for k, v in values.iteritems()])
+    validate_url = 'https://www.paypal.com/cgi-bin/webscr'
 
-    validate_url = 'https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate' + arg
-
-    r = requests.get(validate_url.encode(values['charset']))
+    r = requests.get(validate_url, params=args)
+    print r.url
     if 'VERIFIED' not in r.text:
         return r.text
 
@@ -49,7 +49,7 @@ def ipn_post(invoice_id):
     reference = 'PayPal Payment - {}'.format(values['txn_id'])
     inv_item = InvoiceItem.query.filter_by(description=reference).first()
     if inv_item:
-        return 'INVALID'
+        return 'DUPLICATE'
 
     invoice = Invoice.query.filter_by(id=invoice_id).first()
     invoice.credit(float(values['mc_gross']), reference)
