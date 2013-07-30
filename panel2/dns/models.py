@@ -17,7 +17,7 @@ from panel2 import app, db
 
 import time
 
-valid_records = ['A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT', 'SPF', 'NS', 'PTR']
+valid_records = ['A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT', 'SPF', 'NS', 'PTR', 'JSONCB']
 special_records = ['SOA']
 
 class InvalidRecordException(Exception):
