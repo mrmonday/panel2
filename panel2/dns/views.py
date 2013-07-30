@@ -32,7 +32,10 @@ def is_valid_host(host):
     if not hasattr(is_valid_host, '_re'):
         import re
         is_valid_host._re = re.compile(r'^([0-9a-z_][-\w]*[0-9a-z_]\.)+[a-z0-9\-_]{1,15}$')
-    return bool(is_valid_host._re.match(host))
+    checkhost = host
+    if host[0] == '*':
+        checkhost = host[2:]
+    return bool(is_valid_host._re.match(checkhost))
 
 def user_can_access_domain(domain, user=None):
     if user is None:
