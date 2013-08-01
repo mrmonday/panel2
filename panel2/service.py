@@ -90,6 +90,21 @@ class Service(db.Model):
         self.expiry = time.mktime(tuple(current_expiry))
         self.entitle()
 
+    def last_renewed(self):
+        current_expiry = list(time.gmtime(self.expiry))
+        current_expiry[1] -= 1
+        return time.mktime(tuple(current_expiry))
+
+    def reservation_length(self):
+        return self.expiry - self.last_renewed()
+
+    def reservation_remaining(self):
+        return self.expiry - time.time()
+
+    def refund_amount(self):
+        hourly_rate = round(self.price / (self.reservation_length() / 3600), 2)
+        return round(hourly_rate * (int(self.reservation_remaining() / 3600)), 2)
+
 @invoice_item_paid_signal.connect_via(app)
 def service_update_expiry(*args, **kwargs):
     service = kwargs.get('service', None)
