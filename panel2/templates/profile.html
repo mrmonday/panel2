@@ -71,6 +71,24 @@
 
 <div class="row-fluid pushdown">
 	<div class="span3 text-right">
+		<h3>API Webhooks</h3>
+		<p>Applications using our API can receive callback notifications for tasks that have been queued
+		   to run asynchronously.  Notifications are sent when the queued work either begins or is completed.</p>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+		<form action="{{ url_for('.profile_webhook_uri') }}" method="POST">
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" placeholder="Callback URI" value="{% if user.job_webhook_uri %}{{ user.job_webhook_uri }}{% endif %}" name="webhook_uri" class="input-block-level">
+			</div>
+		</div>
+		<button class="btn btn-primary" type="submit">Set Callback URI</button>
+		</form>
+	</div>
+</div>
+
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
 		<h3>Two-Factor Authentication</h3>
 		<p>Two-Factor Authentication allows you to add an additional layer of protection to your account by
 		   requiring submission of a proof of work using a pre-shared key in order to complete the login process.</p>

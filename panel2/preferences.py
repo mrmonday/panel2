@@ -35,6 +35,20 @@ def profile_change_pw():
     flash('Your password has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
+@app.route('/profile/webhook-uri', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def profile_webhook_uri():
+    uri = request.form.get('webhook_uri', None)
+    if uri and len(uri) == 0:
+        uri = None
+
+    user = get_session_user()
+    user.job_webhook_uri = uri
+    db.session.add(user)
+    db.session.commit()
+
+    flash('Your webhook URI has been changed', 'success')
+    return redirect(url_for('.profile_index'))
+
 @app.route('/profile/email', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def profile_change_email():
     user = get_session_user()
