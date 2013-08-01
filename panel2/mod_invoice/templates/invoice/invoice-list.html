@@ -4,12 +4,34 @@
 {{ super() }}
 
 {% if user %}
+<div id="addCredit" class="modal hide fade" tabindex="-1" role="dialog">
+	<form method="POST" action="{{ url_for('.creditamt') }}" class="form-horizontal">
+        <div class="modal-header">
+                <a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+                <h3>Add Credit</h3>
+        </div>
+        <div class="modal-body">
+		<p>How much credit would you like to add?</p>
+		<div class="control-group">
+			<label class="control-label" for="creditamt">USD ($):</label>
+			<div class="controls">
+				<input type="text" id="creditamt" name="creditamt" value="7.50" class="input-block-level">
+			</div>
+		</div>
+        </div>
+        <div class="modal-footer">
+                <button type="submit" class="btn btn-success"><i class="icon-plus"></i> Add Credit</button>
+                <a href="#"  class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+        </div>
+	</form>
+</div>
+
 <div class="row-fluid">
 <div class="span3 text-right">
 	<h3 style="margin-bottom: 0">Service credit</h3>
 	<h2 class="text-success" style="margin: 0;">${{ user.total_credit() | strf("{0:.2f}") }}</h2>
 	<p>
-		<a href="#" class="btn btn-success"><i class="icon-plus"></i> Add additional credit</a>
+		<a href="#addCredit" class="btn btn-success" data-toggle="modal"><i class="icon-plus"></i> Add additional credit</a>
 	</p>
 </div>
 

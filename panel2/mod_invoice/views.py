@@ -18,7 +18,7 @@ from panel2 import app, db
 from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import render_template_or_json
-from panel2.invoice import Invoice
+from panel2.invoice import Invoice, InvoiceItem, PendingCreditItem
 
 def can_access_invoice(invoice, user=None):
     if user is None:
@@ -68,3 +68,14 @@ def credit(invoice_id):
 def list_unpaid():
     invlist = Invoice.query.filter_by(payment_ts=None)
     return render_template_or_json("invoice/invoice-list.html", invoices=invlist)
+
+@invoice.route('/svccredit', methods=['POST'])
+@login_required
+def creditamt():
+    user = get_session_user()
+    invoice = Invoice(user)
+    creditamt = round(float(request.form.get('creditamt', 0)), 2)
+    InvoiceItem(None, invoice, creditamt, 'Add Service Credit')
+    PendingCreditItem(invoice)
+    invoice.mark_ready()
+    return render_template_or_json("invoice/invoice-view.html", invoice=invoice)
