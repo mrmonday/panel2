@@ -339,3 +339,28 @@ def invoice_credit_sig_hdl(*args, **kwargs):
         cred = ServiceCreditItem(u, -tcred, 'Invoice {}'.format(invoice.id))
         invoice.credit(tcred, 'Service Credit - {}'.format(cred.id))
         assert u.total_credit() == 0
+
+class PendingCreditItem(db.Model):
+    __tablename__ = 'pendingcredits'
+
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float)
+
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
+    invoice = db.relationship('Invoice', backref='credits')
+
+    def __init__(self, invoice):
+        self.amount = invoice.total_due()
+        self.invoice_id = invoice.id
+        self.invoice = invoice
+
+        db.session.add(self)
+        db.session.commit()
+
+    def credit(self):
+        return ServiceCreditItem(self.invoice.user, self.amount, 'Prepaid Credit - Invoice {}'.format(self.invoice.id))
+
+@invoice_paid_signal.connect_via(app)
+def handle_pending_credits(*args, **kwargs):
+    invoice = kwargs.get('invoice', None)
+    [cred.credit() for cred in invoice.credits]
