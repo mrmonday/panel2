@@ -15,6 +15,10 @@ from the use of this software.
 
 from panel2 import app, db
 import time
+import blinker
+
+job_checkin_signal = blinker.Signal('A signal which is fired when a job is checked in with a result')
+job_checkout_signal = blinker.Signal('A signal which is fired when a job is checked out')
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,11 +61,15 @@ class Job(db.Model):
         db.session.add(self)
         db.session.commit()
 
+        job_checkout_signal.send(app, job=self)
+
     def checkin(self, response_envelope=None):
         self.end_ts = int(time.time())
         self.response_envelope = response_envelope
         db.session.add(self)
         db.session.commit()
+
+        job_checkin_signal.send(app, job=self)
 
 from ediarpc import rpc_message, rpc_client
 
