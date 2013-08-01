@@ -15,7 +15,7 @@ from the use of this software.
 
 from panel2 import app, db, cron
 from panel2.cron import DAILY
-from panel2.invoice import InvoiceItem, invoice_item_paid_signal
+from panel2.invoice import InvoiceItem, ServiceCreditItem, invoice_item_paid_signal
 import ipaddress
 import time
 import random
@@ -37,6 +37,10 @@ class Service(db.Model):
     __mapper_args__ = {'polymorphic_on': type}
 
     def delete(self):
+        refund_amt = self.refund_amount()
+        if refund_amt > 0:
+            ServiceCreditItem(self.user, refund_amt, 'Deletion - {}'.format(self.name))
+
         InvoiceItem.query.filter_by(service_id=self.id).delete()
         db.session.commit()
 
