@@ -295,3 +295,47 @@ def update_btc_exchange_rate():
     db.session.commit()
 
     print "BTC is now set to", btc.currency_value
+
+class ServiceCreditItem(db.Model):
+    __tablename__ = 'credits'
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(255))
+    entry_ts = db.Column(db.Integer)
+    amount = db.Column(db.Float)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='credits')
+
+    def __repr__(self):
+        return "<ServiceCreditItem {0}: {1} (${2})>".format(self.id, self.description, self.amount)
+    
+    def __init__(self, user, amount, description=None):
+        if not description and user:
+            self.description = 'Service credit for user: {}'.format(user.username)
+        else:
+            self.description = description
+
+        self.entry_ts = time.time()
+        self.amount = amount
+
+        self.user_id = user.id
+        self.user = user
+
+        db.session.add(self)
+        db.session.commit()
+
+@invoice_create_signal.connect_via(app)
+def invoice_credit_sig_hdl(*args, **kwargs):
+    invoice = kwargs.get('invoice', None)
+    u = invoice.user
+    total = invoice.total_due()
+
+    if u.total_credit() > total:
+        cred = ServiceCreditItem(u, -total, 'Invoice {}'.format(invoice.id))
+        invoice.credit(total, 'Service Credit - {}'.format(cred.id))
+    elif u.total_credit() > 0:
+        tcred = u.total_credit()
+        cred = ServiceCreditItem(u, -tcred, 'Invoice {}'.format(invoice.id))
+        invoice.credit(tcred, 'Service Credit - {}'.format(cred.id))
+        assert u.total_credit() == 0

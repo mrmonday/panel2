@@ -102,6 +102,8 @@ class Service(db.Model):
         return self.expiry - time.time()
 
     def refund_amount(self):
+        if not self.expiry:
+            return 0
         hourly_rate = round(self.price / (self.reservation_length() / 3600), 2)
         return round(hourly_rate * (int(self.reservation_remaining() / 3600)), 2)
 
