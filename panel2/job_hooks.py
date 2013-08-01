@@ -46,5 +46,7 @@ def send_webhook_notification(*args, **kwargs):
     if job.response_envelope:
         st_base['response_envelope'] = json.loads(job.response_envelope)
 
-    r = requests.post(svc.user.job_webhook_uri, st_base, timeout=2.0)
+    st_json = json.dumps(st_base)
+
+    r = requests.post(svc.user.job_webhook_uri, st_json, timeout=2.0)
     return (r.status_code == 200)

@@ -64,6 +64,7 @@ import panel2.preferences
 import panel2.service
 import panel2.filters
 import panel2.job
+import panel2.job_hooks
 import panel2.invoice
 
 # plugins!
