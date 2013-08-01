@@ -122,8 +122,8 @@ class Invoice(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def mark_ready(self):
-        invoice_create_signal.send(app, invoice=self)
+    def mark_ready(self, apply_credit=True):
+        invoice_create_signal.send(app, invoice=self, apply_credit=apply_credit)
         if self.total_due() == 0:
             self.mark_paid()
 
@@ -328,8 +328,12 @@ class ServiceCreditItem(db.Model):
 @invoice_create_signal.connect_via(app)
 def invoice_credit_sig_hdl(*args, **kwargs):
     invoice = kwargs.get('invoice', None)
+    apply_credit = kwargs.get('apply_credit', False)
     u = invoice.user
     total = invoice.total_due()
+
+    if not apply_credit:
+        return
 
     if u.total_credit() > total:
         cred = ServiceCreditItem(u, -total, 'Invoice {}'.format(invoice.id))

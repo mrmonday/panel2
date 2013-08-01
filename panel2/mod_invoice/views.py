@@ -79,5 +79,5 @@ def creditamt():
         return redirect(url_for('.index'))
     InvoiceItem(None, invoice, creditamt, 'Add Service Credit')
     PendingCreditItem(invoice)
-    invoice.mark_ready()
+    invoice.mark_ready(apply_credit=False)
     return redirect(url_for('.view', invoice_id=invoice.id))
