@@ -75,7 +75,9 @@ def creditamt():
     user = get_session_user()
     invoice = Invoice(user)
     creditamt = round(float(request.form.get('creditamt', 0)), 2)
+    if creditamt < 1.00:
+        return redirect(url_for('.index'))
     InvoiceItem(None, invoice, creditamt, 'Add Service Credit')
     PendingCreditItem(invoice)
     invoice.mark_ready()
-    return render_template_or_json("invoice/invoice-view.html", invoice=invoice)
+    return redirect(url_for('.view', invoice_id=invoice.id))
