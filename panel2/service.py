@@ -99,19 +99,23 @@ class Service(db.Model):
         current_expiry[1] -= 1
         return time.mktime(tuple(current_expiry))
 
-    def reservation_length(self):
-        return self.expiry - self.last_renewed()
+    def reservation_length(self, unit=1):
+        return (self.expiry - self.last_renewed()) / unit
 
-    def reservation_remaining(self):
-        return self.expiry - time.time()
+    def reservation_remaining(self, unit=1):
+        return (self.expiry - time.time()) / unit
+
+    def hourly_rate(self):
+        return round(self.price / (self.reservation_length(unit=3600)), 2)
 
     def refund_amount(self):
         if not self.expiry:
             return 0
         if not self.is_entitled:
             return 0
-        hourly_rate = round(self.price / (self.reservation_length() / 3600), 2)
-        return round(hourly_rate * (int(self.reservation_remaining() / 3600)), 2)
+        if self.expiry < time.time():
+            return 0
+        return round(self.hourly_rate() * (round(self.reservation_remaining(unit=3600))), 2)
 
 @invoice_item_paid_signal.connect_via(app)
 def service_update_expiry(*args, **kwargs):
