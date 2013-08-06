@@ -72,7 +72,9 @@
 
 <p>
 {% for region in regions %}
-	<input type="radio" name="region" value="{{ region.id }}" {{ 'checked="checked"' if region.id == 1 }}> {{ region.name }}<br>
+{% if not region.hidden %}
+	<input type="radio" name="region" value="{{ region.id }}" {{ 'checked="checked"' if region.id == 2 }}> {{ region.name }}<br>
+{% endif %}
 {% endfor %}
 </p>
 
