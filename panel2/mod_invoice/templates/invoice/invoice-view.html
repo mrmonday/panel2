@@ -4,12 +4,13 @@
 {{ super() }}
 
 <h3>
-Invoice #{{ invoice.id }}{% if invoice.payment_ts %} (PAID){% endif %}
+Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-success" style="font-size: 0.75em">Paid</span>{% endif %}
+	<span class="pull-right">
+		<a href="{{ url_for('.credit_invoice', invoice_id=invoice.id) }}" class="btn btn-primary">Apply Credit</a>
 {% if user.is_admin %}
-	<span class="pull-right btn-group">
 		<a href="{{ url_for('.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
-	</span>
 {% endif %}
+	</span>
 </h3>
 
 <table class="table table-striped">

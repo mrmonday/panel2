@@ -18,7 +18,7 @@ from panel2 import app, db
 from panel2.mod_invoice import invoice
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import render_template_or_json
-from panel2.invoice import Invoice, InvoiceItem, PendingCreditItem
+from panel2.invoice import Invoice, InvoiceItem, PendingCreditItem, ServiceCreditItem
 
 def can_access_invoice(invoice, user=None):
     if user is None:
@@ -80,4 +80,23 @@ def creditamt():
     InvoiceItem(None, invoice, creditamt, 'Add Service Credit')
     PendingCreditItem(invoice)
     invoice.mark_ready(apply_credit=False)
+    return redirect(url_for('.view', invoice_id=invoice.id))
+
+@invoice.route('/<invoice_id>/svccredit')
+@login_required
+def credit_invoice(invoice_id):
+    invoice = Invoice.query.filter_by(id=invoice_id).first()
+    if not invoice:
+        abort(404)
+    u = invoice.user
+    total = invoice.total_due()
+
+    if u.total_credit() > total:
+        cred = ServiceCreditItem(u, -total, 'Invoice {}'.format(invoice.id))
+        invoice.credit(total, 'Service Credit - {}'.format(cred.id))
+    elif u.total_credit() > 0:
+        tcred = u.total_credit()
+        cred = ServiceCreditItem(u, -tcred, 'Invoice {}'.format(invoice.id))
+        invoice.credit(tcred, 'Service Credit - {}'.format(cred.id))
+        assert u.total_credit() == 0
     return redirect(url_for('.view', invoice_id=invoice.id))
