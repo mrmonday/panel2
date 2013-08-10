@@ -253,7 +253,7 @@ def is_open_invoice_covering_service(user, service):
     open_invs = filter(lambda x: x.payment_ts is None, user.invoices)
     for i in open_invs:
         for line in i.items:
-            if line.service.id == service.id:
+            if line.service and line.service.id == service.id:
                 return True
     return False
 
