@@ -55,3 +55,7 @@ def ipn_post(invoice_id):
     invoice.credit(float(values['mc_gross']), reference)
 
     return r.text
+
+@invoice.route('/fallback/ipn-post', methods=['POST'])
+def ipn_fallback_post():
+    return 'VERIFIED'
