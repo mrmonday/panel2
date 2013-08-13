@@ -27,7 +27,7 @@ def watchdog():
         api = node.api(ServerProxy)
         dl = api.domain_list()
         checklist = XenVPS.query.filter_by(node_id=node.id).filter_by(watchdog=True).filter_by(is_entitled=True).all()
-        deadlist = filter(lambda x: x.name not in dl, checklist)
+        deadlist = filter(lambda x: x.name not in dl and not x.has_pending_work(), checklist)
 
         print 'dead:', deadlist
         [vps.create() for vps in deadlist]
