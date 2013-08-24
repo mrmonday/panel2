@@ -232,7 +232,10 @@ class XenVPS(Service):
     hvm_bootorder = db.Column(db.String(4), default="cd")
     hvm_nictype = db.Column(db.String(255), default="e1000")
 
-    def __init__(self, name, memory, swap, disk, price, node, user):
+    ipv4_limit = db.Column(db.Integer)
+    ipv6_limit = db.Column(db.Integer)
+
+    def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32):
         self.name = name
 
         self.memory = memory
@@ -252,6 +255,9 @@ class XenVPS(Service):
         self.hvmiso_id = 1
 
         self.watchdog = False
+
+        self.ipv4_limit = ipv4_limit
+        self.ipv6_limit = ipv6_limit
 
         db.session.add(self)
         db.session.commit()
