@@ -289,7 +289,7 @@ def update_btc_exchange_rate():
     exc_table = json.loads(exc_table_json.text)
 
     btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
-    btc.currency_value = exc_table['USD']['24h']
+    btc.currency_value = exc_table['USD']['15m']
 
     db.session.add(btc)
     db.session.commit()
