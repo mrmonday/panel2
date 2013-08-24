@@ -14,11 +14,9 @@
 <th>Gateway</th>
 <th>Broadcast</th>
 <th>Netmask</th>
-{% if user.is_admin %}
 <th>
 	<span class="pull-right">Options</span>
 </th>
-{% endif %}
 </tr>
 {% for ipaddr in service.ips %}
 <tr>
@@ -33,30 +31,35 @@
 		<td>&mdash;</td>
 		<td>&mdash;</td>
 	{% endif %}
-	{% if user.is_admin %}
 	<td>
 		<span class="pull-right btn-group">
 			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger">Delete</a>
 		</span>
 	</td>
-	{% endif %}
 </tr>
 {% endfor %}
 </table>
 
-{% if user.is_admin %}
 <h4>Add Additional IP</h4>
+
+<p>You may add <strong>{{ service.ipv4_quota() }}</strong> additional IPv4 addresses to this service.</p>
+
+<p>You may add <strong>{{ service.ipv6_quota() }}</strong> additional IPv6 addresses to this service.</p>
 
 <form method="POST" action="{{ url_for('.adm_add_ip', vps=service.id) }}">
 <select name="ipbox">
 {% for iprange in service.node.ipranges %}
 {% for host in iprange.available_ips() %}
-<option value="{{ iprange.id }}!{{ host }}">{{ host }}</option>
+{% if not iprange.is_ipv6() and service.ipv4_quota() > 0 %}
+	<option value="{{ iprange.id }}!{{ host }}">{{ host }}</option>
+{% endif %}
+{% if iprange.is_ipv6() and service.ipv6_quota() > 0 %}
+	<option value="{{ iprange.id }}!{{ host }}">{{ host }}</option>
+{% endif %}
 {% endfor %}
 {% endfor %}
 </select><br>
 <button type="submit" class="btn btn-primary">Add</button>
 </form>
-{% endif %}
 
 {% endblock %}

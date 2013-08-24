@@ -353,20 +353,31 @@ def vbdstats(vps, start, step):
 
 @vps.route('/<vps>/admin/ip/<ip>/delete')
 @login_required
-@admin_required
 def adm_del_ip(vps, ip):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     IPAddress.query.filter_by(id=ip).delete()
     db.session.commit()
     return redirect(url_for('.ip_admin', vps=vps))
 
 @vps.route('/<vps>/admin/ip/add', methods=['POST'])
 @login_required
-@admin_required
 def adm_add_ip(vps):
-    vps = XenVPS.query.filter_by(id=vps).first()
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
     postdata = request.form['ipbox']
     ipnetid, ip = postdata.split('!')
     ipnet = IPRange.query.filter_by(id=ipnetid).first()
+
+    if not ipnet.is_ipv6() and not vps.ipv4_quota():
+        flash('No additional IPv4 addresses available')
+        return redirect(url_for('.ip_admin', vps=vps.id))
+    elif ipnet.is_ipv6() and not vps.ipv6_quota():
+        flash('No additional IPv6 addresses available')
+        return redirect(url_for('.ip_admin', vps=vps.id))
+
     vps.attach_ip(ip, ipnet)
     return redirect(url_for('.ip_admin', vps=vps.id))
 
