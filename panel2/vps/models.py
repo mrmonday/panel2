@@ -370,6 +370,14 @@ class XenVPS(Service):
         if create:
             self.create()
 
+    def ipv4_quota(self):
+        ipv4_ips = filter(lambda x: x.ipnet.is_ipv6() == False, self.ips)
+        return self.ipv4_limit - len(ipv4_ips)
+
+    def ipv6_quota(self):
+        ipv6_ips = filter(lambda x: x.ipnet.is_ipv6() == True, self.ips)
+        return self.ipv6_limit - len(ipv6_ips)
+
     def __repr__(self):
         return "<XenVPS: '%s' on '%s'>" % (self.name, self.node.name)
 
