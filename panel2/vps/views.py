@@ -359,7 +359,7 @@ def adm_del_ip(vps, ip):
         abort(403)
     IPAddress.query.filter_by(id=ip).delete()
     db.session.commit()
-    return redirect(url_for('.ip_admin', vps=vps))
+    return redirect(url_for('.ip_admin', vps=vps.id))
 
 @vps.route('/<vps>/admin/ip/add', methods=['POST'])
 @login_required

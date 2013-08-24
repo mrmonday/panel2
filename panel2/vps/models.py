@@ -518,19 +518,25 @@ class ResourcePlan(db.Model):
     swap = db.Column(db.Integer)
     price = db.Column(db.Float)
 
-    def __init__(self, name, memory, swap, disk, price):
+    ipv4_limit = db.Column(db.Integer)
+    ipv6_limit = db.Column(db.Integer)
+
+    def __init__(self, name, memory, swap, disk, price, ipv4_limit=1, ipv6_limit=32):
         self.name = name
         self.memory = memory
         self.disk = disk
         self.swap = swap
         self.price = price
 
+        self.ipv4_limit = ipv4_limit
+        self.ipv6_limit = ipv6_limit
+
         db.session.add(self)
         db.session.commit()
 
     def _serialize(self):
         return dict(id=self.id, name=self.name, memory=self.memory, disk=self.disk, swap=self.swap, price_usd=self.price,
-                    price_btc=self.bitcoin_cost())
+                    price_btc=self.bitcoin_cost(), ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit)
 
     def __repr__(self):
         return "<ResourcePlan: {}>".format(self.name)
@@ -543,7 +549,8 @@ class ResourcePlan(db.Model):
         node = region.available_node(self.memory, self.disk)
         if not node:
             return None
-        vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user)
+        vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
+                     ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit)
         ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
             return vps
