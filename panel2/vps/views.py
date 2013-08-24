@@ -73,7 +73,7 @@ def list_user(user):
 def signup():
     user = get_session_user()
     regions = Region.query.all()
-    resource_plans = ResourcePlan.query.all()
+    resource_plans = ResourcePlan.query.order_by(ResourcePlan.memory).all()
     discount = get_discount_code(request.args.get('c', 'DEFAULT'))
 
     if request.method == 'POST':
