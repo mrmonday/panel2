@@ -1,0 +1,103 @@
+<html>
+<head>
+<style type="text/css">
+	html {
+		font-family: 'DejaVu Sans', 'Arial';
+	}
+
+	.fulltable {
+		width: 100%;
+		border-collapse: collapse;
+		border-spacing: 0px;
+	}
+
+	.pull-right {
+		float: right;
+	}
+
+	.bordertop {
+		border-top: 1px #000 solid;
+	}
+
+	.borderbottom {
+		border-bottom: 1px #000 solid;
+	}
+
+	.box {
+		border: 1px #000 solid;
+		width: 50%;
+	}
+
+	.box tr th {
+		text-align: right;
+		background: black;
+		color: white;
+	}
+
+	.box tr td {
+		text-align: center;
+	}
+
+	.pushdown {
+		padding-bottom: 1em;
+		clear: both;
+	}
+
+	.pushup {
+		padding-top: 1em;
+		clear: both;
+	}
+</style>
+</head>
+<body>
+
+<div class="pushdown">
+	<img src="/static/tl-logo.png">
+	<h1 class="pull-right">Invoice</h3>
+</div>
+
+<div class="pushdown">
+	<table class="box pull-right">
+		<tr>
+			<th>Invoice Number:</th>
+			<td>{{ invoice.id }}</td>
+		</tr>
+		<tr>
+			<th>Created:</th>
+			<td>{{ invoice.creation_ts | strftime('%B %d, %Y') }}</td>
+		</tr>
+{% if not invoice.payment_ts %}
+		<tr>
+			<th>Payment Due:</th>
+			<td>Upon receipt</td>
+		</tr>
+{% else %}
+		<tr>
+			<th>Paid:</th>
+			<td>{{ invoice.payment_ts | strftime('%B %d, %Y') }}</td>
+		</tr>
+{% endif %}
+	</table>
+</div>
+
+<div class="pushup">
+<table class="fulltable">
+<tr class="borderbottom">
+	<th>Line Item</th>
+	<th>Amount (USD)</th>
+</tr>
+{% for item in invoice.items %}
+<tr>
+	<td>{{ item.id }}. {{ item.description }}</td>
+	<td>${{ item.price | strf("{0:.2f}") }}</td>
+</tr>
+{% endfor %}
+<tr class="bordertop">
+	<td><strong class="pull-right">Total due (USD):</strong></td>
+	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
+</tr>
+</table>
+</div>
+
+</body>
+</html>
