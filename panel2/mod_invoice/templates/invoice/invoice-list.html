@@ -80,17 +80,24 @@
 </tr>
 {% for invoice in invoices %}
 <tr>
-	<td><a href="{{ url_for('.view', invoice_id=invoice.id) }}">{{ invoice.id }}</a></td>
+	<td class="span1"><a href="{{ url_for('.view', invoice_id=invoice.id) }}">{{ invoice.id }}</a></td>
 	{% if user and user.is_admin %}
-	<td><a href="{{ url_for('profile.view_base', username=invoice.user.username) }}">{{ invoice.user.username }}</a></td>
+	<td class="span4"><a href="{{ url_for('profile.view_base', username=invoice.user.username) }}">{{ invoice.user.username }}</a></td>
 	{% else %}
-	<td>{{ invoice.user.username }}</td>
+	<td class="span6">{{ invoice.user.username }}</td>
 	{% endif %}
-	<td>{{ "Paid" if invoice.payment_ts else "Unpaid" }}</td>
-	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
-	<td>
+	<td class="span1">
+	{% if invoice.payment_ts %}
+		<span class="label label-success">Paid</span>
+	{% else %}
+		<span class="label label-important">Due</span>
+	{% endif %}
+	</td>
+	<td class="span1">${{ invoice.total_due() | strf("{0:.2f}") }}</td>
+	<td class="span3">
 		<span class="pull-right">
-			<a href="{{ url_for('.view', invoice_id=invoice.id) }}" class="btn btn-primary">View</a>
+			<a href="{{ url_for('.view', invoice_id=invoice.id) }}" class="btn btn-primary"><i class="icon-search"></i> View</a>
+			<a href="{{ url_for('.view_pdf', invoice_id=invoice.id) }}" class="btn btn-info"><i class="icon-download"></i> Download</a>
 			{% if user.is_admin %}
 				<a href="{{ url_for('.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
 			{% endif %}
