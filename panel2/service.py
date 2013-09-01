@@ -81,6 +81,8 @@ class Service(db.Model):
     def entitle(self):
         self.is_entitled = True
 
+        self.user.send_email('ACTIVATION: {}'.format(self.name), 'email/service-activated.txt', service=self)
+
         db.session.add(self)
         db.session.commit()
 
