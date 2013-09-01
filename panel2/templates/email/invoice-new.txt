@@ -1,5 +1,16 @@
 {% extends "email/base-message.txt" %}
 {% block message %}This is a notification that invoice {{ invoice.id }} has been created and is now due.
 
-You may view the invoice at https://manage.tortois.es/invoice/{{ invoice.id }} - accepted payment
-methods right now are PayPal.{% endblock %}
+Invoice #{{ invoice.id }}:
+
+{{ "Line Item" | strf("{0:52}") }} Price (USD)
+{{ "=" * 72 }}
+{% for item in invoice.items %}{{ item.description | strf("{0:52}") }} ${{ item.price | strf("{0:.02f}") }}
+{% endfor %}
+Total due (USD): ${{ invoice.total_due() | strf("{0:.02f}") }}
+
+You may view the invoice at https://manage.tortois.es/invoice/{{ invoice.id }}.
+
+You may pay with PayPal, Bitcoins or a credit or debit card as a guest
+through PayPal.  Alternate payment arrangements can be made for large
+invoices, please open a ticket.{% endblock %}
