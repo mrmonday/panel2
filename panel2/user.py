@@ -144,7 +144,7 @@ class User(db.Model):
         return TOTP(self.totp_key).verify(response)
 
     def total_credit(self):
-        return sum([cred.amount for cred in self.credits])
+        return round(sum([cred.amount for cred in self.credits]), 2)
 
     def _serialize(self):
         return dict(username=self.username, email=self.email,
