@@ -15,7 +15,7 @@ from the use of this software.
 
 from flask import Flask, request
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.mail import Mail
+from flask.ext.sendmail import Mail
 from flask.ext.sslify import SSLify
 
 class LocalSSLify(SSLify):
@@ -35,8 +35,7 @@ if app.config['SEND_DEBUG_EMAILS'] is True:
     from logging.handlers import SMTPHandler
     mail_handler = SMTPHandler((app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
                                app.config['NOREPLY_MAIL'],
-                               app.config['DEBUG_EMAIL_TARGETS'], __name__ + ' failed',
-			       credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD']))
+                               app.config['DEBUG_EMAIL_TARGETS'], __name__ + ' failed')
     mail_handler.setLevel(logging.ERROR)
     mail_handler.setFormatter(logging.Formatter('''
 Message type:       %(levelname)s
