@@ -79,9 +79,10 @@ class Service(db.Model):
         return IPAddressRef(ip, ipnet, self.user, self)
 
     def entitle(self):
-        self.is_entitled = True
+        if not self.is_entitled:
+            self.user.send_email('ACTIVATION: {}'.format(self.name), 'email/service-activated.txt', service=self)
 
-        self.user.send_email('ACTIVATION: {}'.format(self.name), 'email/service-activated.txt', service=self)
+        self.is_entitled = True
 
         db.session.add(self)
         db.session.commit()
