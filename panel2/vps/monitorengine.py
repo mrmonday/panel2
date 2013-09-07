@@ -116,6 +116,9 @@ class EMailTrigger(MonitorTrigger):
         subject = None
         message = None
 
+        if not self.probe.vps:
+            return
+
         if check.failed:
             subject = '*** FAILED: {0} on {1} ***'.format(self.probe.nickname, self.probe.vps.name)
             message = render_template('vps/email/monitoring-failed.txt', user=self.probe.vps.user, service=self.probe.vps, check=self.probe)
