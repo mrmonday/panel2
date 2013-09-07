@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-import rrdtool, os, time
+import rrdtool, os, time, subprocess
 from panel2 import app, cron
 from panel2.vps.models import Node
 from panel2.cron import MINUTELY
@@ -27,15 +27,17 @@ def make_path(nodename, vpsname, type):
     return RRDPATH + '/' + nodename + '-' + vpsname + '-' + type + '.rrd'
 
 def make_cpu_rrd(path):
-    rrdtool.create(str(path), '--step', '60',
+    args = ["rrdtool", "create", path, '--step', '60',
                    'DS:cpu:COUNTER:666:0:10000',
                    'RRA:LAST:0.5:1:15000',
                    'RRA:MIN:0.5:60:1000', 'RRA:MIN:0.5:1440:1000',
                    'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
-                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
+                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000']
+    print ' '.join(args)
+    subprocess.call(args)
 
 def make_net_rrd(path):
-    rrdtool.create(str(path), '--step', '60',
+    subprocess.call(['rrdtool', 'create', path, '--step', '60',
                    'DS:rxbytes:COUNTER:666:0:125000000',
                    'DS:txbytes:COUNTER:666:0:125000000',
                    'DS:rxpkts:COUNTER:666:0:125000000',
@@ -43,17 +45,17 @@ def make_net_rrd(path):
                    'RRA:LAST:0.5:1:15000',
                    'RRA:MIN:0.5:60:1000', 'RRA:MIN:0.5:1440:1000',
                    'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
-                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
+                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000'])
 
 def make_vbd_rrd(path):
-    rrdtool.create(str(path), '--step', '60',
+    subprocess.call(['rrdtool', 'create', path, '--step', '60',
                    'DS:rdreq:COUNTER:666:0:125000000',
                    'DS:wrreq:COUNTER:666:0:125000000',
                    'DS:ooreq:COUNTER:666:0:125000000',
                    'RRA:LAST:0.5:1:15000',
                    'RRA:MIN:0.5:60:1000', 'RRA:MIN:0.5:1440:1000',
                    'RRA:MAX:0.5:60:1000', 'RRA:MAX:0.5:1440:1000',
-                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000')
+                   'RRA:AVERAGE:0.5:60:1000', 'RRA:AVERAGE:0.5:1440:1000'])
 
 def update_cpu_usage(nodename, vpsinfo):
     path = make_path(nodename, vpsinfo['name'], 'cpu')
