@@ -16,22 +16,12 @@ function equalize(p) {
 	}
 
 	equalize_worker();
+	setInterval(equalize_worker, 500);
 }
 
 $(document).ready(function() {
 	$(".row-equalize").each(function() {
-		var maxheight = 0;
-		var recurse = false;
-
 		equalize($(this));
-		$(this).bind("DOMSubtreeModified", function() {
-			if (recurse)
-				return;
-
-			recurse = true;
-			equalize($(this));
-			recurse = false;
-		});
 	});
 
 	$('.launchconsole').click(function() {
