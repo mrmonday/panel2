@@ -16,7 +16,7 @@ from the use of this software.
 import re
 
 from flask import Markup, redirect, url_for, request, abort
-from jinja2 import escape
+from jinja2 import evalcontextfilter, Markup, escape
 
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable, render_template_or_json
@@ -27,11 +27,12 @@ from panel2 import app, db
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 @app.template_filter()
-def nl2br(value):
-    esc_value = escape(value)
-    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '\n') \
-        for p in _paragraph_re.split(esc_value))
-    return Markup(result)
+@evalcontextfilter
+def breakln(eval_ctx, value):
+    result = escape(value).replace('\n', Markup('<br>\n'))
+    if eval_ctx.autoescape:
+        result = Markup(result)
+    return result
 
 def user_can_access_ticket(ticket, user=None):
     if user is None:
