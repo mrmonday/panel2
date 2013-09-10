@@ -1109,7 +1109,7 @@ VT100.prototype.resizer = function() {
   newCursor.id                 = 'cursor';
   newCursor.style.cssText      = this.cursor.style.cssText;
   this.cursor.parentNode.insertBefore(newCursor, this.cursor);
-  if (!newCursor.clientHeight) {
+  if (false && !newCursor.clientHeight) {
     // Things are broken right now. This is probably because we are
     // displaying the print-preview. Just don't change any of our settings
     // until the print dialog is closed again.
@@ -3939,7 +3939,7 @@ VT100.prototype.doControl = function(ch) {
 /*H*/ case 0x48:
 /*f*/ case 0x66: this.gotoXaY(this.par[1] - 1, this.par[0] - 1);        break;
 /*I*/ case 0x49: this.ht(this.par[0] ? this.par[0] : 1);                break;
-/*@*/ case 0x40: this.csiAt(this.par[0]);                               break;
+/* at */ case 0x40: this.csiAt(this.par[0]);                               break;
 /*i*/ case 0x69: this.csii(this.par[0]);                                break;
 /*J*/ case 0x4A: this.csiJ(this.par[0]);                                break;
 /*K*/ case 0x4B: this.csiK(this.par[0]);                                break;
@@ -4003,7 +4003,7 @@ VT100.prototype.doControl = function(ch) {
     case 13 /* ESpercent */:
       this.isEsc              = 0 /* ESnormal */;
       switch (ch) {
-/*@*/ case 0x40: this.utfEnabled = false;                               break;
+/* at */ case 0x40: this.utfEnabled = false;                               break;
 /*G*/ case 0x47:
 /*8*/ case 0x38: this.utfEnabled = true;                                break;
       default:                                                          break;
