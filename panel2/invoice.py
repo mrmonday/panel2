@@ -124,7 +124,7 @@ class Invoice(db.Model):
 
     def mark_ready(self, apply_credit=True):
         invoice_create_signal.send(app, invoice=self, apply_credit=apply_credit)
-        if self.total_due() == 0:
+        if round(self.total_due(), 2) == 0:
             self.mark_paid()
 
     def mark_paid(self):
@@ -148,7 +148,7 @@ class Invoice(db.Model):
 
     def credit(self, amount, description='Payment'):
         item = InvoiceItem(None, self, -amount, description)
-        if self.total_due() == 0:
+        if round(self.total_due(), 2) == 0:
             self.mark_paid()
         return item
 
