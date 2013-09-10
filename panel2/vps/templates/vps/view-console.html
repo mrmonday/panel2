@@ -109,10 +109,10 @@
 		</div>
 	</header>
 	{% if service.profile.type != 'hvm' %}
-	<iframe id="canvas" src="{{ url_for('.console_real', vps=service.id) }}" style="width: 100%; height: 30em; border: none;"></iframe>
+	<iframe id="thecanvas" src="{{ url_for('.console_real', vps=service.id) }}" style="width: 100%; height: 30em; border: none;"></iframe>
 	{% else %}
 	<canvas id="thecanvas" width="640px" height="480px">
 	</canvas>
 	{% endif %}
-</div>
+</body>
 {% endblock %}
