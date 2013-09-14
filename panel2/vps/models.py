@@ -80,6 +80,7 @@ class KernelProfile(db.Model):
             'isopath': domain.hvmiso.file,
             'bootorder': domain.hvm_bootorder,
             'hvm_nictype': domain.hvm_nictype,
+            'cpu_weight': domain.calculate_weight(),
         }
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
@@ -235,6 +236,8 @@ class XenVPS(Service):
     ipv4_limit = db.Column(db.Integer)
     ipv6_limit = db.Column(db.Integer)
 
+    cpu_sla = db.Column(db.Enum('guaranteed', 'standard', 'bulk'), default='standard')
+
     def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32):
         self.name = name
 
@@ -259,10 +262,20 @@ class XenVPS(Service):
         self.ipv4_limit = ipv4_limit
         self.ipv6_limit = ipv6_limit
 
+        self.cpu_sla = 'standard'
+
         db.session.add(self)
         db.session.commit()
 
         self.generate_mac()
+
+    def calculate_weight(self):
+        multiplier = 1
+
+        if self.cpu_sla == 'bulk': return 1
+        if self.cpu_sla == 'guaranteed': multiplier = 4
+
+        return self.memory * multiplier
 
     def _serialize(self):
         return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
