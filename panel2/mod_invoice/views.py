@@ -71,6 +71,16 @@ def view_html(invoice_id):
         abort(403)
     return render_template("invoice/invoice-view-pdf.html", invoice=invoice)
 
+@invoice.route('/<invoice_id>/resend')
+@login_required
+def resend(invoice_id):
+    invoice = Invoice.query.filter_by(id=invoice_id).first_or_404()
+    if can_access_invoice(invoice) is False:
+        abort(403)
+    invoice.send_create_email()
+    flash('Your invoice has been resent')
+    return redirect(url_for('.view', invoice_id=invoice.id))
+
 @invoice.route('/<invoice_id>/credit')
 @admin_required
 def credit(invoice_id):
