@@ -139,6 +139,12 @@ class Invoice(db.Model):
         [item.mark_paid() for item in self.items]
         invoice_paid_signal.send(app, invoice=self)
 
+    def send_create_email(self):
+        self.user.send_email('Invoice Created', 'email/invoice-new.txt', invoice=self)
+
+    def send_payment_email(self):
+        self.user.send_email('Invoice Payment Received', 'email/invoice-paid.txt', invoice=self)
+
     def delete(self):
         InvoiceItem.query.filter_by(invoice_id=self.id).delete()
         db.session.commit()
@@ -239,12 +245,12 @@ class InvoiceItem(db.Model):
 @invoice_create_signal.connect_via(app)
 def invoice_paid_sig_hdl(*args, **kwargs):
     invoice = kwargs.get('invoice', None)
-    invoice.user.send_email('Invoice Created', 'email/invoice-new.txt', invoice=invoice)
+    invoice.send_create_email()
 
 @invoice_paid_signal.connect_via(app)
 def invoice_paid_sig_hdl(*args, **kwargs):
     invoice = kwargs.get('invoice', None)
-    invoice.user.send_email('Invoice Payment Received', 'email/invoice-paid.txt', invoice=invoice)
+    invoice.send_payment_email()
 
 def due_invoices(user):
     return filter(lambda x: (x.expiry is None or x.expiry - time.time() <= 604800) and not x.disable_renew, user.services)
