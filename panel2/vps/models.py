@@ -559,6 +559,8 @@ class ResourcePlan(db.Model):
         return btc.convert_to(discount.translate_price(self.price))
 
     def create_vps(self, user, region, name, discount):
+        if not self.order_is_allowed(region, discount):
+            return None
         node = region.available_node(self.memory, self.disk)
         if not node:
             return None
@@ -574,3 +576,44 @@ class ResourcePlan(db.Model):
             return vps
         ipv6_rs[0].assign_first_available(user, vps)
         return vps
+
+    def order_is_allowed(self, region, discount):
+        if len(self.rules) == 0:
+            return True
+        return False not in [rule.eval(region, discount) for rule in self.rules]
+
+OPERATION_TRUE = 0
+OPERATION_NOT  = 1
+
+class ResourcePlanAvailabilityRule(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
+
+    plan_id = db.Column(db.Integer, db.ForeignKey('vps_resource_plan.id'))
+    plan = db.relationship('ResourcePlan', backref='rules')
+
+class RegionalPlanAvailabilityRule(ResourcePlanAvailabilityRule):
+    __mapper_args__ = {'polymorphic_identity': 'region'}
+
+    region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
+    region = db.relationship('Region')
+
+    operation = db.Column(db.Integer)
+
+    def __init__(self, plan, region, operation=OPERATION_TRUE):
+        self.type = 'region'
+
+        self.region_id = region.id
+        self.region = region
+
+        self.plan_id = plan.id
+        self.plan = plan
+
+        self.operation = operation
+
+    def eval(self, region, discount):
+        res = {
+            OPERATION_TRUE: self.region == region,
+            OPERATION_NOT: self.region != region,
+        }
+        return res[self.operation]
