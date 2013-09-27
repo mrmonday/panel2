@@ -324,11 +324,11 @@ class XenVPS(Service):
         self.api().vps_destroy(domname=self.name)
         Service.delete(self)
 
-    def create(self, profile=None):
+    def create(self, profile=None, constructor=QueueingProxy):
         if not profile:
             profile = self.profile
         bootargs = profile.render_config(self)
-        return self.api().create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
+        return self.api(constructor).create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
 
     def format(self):
         return self.api().vps_format(domname=self.name)
@@ -592,6 +592,11 @@ class ResourcePlanAvailabilityRule(db.Model):
     plan_id = db.Column(db.Integer, db.ForeignKey('vps_resource_plan.id'))
     plan = db.relationship('ResourcePlan', backref='rules')
 
+    __mapper_args__ = {'polymorphic_on': type}
+
+    def __repr__(self):
+        return '<ResourcePlanAvailabilityRule: {}>'.format(self.type)
+
 class RegionalPlanAvailabilityRule(ResourcePlanAvailabilityRule):
     __mapper_args__ = {'polymorphic_identity': 'region'}
 
@@ -611,9 +616,12 @@ class RegionalPlanAvailabilityRule(ResourcePlanAvailabilityRule):
 
         self.operation = operation
 
+        db.session.add(self)
+        db.session.commit()
+
     def eval(self, region, discount):
         res = {
-            OPERATION_TRUE: self.region == region,
-            OPERATION_NOT: self.region != region,
+            OPERATION_TRUE: self.region_id == region.id,
+            OPERATION_NOT: self.region_id != region.id,
         }
         return res[self.operation]
