@@ -80,7 +80,8 @@
 			<input type="password" class="input-block-level" placeholder="Password" name="password" required="required">
 		</div>
 		<button class="btn btn-large btn-primary btn-block" type="submit">Log in</button>
-		<a href="/create" class="btn btn-large btn-danger btn-block">Create account</a>
+		<a href="{{ url_for('create') }}" class="btn btn-large btn-danger btn-block">Create account</a>
+		<a href="{{ url_for('reset_ui') }}" class="btn btn-large btn-warning btn-block">Reset password</a>
 	</form>
 </div>
 
