@@ -127,8 +127,8 @@ def create():
 @app.route('/reset', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def reset_ui():
     if request.method == 'POST':
-        username = request.form['username'].strip().rstrip()
-        email = request.form['email'].strip().rstrip()
+        username = request.form.get('username', '').strip().rstrip()
+        email = request.form.get('email', '').strip().rstrip()
         user = User.query.filter_by(username=username).filter_by(email=email).first()
 
         if not user:
@@ -140,6 +140,19 @@ def reset_ui():
         return render_template_or_json('lost-password.html', error='A confirmation message has been sent to the e-mail address on file')
 
     return render_template_or_json('lost-password.html')
+
+@app.route('/reset-confirm/<pwreset_key>', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def reset_confirm(pwreset_key):
+    user = User.query.filter_by(pwreset_key=pwreset_key).first_or_404()
+
+    if request.method == 'POST':
+        password = request.form['password'].strip().rstrip()
+        user.assign_password(password)
+        user.set_pwreset_key()
+
+        return redirect(url_for('login'))
+
+    return render_template_or_json('lost-password-confirm.html', user=user)
 
 @app.route('/notifications.json', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def notifications():
