@@ -124,6 +124,23 @@ def create():
 
     return render_template_or_json('create.html')
 
+@app.route('/reset', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def reset_ui():
+    if request.method == 'POST':
+        username = request.form['username'].strip().rstrip()
+        email = request.form['email'].strip().rstrip()
+        user = User.query.filter_by(username=username).filter_by(email=email).first()
+
+        if not user:
+            return render_template_or_json('lost-password.html', error='The information provided does not match any account on file')
+
+        user.set_pwreset_key()
+        user.send_email('Please confirm your password reset request', 'email/lost-password-confirm.txt')
+
+        return render_template_or_json('lost-password.html', error='A confirmation message has been sent to the e-mail address on file')
+
+    return render_template_or_json('lost-password.html')
+
 @app.route('/notifications.json', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def notifications():
     messages = get_flashed_messages(with_categories=True)
