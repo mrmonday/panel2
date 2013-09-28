@@ -78,6 +78,7 @@ class User(db.Model):
     totp_key = db.Column(db.String(32))
     require_totp = db.Column(db.Boolean)
     job_webhook_uri = db.Column(db.Text)
+    pwreset_key = db.Column(db.String(128))
 
     def __init__(self, username, password, email):
         self.username = username
@@ -130,6 +131,12 @@ class User(db.Model):
 
     def set_api_key(self):
         self.api_key = ''.join([random.choice(string.letters + string.digits) for i in xrange(64)])
+
+        db.session.add(self)
+        db.session.commit()
+
+    def set_pwreset_key(self):
+        self.pwreset_key = ''.join([random.choice(string.letters + string.digits) for i in xrange(120)])
 
         db.session.add(self)
         db.session.commit()
