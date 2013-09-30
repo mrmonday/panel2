@@ -233,6 +233,27 @@ class IPAddress(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def ptr_name(self, ipv4_dns_base=None):
+        if self.ipnet.is_ipv6():
+            ip = ipaddress.IPv6Address(self.ip)
+            nibbles = list(("%32x" % ip._ip))
+            nibbles.reverse()
+            return '{}.ip6.arpa'.format('.'.join(nibbles))
+
+        ip = ipaddress.IPv4Address(self.ip)
+        ip_int = int(ip._ip)
+
+        octets = []
+        for octet in xrange(4):
+            octets.insert(0, str(ip_int & 0xFF))
+            ip_int >>= 8
+        octets.reverse()
+
+        if not ipv4_dns_base:
+            return '{}.in-addr.arpa'.format('.'.join(octets))
+
+        return '{0}.{1}'.format(octets[0], ipv4_dns_base)
+
     def _serialize(self):
         return dict(ip=self.ip, ipnet=self.ipnet._serialize())
 
