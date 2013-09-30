@@ -254,6 +254,38 @@ class IPAddress(db.Model):
 
         return '{0}.{1}'.format(octets[0], ipv4_dns_base)
 
+    def update_rdns(self, rdns):
+        from panel2.dns.models import Record
+
+        if not self.ipnet.rdns_zone:
+            return False
+
+        dom = self.ipnet.rdns_zone
+        recname = self.ptr_name(ipv4_dns_base=dom.name)
+
+        rec = Record.query.filter_by(domain_id=dom.id).filter_by(name=recname).first()
+        if not rec:
+            dom.add_record(recname, rdns, 'PTR', ttl=43200)
+            return True
+
+        rec.update_content(rdns)
+        return True
+
+    def lookup_rdns(self):
+        from panel2.dns.models import Record
+
+        if not self.ipnet.rdns_zone:
+            return None
+
+        dom = self.ipnet.rdns_zone
+        recname = self.ptr_name(ipv4_dns_base=dom.name)
+
+        rec = Record.query.filter_by(domain_id=dom.id).filter_by(name=recname).first()
+        if not rec:
+            return None
+
+        return rec.content
+
     def _serialize(self):
         return dict(ip=self.ip, ipnet=self.ipnet._serialize())
 
@@ -274,6 +306,9 @@ class IPRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(50))
     network = db.Column(db.String(255))
+
+    rdns_zone_id = db.Column(db.Integer, db.ForeignKey('domains.id'))
+    rdns_zone = db.relationship('Domain')
 
     __mapper_args__ = {'polymorphic_on': type}
 
