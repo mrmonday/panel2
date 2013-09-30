@@ -472,7 +472,7 @@ def hvmvnc(vps):
     if can_access_vps(vps) is False:
         abort(403)
     user = get_session_user()
-    return render_template_or_json('vps/view-hvm.html', service=vps, isolist=HVMISOImage.query.filter((HVMISOImage.public == True) | (HVMISOImage.user_id == user.id)).all())
+    return render_template_or_json('vps/view-hvm.html', service=vps, isolist=HVMISOImage.query.filter((HVMISOImage.public == True) | (HVMISOImage.user_id == vps.user.id)).all())
 
 @vps.route('/<vps>/hvm/setiso', methods=['POST'])
 @login_required
