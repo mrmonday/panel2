@@ -35,7 +35,7 @@
 	<td>{{ ipaddr.lookup_rdns() }}</td>
 	<td>
 		<span class="pull-right btn-group">
-			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger">Delete</a>
+			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger"><i class="icon-trash"></i> Delete</a>
 		</span>
 	</td>
 </tr>
