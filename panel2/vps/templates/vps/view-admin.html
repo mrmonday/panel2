@@ -19,7 +19,7 @@
 		<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
 	</div>
 	{% else %}
-	<form method="POST" class="form-horizontal">
+	<form method="POST" class="form-horizontal" action="{{ url_for('.adm_modify_ip_rdns', vps=service.id, ip=ipaddr.id) }}">
 	<div class="modal-body">
 		<div class="control-group">
 			<label class="control-label" for="rdns">rDNS</label>

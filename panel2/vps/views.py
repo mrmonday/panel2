@@ -361,6 +361,26 @@ def adm_del_ip(vps, ip):
     db.session.commit()
     return redirect(url_for('.ip_admin', vps=vps.id))
 
+@vps.route('/<vps>/admin/ip/<ip>/rdns-modify', methods=['POST'])
+@login_required
+def adm_modify_ip_rdns(vps, ip):
+    vps = XenVPS.query.filter_by(id=vps).first_or_404()
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    rdns = request.form.get('rdns', None)
+    if not rdns:
+        return redirect(url_for('.ip_admin', vps=vps.id))
+
+    if not is_valid_host(rdns):
+        flash('Provided rDNS was invalid')
+        return redirect(url_for('.ip_admin', vps=vps.id))
+
+    ip = IPAddress.query.filter_by(id=ip).first()
+    ip.update_rdns(rdns)
+
+    return redirect(url_for('.ip_admin', vps=vps.id))
+
 @vps.route('/<vps>/admin/ip/add', methods=['POST'])
 @login_required
 def adm_add_ip(vps):
