@@ -14,6 +14,7 @@
 <th>Gateway</th>
 <th>Broadcast</th>
 <th>Netmask</th>
+<th>Reverse DNS</th>
 <th>
 	<span class="pull-right">Options</span>
 </th>
@@ -31,6 +32,7 @@
 		<td>&mdash;</td>
 		<td>&mdash;</td>
 	{% endif %}
+	<td>{{ ipaddr.lookup_rdns() }}</td>
 	<td>
 		<span class="pull-right btn-group">
 			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger">Delete</a>
