@@ -40,6 +40,8 @@ def run(job):
         while True:
             try:
                 packet = sock.recv(1024)
+                if not packet or packet == '':
+                    return '{}'
                 if end in packet:
                     data.append(packet[:packet.find(end)])
                     break

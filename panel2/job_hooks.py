@@ -48,5 +48,9 @@ def send_webhook_notification(*args, **kwargs):
 
     st_json = json.dumps(st_base)
 
-    r = requests.post(svc.user.job_webhook_uri, st_json, timeout=2.0)
+    try:
+        r = requests.post(svc.user.job_webhook_uri, st_json, timeout=2.0)
+    except:
+        return False
+
     return (r.status_code == 200)
