@@ -323,20 +323,20 @@ class XenVPS(Service):
         return not lastjob.end_ts
 
     def delete(self):
-        self.api().vps_destroy(domname=self.name)
+        self.api().vps_destroy(domname=escape(self.name))
         Service.delete(self)
 
     def create(self, profile=None, constructor=QueueingProxy):
         if not profile:
             profile = self.profile
         bootargs = profile.render_config(self)
-        return self.api(constructor).create(domname=self.name, memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
+        return self.api(constructor).create(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
 
     def format(self):
-        return self.api().vps_format(domname=self.name)
+        return self.api().vps_format(domname=escape(self.name))
 
     def init(self):
-        return self.api().vps_create(domname=self.name, size=self.disk, swap=self.swap, is_hvm=False)
+        return self.api().vps_create(domname=escape(self.name), size=self.disk, swap=self.swap, is_hvm=False)
 
     def image(self, template, arch='x86_64'):
         eth0 = {
@@ -345,24 +345,24 @@ class XenVPS(Service):
            'broadcast': str(self.ips[0].ipnet.broadcast()),
            'gateway': str(self.ips[0].ipnet.gateway()),
         }
-        return self.api().vps_image(domname=self.name, eth0=eth0, image=template, arch=arch)
+        return self.api().vps_image(domname=escape(self.name), eth0=eth0, image=template, arch=arch)
 
     # XXX: presently MD5 Crypt is still the lowest common denominator...
     def rootpass(self, rootpass):
         from passlib.hash import md5_crypt
-        return self.api().vps_rootpass(domname=self.name, newpasshash=md5_crypt.encrypt(rootpass))
+        return self.api().vps_rootpass(domname=escape(self.name), newpasshash=md5_crypt.encrypt(rootpass))
 
     def shutdown(self):
-        return self.api().shutdown(domname=self.name)
+        return self.api().shutdown(domname=escape(self.name))
 
     def destroy(self):
-        return self.api().destroy(domname=self.name)
+        return self.api().destroy(domname=escape(self.name))
 
     def pause(self):
-        return self.api().pause(domname=self.name)
+        return self.api().pause(domname=escape(self.name))
 
     def unpause(self):
-        return self.api().unpause(domname=self.name)
+        return self.api().unpause(domname=escape(self.name))
 
     def reimage(self, template, password, create=False, arch='x86_64'):
         self.destroy()
@@ -381,7 +381,7 @@ class XenVPS(Service):
         }
         self.destroy()
         self.format()
-        self.api().vps_clone(domname=self.name, eth0=eth0, image=template, targetip=targetip)
+        self.api().vps_clone(domname=escape(self.name), eth0=eth0, image=template, targetip=targetip)
         if create:
             self.create()
 
