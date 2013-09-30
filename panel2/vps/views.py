@@ -86,10 +86,14 @@ def signup():
                 email = request.form['email'].strip().rstrip()
                 if len(username) == 0:
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No username provided', discount=discount)
+                if escape(username) != username or ' ' in username:
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Username contains invalid characters', discount=discount)
                 if len(password) == 0: 
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No password provided', discount=discount)
                 if len(email) == 0:
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='No email provided', discount=discount)
+                if escape(email) != email or '@' not in email:
+                    return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='E-mail address is malformed', discount=discount)
                 if User.query.filter_by(username=username).first() is not None:
                     return render_template_or_json('vps/signup.html', regions=regions, resource_plans=resource_plans, error='Username is already taken', discount=discount)
                 user = User(username, password, email)

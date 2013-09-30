@@ -107,11 +107,15 @@ def create():
             password = request.form['password'].strip().rstrip()
             email = request.form['email'].strip().rstrip()
             if len(username) == 0:
-                return render_template_or_json('create.html', error='No username provided') 
+                return render_template_or_json('create.html', error='No username provided')
+            if escape(username) != username or ' ' in username:
+                return render_template_or_json('create.html', error='Username contains invalid characters')
             if len(password) == 0:
                 return render_template_or_json('create.html', error='No password provided') 
             if len(email) == 0:
                 return render_template_or_json('create.html', error='No email provided') 
+            if escape(email) != email or '@' not in email:
+                return render_template_or_json('create.html', error='E-mail address is malformed')
             user = User(username, password, email)
         except:
             return render_template_or_json('create.html', error='Username is already taken')
