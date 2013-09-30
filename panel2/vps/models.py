@@ -18,6 +18,8 @@ import rrdtool
 import hashlib
 import random
 
+from flask import escape
+
 from panel2 import app, db
 from panel2.service import Service, IPRange
 from panel2.invoice import ExchangeRate
@@ -50,7 +52,7 @@ class HVMISOImage(db.Model):
         return "<HVMISOImage: '{0}' ['{1}']>".format(self.name, self.file)
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name, public=self.public)
+        return dict(id=self.id, name=escape(self.name), public=self.public)
 
 class KernelProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,7 +87,7 @@ class KernelProfile(db.Model):
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name)
+        return dict(id=self.id, name=escape(self.name))
 
 class KernelProfileArgument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -130,7 +132,7 @@ class Region(db.Model):
         return random.choice(list)
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name)
+        return dict(id=self.id, name=escape(self.name))
 
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -278,8 +280,8 @@ class XenVPS(Service):
         return self.memory * multiplier
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name, memory=self.memory, swap=self.swap, disk=self.disk, node=self.node.name,
-                    user=self.user.username, ips=[ip._serialize() for ip in self.ips], mac=self.mac, nickname=self.nickname)
+        return dict(id=self.id, name=escape(self.name), memory=self.memory, swap=self.swap, disk=self.disk, node=escape(self.node.name),
+                    user=escape(self.user.username), ips=[ip._serialize() for ip in self.ips], mac=self.mac, nickname=escape(self.nickname))
 
     def generate_mac(self):
         octets = [random.randint(0, 255) for x in range(3)]
@@ -548,7 +550,7 @@ class ResourcePlan(db.Model):
         db.session.commit()
 
     def _serialize(self):
-        return dict(id=self.id, name=self.name, memory=self.memory, disk=self.disk, swap=self.swap, price_usd=self.price,
+        return dict(id=self.id, name=escape(self.name), memory=self.memory, disk=self.disk, swap=self.swap, price_usd=self.price,
                     price_btc=self.bitcoin_cost(), ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit)
 
     def __repr__(self):

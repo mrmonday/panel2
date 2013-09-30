@@ -16,7 +16,7 @@ from the use of this software.
 import json
 import time
 
-from flask import redirect, url_for, abort, flash, jsonify, make_response, request, session
+from flask import redirect, url_for, abort, flash, jsonify, make_response, request, session, escape
 from panel2 import db
 from panel2.job import Job
 from panel2.service import IPAddress, IPAddressRef, IPRange
@@ -158,7 +158,7 @@ def setnickname(vps):
     db.session.add(vps)
     db.session.commit()
 
-    return jsonify({'nickname': vps.nickname, 'name': vps.name})
+    return jsonify({'nickname': escape(vps.nickname), 'name': escape(vps.name)})
 
 @vps.route('/<vps>/setprofile', methods=['POST'])
 @login_required

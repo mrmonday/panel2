@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from functools import wraps
-from flask import session, redirect, url_for, abort, render_template, request
+from flask import session, redirect, url_for, abort, render_template, request, escape
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
@@ -154,7 +154,7 @@ class User(db.Model):
         return round(sum([cred.amount for cred in self.credits]), 2)
 
     def _serialize(self):
-        return dict(username=self.username, email=self.email,
+        return dict(username=escape(self.username), email=escape(self.email),
                     services=[service._serialize() for service in self.services],
                     invoices=[invoice._serialize() for invoice in self.invoices],
                     tickets=[ticket._serialize() for ticket in self.tickets])
