@@ -357,8 +357,13 @@ def adm_del_ip(vps, ip):
     vps = XenVPS.query.filter_by(id=vps).first_or_404()
     if can_access_vps(vps) is False:
         abort(403)
-    IPAddress.query.filter_by(id=ip).delete()
+    ip = IPAddress.query.filter_by(id=ip).first()
+    if ip.service_id != vps.service_id:
+        abort(403)
+
+    db.session.delete(ip)
     db.session.commit()
+
     return redirect(url_for('.ip_admin', vps=vps.id))
 
 @vps.route('/<vps>/admin/ip/<ip>/rdns-modify', methods=['POST'])
