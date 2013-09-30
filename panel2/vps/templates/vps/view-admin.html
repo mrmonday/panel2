@@ -4,6 +4,39 @@
 
 {% block component %}
 
+{% for ipaddr in service.ips %}
+<div id="adm-rdns-{{ ipaddr.id }}" class="modal hide" tabindex="-1" role="dialog">
+        <div class="modal-header">
+                <a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+                <h3>Reverse DNS &mdash; {{ ipaddr.ip }}</h3>
+        </div>
+	{% if not ipaddr.ipnet.rdns_zone %}
+	<div class="modal-body">
+		This operation is not supported for this IP network, please contact support to have it
+		set manually.
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+	</div>
+	{% else %}
+	<form method="POST" class="form-horizontal">
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label" for="rdns">rDNS</label>
+			<div class="controls">
+				<input type="text" id="rdns" name="rdns" class="input-block-level" value="{{ ipaddr.lookup_rdns() }}">
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary">Modify</button>
+		<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+	</div>
+	</form>
+	{% endif %}
+</div>
+{% endfor %}
+
 <h3>IP Allocation / Planning [eth0: {{ service.mac }}]</h3>
 
 <table class="table table-striped">
@@ -14,7 +47,7 @@
 <th>Gateway</th>
 <th>Broadcast</th>
 <th>Netmask</th>
-<th>Reverse DNS</th>
+<th>rDNS</th>
 <th>
 	<span class="pull-right">Options</span>
 </th>
@@ -34,7 +67,8 @@
 	{% endif %}
 	<td>{{ ipaddr.lookup_rdns() }}</td>
 	<td>
-		<span class="pull-right btn-group">
+		<span class="pull-right">
+			<a href="#adm-rdns-{{ ipaddr.id }}" class="btn btn-primary" data-toggle="modal"><i class="icon-pencil"></i> rDNS</a>
 			<a href="{{ url_for('.adm_del_ip', vps=service.id, ip=ipaddr.id) }}" class="btn btn-danger"><i class="icon-trash"></i> Delete</a>
 		</span>
 	</td>
