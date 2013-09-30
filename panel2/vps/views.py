@@ -377,6 +377,10 @@ def adm_modify_ip_rdns(vps, ip):
         return redirect(url_for('.ip_admin', vps=vps.id))
 
     ip = IPAddress.query.filter_by(id=ip).first()
+
+    if ip.service_id != vps.service_id:
+        abort(403)
+
     ip.update_rdns(rdns)
 
     return redirect(url_for('.ip_admin', vps=vps.id))
