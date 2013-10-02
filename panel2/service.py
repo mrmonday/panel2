@@ -36,10 +36,11 @@ class Service(db.Model):
 
     __mapper_args__ = {'polymorphic_on': type}
 
-    def delete(self):
-        refund_amt = self.refund_amount()
-        if refund_amt > 0:
-            ServiceCreditItem(self.user, refund_amt, 'Deletion - {}'.format(self.name))
+    def delete(self, do_refund=True):
+        if do_refund:
+            refund_amt = self.refund_amount()
+            if refund_amt > 0:
+                ServiceCreditItem(self.user, refund_amt, 'Deletion - {}'.format(self.name))
 
         InvoiceItem.query.filter_by(service_id=self.id).delete()
         db.session.commit()
