@@ -48,6 +48,15 @@
 			<li>
 				<a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Management</a>
 			</li>
+			{% if user.is_admin %}
+			<li class="divider"></li>
+			<li>
+				<a href="{{ url_for('.suspend', vps=service.id) }}">Suspend</a>
+			</li>
+			<li>
+				<a href="{{ url_for('.entitle', vps=service.id) }}">Entitle</a>
+			</li>
+			{% endif %}
 			</ul>
 		</div>
 	</span>

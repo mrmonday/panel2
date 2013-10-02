@@ -234,6 +234,28 @@ def adm_delete(vps):
     flash('Your VPS has been deleted.')
     return redirect(url_for('.list'))
 
+@vps.route('/<vps>/suspend')
+@admin_required
+def suspend(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.suspend(disable_renew=True)
+    return redirect(url_for('.view', vps=vps.id))
+
+@vps.route('/<vps>/entitle')
+@admin_required
+def entitle(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.entitle()
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/renew')
 @login_required
 def renew(vps):

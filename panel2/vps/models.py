@@ -311,9 +311,9 @@ class XenVPS(Service):
         payload = '{0}:{1}'.format(self.name, self.node.secret)
         return hashlib.sha512(payload).hexdigest()
 
-    def suspend(self):
+    def suspend(self, disable_renew=False):
         self.destroy()
-        Service.suspend(self)
+        Service.suspend(self, disable_renew)
 
     def jobs(self):
         return Job.query.filter_by(refid=self.id)
