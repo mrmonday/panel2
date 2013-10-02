@@ -20,7 +20,7 @@ from jinja2 import evalcontextfilter, Markup, escape
 
 from panel2.user import User, get_session_user, login_required, admin_required
 from panel2.utils import strip_unprintable, render_template_or_json
-from panel2.support.models import Ticket, Reply
+from panel2.support.models import Ticket, Reply, send_message
 from panel2.support import support
 from panel2 import app, db
 
@@ -107,3 +107,21 @@ def new():
         return redirect(url_for('.view', ticket_id=ticket.id))
 
     return render_template_or_json('support/ticketnew.html')
+
+@support.route('/message/<username>', methods=['GET', 'POST'])
+@admin_required
+def message(username):
+    if request.method == 'POST':
+        subject = strip_unprintable(request.form['subject'])
+        message = strip_unprintable(request.form['message'])
+
+        if len(subject) == 0:
+            abort(500)
+        if len(message) == 0:
+            abort(500)
+
+        user = User.query.filter_by(username=username).first()
+        ticket = send_message(user, get_session_user(), subject, message)
+        return redirect(url_for('.view', ticket_id=ticket.id))
+
+    return render_template_or_json('support/sendmessage.html', username=username)

@@ -36,7 +36,7 @@ class Ticket(db.Model):
     
     user = db.relationship('User', backref='tickets')
 
-    def __init__(self, user, subject, message, priority=0, department='Support'):
+    def __init__(self, user, subject, message=None, priority=0, department='Support'):
         self.user = user
         self.user_id = user.id
 
@@ -50,9 +50,9 @@ class Ticket(db.Model):
         db.session.add(self)
         db.session.commit()
 
-        reply = self.add_reply(self.user, message, False)
-
-        ticket_create_signal.send(app, ticket=self, reply=reply)
+        if message:
+            reply = self.add_reply(self.user, message, False)
+            ticket_create_signal.send(app, ticket=self, reply=reply)
 
     def __repr__(self):
         return "<Ticket: %d - '%s'>" % (self.id, self.subject)
@@ -71,6 +71,12 @@ class Ticket(db.Model):
         return dict(ticket=self.id, subject=self.subject, user=self.user.username, priority=self.priority,
                     department=self.department, is_open=self.is_open, opened_at=self.opened_at,
                     closed_at=self.closed_at, replies=[reply._serialize() for reply in self.replies])
+
+def send_message(user, from_user, subject, message):
+    ticket = Ticket(user, subject)
+    reply = ticket.add_reply(from_user, message, False)
+    ticket_create_signal.send(app, ticket=ticket, reply=reply)
+    return ticket
 
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
