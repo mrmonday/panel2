@@ -50,6 +50,10 @@ Message:
 '''))
     app.logger.addHandler(mail_handler)
 
+# add round()
+app.jinja_env.globals.update(sum=sum)
+app.jinja_env.globals.update(round=round)
+
 # cron system
 import panel2.cron
 cron = panel2.cron.CronManager()

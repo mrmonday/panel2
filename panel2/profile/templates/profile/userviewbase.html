@@ -14,6 +14,7 @@
 	<li{{ ' class="active"'|safe if subtitle == 'Invoices' else '' }}><a href="{{ url_for('.view_invoices', username=user.username) }}">Invoices</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Services' else '' }}><a href="{{ url_for('.view_services', username=user.username) }}">Services</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Tickets' else '' }}><a href="{{ url_for('.view_tickets', username=user.username) }}">Tickets</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Credits' else '' }}><a href="{{ url_for('.view_credits', username=user.username) }}">Credits</a></li>
 </ul>
 
 {% block subcontent %}

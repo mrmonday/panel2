@@ -111,3 +111,8 @@ def view_tickets(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usertickets.html', user=user)
 
+@profile.route('/<username>/credits')
+@admin_required
+def view_credits(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template_or_json('profile/usercredits.html', user=user)
