@@ -17,9 +17,9 @@
 	<th class="span2">VPS</th>
 	<th class="span1">Memory</th>
 	<th class="span1">Disk</th>
-	<th class="span2">Primary IP</th>
+	<th class="span1">Primary IP</th>
+	<th class="span1">Status</th>
 	<th class="span1">Host</th>
-	<th class="span3">Location</th>
 	<th class="span1">
 		<span class="pull-right">Options</span>
 	</th>
@@ -27,19 +27,25 @@
 </thead>
 <tbody>
 {% for service in vpslist %}
-{% if service.is_entitled and service.type == 'xenvps' %}
+{% if service.type == 'xenvps' %}
 <tr>
 	<td>{{ service.name }} {% if service.nickname %}({{ service.nickname }}){% endif %}</td>
 	<td>{{ service.memory }} MB</td>
 	<td>{{ service.disk }} GB</td>
 	<td>{{ service.ips[0].ip }}</td>
+	<td>
+	{% if service.is_entitled %}
+		 <span class="label label-success">Active</span>
+	{% else %}
+		 <span class="label label-important">Suspended</span>
+	{% endif %}
+	</td>
 	<td>{{ service.node.name }}</td>
-	<td>{{ service.node.region.name }}</td>
 	<td>
 		<span class="pull-right">
 			<a href="{{ url_for('.view', vps=service.id) }}" class="btn btn-primary">View</a>
 			{% if user.is_admin %}
-				<a href="{{ url_for('.ip_admin', vps=service.id) }}" class="btn btn-danger">Admin</a>
+			<a href="{{ url_for('support.message', username=service.user.username) }}" class="btn btn-danger">Message</a>
 			{% endif %}
 		</span>
 	</td>
