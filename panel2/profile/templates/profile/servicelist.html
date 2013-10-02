@@ -1,0 +1,38 @@
+{% extends "profile/base.html" %}
+
+{% block content %}
+
+<div class="pushdown"></div>
+
+<table class="table table-striped">
+	<tr>
+		<th>ID</th>
+		<th>Username</th>
+		<th>Service</th>
+		<th>Revenue</th>
+		<th>
+			<span class="pull-right">Options</span>
+		</th>
+	</tr>
+	{% for service in svslist %}
+	<tr>
+		<td class="span1">{{ service.id }}</td>
+		<td class="span4"><a href="{{ url_for('.view_base', username=service.user.username) }}">{{ service.user.username }}</a></td>
+		<td class="span2">{{ service.name }}</td>
+		<td class="span1">${{ service.price | strf("{0:.2f}") }}</td>
+		<td class="span2">
+			<div class="pull-right">
+				{% if service.type == 'xenvps' %}
+				<a href="{{ url_for('vps.view', vps=service.id) }}" class="btn btn-primary">View</a>
+				{% endif %}
+			</div>
+		</td>
+	</tr>
+	{% endfor %}
+	<tr>
+		<td colspan="3" style="text-align: right; font-weight: bold;">Lost revenue:</td>
+		<td colspan="2">${{ revenue_sum | strf("{0:.2f}") }}</td>
+	</tr>
+</table>
+
+{% endblock %}

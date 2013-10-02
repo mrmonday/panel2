@@ -20,6 +20,9 @@ from panel2.profile import profile
 from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node
+from panel2.service import Service
+
+import time
 
 @profile.route('/')
 @admin_required
@@ -75,6 +78,13 @@ def node_lock(node):
     db.session.add(node)
     db.session.commit()
     return redirect(url_for('.node_stats'))
+
+@profile.route('/_services/delinquent')
+@admin_required
+def delinquent_services():
+    delinquent = Service.query.filter(Service.expiry < time.time())
+    return render_template_or_json('profile/servicelist.html', svslist=delinquent,
+           revenue_sum=sum([svs.price for svs in delinquent]))
 
 @profile.route('/<username>')
 @profile.route('/<username>/index')

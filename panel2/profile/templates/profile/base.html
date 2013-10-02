@@ -1,12 +1,15 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}Accounts{% endblock %}
-
-{% block accountingsidebar %}
+{% block containertype %}container-subnav-type{% endblock %}
+{% block subnav %}
+<nav id="subnav">
 <ul class="nav nav-list">
 	<li><a href="{{ url_for('.list') }}"><i class="icon-lock"></i> Account List</a></li>
 	<li><a href="{{ url_for('.list_paid') }}"><i class="icon-lock"></i> Paid Accounts</a></li>
 	<li><a href="{{ url_for('.list_free') }}"><i class="icon-lock"></i> Free Accounts</a></li>
 	<li><a href="{{ url_for('.list_active') }}"><i class="icon-lock"></i> All with Active Services</a></li>
 	<li><a href="{{ url_for('.node_stats') }}"><i class="icon-lock"></i> Node Statistics</a></li>
+	<li><a href="{{ url_for('.delinquent_services') }}"><i class="icon-lock"></i> Delinquent Services</a></li>
 </ul>
+</nav>
 {% endblock %}
