@@ -48,25 +48,14 @@ def user_can_access_ticket(ticket, user=None):
 @login_required
 def list():
     user = get_session_user()
-    open_tickets = []
-    closed_tickets = []
-    for ticket in user.tickets:
-        if ticket.is_open is not True:
-            closed_tickets.append(ticket)
-        else:
-            open_tickets.append(ticket)
-
-    return render_template_or_json('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
-                           open_tickets_count=len(open_tickets), closed_tickets_count=len(closed_tickets))
+    tickets = Ticket.query.filter_by(user_id=user.id).order_by(Ticket.is_open).order_by(Ticket.id)
+    return render_template_or_json('support/ticketlist.html', tickets=tickets)
 
 @support.route('/tickets/all')
 @admin_required
 def list_all():
-    open_tickets = Ticket.query.filter_by(is_open=True)
-    closed_tickets = Ticket.query.filter_by(is_open=False)
-
-    return render_template_or_json('support/ticketlist.html', open_tickets=open_tickets, closed_tickets=closed_tickets,
-                           open_tickets_count=open_tickets.count(), closed_tickets_count=closed_tickets.count())
+    tickets = Ticket.query.order_by(Ticket.is_open).order_by(Ticket.id)
+    return render_template_or_json('support/ticketlist.html', tickets=tickets)
 
 @support.route('/ticket/<ticket_id>', methods=['GET', 'POST'])
 @login_required

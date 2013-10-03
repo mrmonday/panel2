@@ -16,29 +16,22 @@
 			<span class="pull-right">Options</span>
 		</th>
 	</tr>
-	{% for ticket in open_tickets %}
+	{% for ticket in tickets %}
 	<tr>
-		<td class="span1">{{ ticket.id }}</td>
-		<td class="span7">{{ ticket.subject }}</td>
-		<td class="span1">{{ ticket.user.username }}</td>
-		<td class="span1">OPEN</td>
-		<td class="span2">
-			<div class="btn-group pull-right">
+		<td>{{ ticket.id }}</td>
+		<td>{{ ticket.subject }}</td>
+		<td>{{ ticket.user.username }}</td>
+		<td>
+		{% if ticket.is_open %}
+			 <span class="label label-warning">Open</span>
+		{% else %}
+			 <span class="label label-success">Closed</span>
+		{% endif %}
+		</td>
+		<td>
+			<div class="pull-right">
 				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
 				<a href="{{ url_for('.close', ticket_id=ticket.id) }}" class="btn">Close</a>
-			</div>
-		</td>
-	</tr>
-	{% endfor %}
-	{% for ticket in closed_tickets %}
-	<tr>
-		<td class="span1">{{ ticket.id }}</td>
-		<td class="span7">{{ ticket.subject }}</td>
-		<td class="span1">{{ ticket.user.username }}</td>
-		<td class="span1">CLOSED</td>
-		<td class="span2">
-			<div class="btn-group pull-right">
-				<a href="{{ url_for('.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
 			</div>
 		</td>
 	</tr>
