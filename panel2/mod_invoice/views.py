@@ -91,6 +91,16 @@ def credit(invoice_id):
     invoice.credit(invoice.total_due(), "Service credit (per {})".format(user.username))
     return redirect(url_for('.view', invoice_id=invoice.id))
 
+@invoice.route('/<invoice_id>/delete')
+@admin_required
+def delete(invoice_id):
+    user = get_session_user()
+    invoice = Invoice.query.filter_by(id=invoice_id).first()
+    if not invoice:
+        abort(404)
+    invoice.delete()
+    return redirect(url_for('.index'))
+
 @invoice.route('/unpaid')
 @admin_required
 def list_unpaid():

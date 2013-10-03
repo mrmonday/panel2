@@ -11,6 +11,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 		<a href="{{ url_for('.resend', invoice_id=invoice.id) }}" class="btn btn-warning"><i class="icon-envelope"></i> Resend</a>
 {% if user.is_admin %}
 		<a href="{{ url_for('.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
+		<a href="{{ url_for('.delete', invoice_id=invoice.id) }}" class="btn btn-inverse">Delete</a>
 {% endif %}
 	</span>
 </h3>
