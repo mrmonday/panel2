@@ -37,11 +37,10 @@ def ipn_post(invoice_id):
     if values['payment_status'] != 'Completed':
         return 'INVALID'
 
-    args = OrderedDict([('cmd', '_notify-validate')] + [(k, v.encode(values['charset'], 'ignore')) for k, v in values.iteritems()])
-    validate_url = 'https://www.paypal.com/cgi-bin/webscr'
+    args = OrderedDict([('cmd', '_notify-validate')] + [(k, v) for k, v in values.iteritems()])
+    validate_url = u'https://www.paypal.com/cgi-bin/webscr'
 
     r = requests.get(validate_url, params=args)
-    print r.url
     if 'VERIFIED' not in r.text:
         return r.text
 
