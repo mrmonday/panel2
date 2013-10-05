@@ -230,7 +230,7 @@ def adm_delete(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    vps.delete(do_refund=(vps.user == user))
+    vps.delete(do_refund=(vps.user == get_session_user()))
     flash('Your VPS has been deleted.')
     return redirect(url_for('.list'))
 

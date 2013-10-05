@@ -322,9 +322,9 @@ class XenVPS(Service):
         lastjob = self.jobs().order_by(Job.id.desc()).first()
         return not lastjob.end_ts
 
-    def delete(self):
+    def delete(self, do_refund=True):
         self.api().vps_destroy(domname=escape(self.name))
-        Service.delete(self)
+        Service.delete(self, do_refund)
 
     def create(self, profile=None, constructor=QueueingProxy):
         if not profile:
