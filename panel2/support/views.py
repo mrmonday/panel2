@@ -57,6 +57,18 @@ def list_all():
     tickets = Ticket.query.order_by(Ticket.is_open).order_by(Ticket.id)
     return render_template_or_json('support/ticketlist.html', tickets=tickets)
 
+@support.route('/tickets/open')
+@admin_required
+def list_open():
+    tickets = Ticket.query.filter_by(is_open=True).order_by(Ticket.id)
+    return render_template_or_json('support/ticketlist.html', tickets=tickets)
+
+@support.route('/tickets/closed')
+@admin_required
+def list_closed():
+    tickets = Ticket.query.filter_by(is_open=False).order_by(Ticket.id)
+    return render_template_or_json('support/ticketlist.html', tickets=tickets)
+
 @support.route('/ticket/<ticket_id>', methods=['GET', 'POST'])
 @login_required
 def view(ticket_id):
