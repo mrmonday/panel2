@@ -156,7 +156,7 @@ def setnickname(vps):
     if can_access_vps(vps) is False:
         abort(403)
     nickname = request.form.get('nickname', None)
-    if not is_valid_host(nickname + '.localdomain'):
+    if nickname and not is_valid_host(nickname + '.localdomain'):
         nickname = None
     vps.nickname = nickname
     db.session.add(vps)
