@@ -281,7 +281,9 @@ class XenVPS(Service):
 
     def _serialize(self):
         return dict(id=self.id, name=escape(self.name), memory=self.memory, swap=self.swap, disk=self.disk, node=escape(self.node.name),
-                    user=escape(self.user.username), ips=[ip._serialize() for ip in self.ips], mac=self.mac, nickname=escape(self.nickname))
+                    user=escape(self.user.username), ips=[ip._serialize() for ip in self.ips], mac=self.mac, nickname=escape(self.nickname),
+                    monitoring=self.watchdog, cpu_sla=self.cpu_sla, ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit,
+                    profile=self.profile._serialize())
 
     def generate_mac(self):
         octets = [random.randint(0, 255) for x in range(3)]
