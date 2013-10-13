@@ -31,7 +31,7 @@ def is_valid_host(host):
         return False
     if not hasattr(is_valid_host, '_re'):
         import re
-        is_valid_host._re = re.compile(r'^([0-9a-z_][-\w]*[0-9a-z_]\.)+[a-z0-9\-_]{1,15}$')
+        is_valid_host._re = re.compile(r'^([0-9a-z_]([-\w]*[0-9a-z_]|)\.)+[a-z0-9\-_]{1,15}$')
     checkhost = host
     if host[0] == '*':
         checkhost = host[2:]
