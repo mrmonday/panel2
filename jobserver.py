@@ -65,7 +65,11 @@ def main():
     while True:
        jobs = wait()
        for job in jobs:
-           run(job)
+           try:
+               run(job)
+           except socket.error as e:
+               job.backout()
+               break
 
 if __name__ == '__main__':
     main()

@@ -63,6 +63,13 @@ class Job(db.Model):
 
         job_checkout_signal.send(app, job=self)
 
+    def backout(self):
+        self.start_ts = None
+        self.end_ts = None
+        self.response_envelope = None
+        db.session.add(self)
+        db.session.commit()
+
     def checkin(self, response_envelope=None):
         self.end_ts = int(time.time())
         self.response_envelope = response_envelope
