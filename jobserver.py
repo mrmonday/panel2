@@ -15,22 +15,23 @@ from the use of this software.
 
 from panel2 import app, db
 from panel2.job import Job
-from time import sleep
-import socket
+from panel2.vps.models import Node
+from gevent import sleep, spawn
+import gevent.socket as socket
 
-def wait(timeout=5):
+def wait(server_ip='127.0.0.1', timeout=5):
     while True:
         # Synchronize ORM with database state, otherwise query will be
         # cached.
         db.session.commit()
-        lst = Job.query.filter_by(start_ts=None).all()
+        lst = Job.query.filter_by(start_ts=None).filter_by(target_ip=server_ip).all()
         if len(lst) == 0:
             sleep(timeout)
             continue
         return lst
 
-def run(job):
-    print 'running job', job.id
+def run(node, job):
+    print '[{0}] running job {1}'.format(node.name, job.id)
     job.checkout()
 
     sock = socket.create_connection((job.target_ip, int(job.target_port)))
@@ -60,16 +61,33 @@ def run(job):
     response = read_loop(sock)
     job.checkin(response)
     sock.close()
+    print '[{0}] finished job {1}'.format(node.name, job.id)
 
-def main():
+def loop(node):
     while True:
-       jobs = wait()
+       jobs = wait(server_ip=node.ipaddr)
        for job in jobs:
            try:
-               run(job)
+               run(node, job)
            except socket.error as e:
                job.backout()
                break
+
+already_running = list()
+
+def launch():
+    nodes = Node.query.all()
+    for node in nodes:
+        if node in already_running:
+            continue
+        print "spawning thread for", node.name
+        spawn(loop, node)
+        already_running.append(node)
+
+def main():
+    while True:
+        launch()
+        sleep(60)
 
 if __name__ == '__main__':
     main()
