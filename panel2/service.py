@@ -289,7 +289,7 @@ class IPAddress(db.Model):
         return rec.content
 
     def _serialize(self):
-        return dict(ip=self.ip, ipnet=self.ipnet._serialize())
+        return dict(id=self.id, ip=self.ip, ipnet=self.ipnet._serialize())
 
 def IPAddressRef(ip, ipnet=None, user=None, service=None):
     '''A wrapper around the IPAddress constructor which handles lookup as well as
