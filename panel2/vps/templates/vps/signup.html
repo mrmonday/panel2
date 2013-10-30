@@ -71,9 +71,10 @@
 <h3>Region</h3>
 
 <p>
+	<input type="radio" name="region" value="-1" checked="checked"> Pick any region where stock is available.<br>
 {% for region in regions %}
 {% if not region.hidden %}
-	<input type="radio" name="region" value="{{ region.id }}" {{ 'checked="checked"' if region.id == 2 }}> {{ region.name }}<br>
+	<input type="radio" name="region" value="{{ region.id }}"> {{ region.name }}<br>
 {% endif %}
 {% endfor %}
 </p>

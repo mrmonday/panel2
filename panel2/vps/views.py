@@ -15,6 +15,7 @@ from the use of this software.
 
 import json
 import time
+import random
 
 from flask import redirect, url_for, abort, flash, jsonify, make_response, request, session, escape
 from panel2 import db
@@ -107,14 +108,26 @@ def signup():
 
         vpsname = user.next_service_name()
 
-        region = Region.query.filter_by(id=int(request.form['region'])).first()
-        if not region:
-            abort(404)
         resource_plan = ResourcePlan.query.filter_by(id=int(request.form['plan'])).first()
         if not resource_plan:
             abort(404)
 
-        vps = resource_plan.create_vps(user, region, vpsname, discount)
+        def create_vps(regionlist):
+            for region in regionlist:
+                vps = resource_plan.create_vps(user, region, vpsname, discount)
+                if vps:
+                    return vps
+            return None
+
+        region = Region.query.filter_by(id=int(request.form['region'])).first()
+        vps = None
+        if not region:
+            regions = Region.query.filter_by(hidden=False).all()
+            random.shuffle(regions)
+            vps = create_vps(regions)
+        else:
+            vps = create_vps([region])
+
         if not vps:
             return redirect(url_for('.nostock'))
         vps.expiry_ts = time.time()
