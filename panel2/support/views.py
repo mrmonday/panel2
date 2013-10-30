@@ -25,7 +25,6 @@ from panel2.support import support
 from panel2 import app, db
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
-_urlfinder_re = re.compile(r'([^"])\b((http|https)://[^ \t\n\r<>\(\)&"]+[^ \t\n\r<>\(\)&"\.])')
 
 @app.template_filter()
 @evalcontextfilter
@@ -33,7 +32,6 @@ def breakln(eval_ctx, value):
     result = escape(value).replace('\n', Markup('<br>\n'))
     if eval_ctx.autoescape:
         result = Markup(result)
-    result = _urlfinder_re.sub(r'\1<a href="\2">\2</a>', value)
     return result
 
 def user_can_access_ticket(ticket, user=None):
