@@ -29,7 +29,7 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 @app.template_filter()
 @evalcontextfilter
 def breakln(eval_ctx, value):
-    result = escape(value).replace('\n', Markup('<br>\n'))
+    result = escape(value).replace('\n', Markup(' <br> \n'))
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
