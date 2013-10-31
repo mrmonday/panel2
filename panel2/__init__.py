@@ -75,7 +75,6 @@ from panel2.dns import dns
 from panel2.support import support
 from panel2.vps import vps
 from panel2.mod_invoice import invoice
-from panel2.squid import squid
 from panel2.status import status
 from panel2.profile import profile
 
