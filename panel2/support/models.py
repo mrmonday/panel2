@@ -57,8 +57,18 @@ class Ticket(db.Model):
     def __repr__(self):
         return "<Ticket: %d - '%s'>" % (self.id, self.subject)
 
-    def add_reply(self, from_user, message, fire_reply_signal=True):
+    def add_reply(self, from_user, message, fire_reply_signal=True, reopen=True):
+        if reopen:
+            self.reopen()
+
         return Reply(self, from_user, message, fire_reply_signal)
+
+    def reopen(self):
+        self.closed_at = None
+        self.is_open = True
+
+        db.session.add(self)
+        db.session.commit()
 
     def close(self):
         self.closed_at = time.time()
@@ -72,9 +82,13 @@ class Ticket(db.Model):
                     department=self.department, is_open=self.is_open, opened_at=self.opened_at,
                     closed_at=self.closed_at, replies=[reply._serialize() for reply in self.replies])
 
-def send_message(user, from_user, subject, message):
+def send_message(user, from_user, subject, message, close=False):
     ticket = Ticket(user, subject)
     reply = ticket.add_reply(from_user, message, False)
+
+    if close:
+        ticket.close()
+
     ticket_create_signal.send(app, ticket=ticket, reply=reply)
     return ticket
 
