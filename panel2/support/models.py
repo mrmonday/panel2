@@ -36,7 +36,7 @@ class Ticket(db.Model):
     
     user = db.relationship('User', backref='tickets')
 
-    def __init__(self, user, subject, message=None, priority=0, department='Support'):
+    def __init__(self, user, subject, message=None, priority=0, department='Support', notify_admins=True):
         self.user = user
         self.user_id = user.id
 
@@ -52,7 +52,7 @@ class Ticket(db.Model):
 
         if message:
             reply = self.add_reply(self.user, message, False)
-            ticket_create_signal.send(app, ticket=self, reply=reply)
+            ticket_create_signal.send(app, ticket=self, reply=reply, notify_admins=notify_admins)
 
     def __repr__(self):
         return "<Ticket: %d - '%s'>" % (self.id, self.subject)
@@ -82,14 +82,14 @@ class Ticket(db.Model):
                     department=self.department, is_open=self.is_open, opened_at=self.opened_at,
                     closed_at=self.closed_at, replies=[reply._serialize() for reply in self.replies])
 
-def send_message(user, from_user, subject, message, close=False):
+def send_message(user, from_user, subject, message, close=False, notify_admins=True):
     ticket = Ticket(user, subject)
     reply = ticket.add_reply(from_user, message, False)
 
     if close:
         ticket.close()
 
-    ticket_create_signal.send(app, ticket=ticket, reply=reply)
+    ticket_create_signal.send(app, ticket=ticket, reply=reply, notify_admins=notify_admins)
     return ticket
 
 class Reply(db.Model):
@@ -103,7 +103,7 @@ class Reply(db.Model):
     ticket = db.relationship('Ticket', backref='replies')
     from_user = db.relationship('User')
 
-    def __init__(self, ticket, from_user, message, fire_reply_signal=True):
+    def __init__(self, ticket, from_user, message, fire_reply_signal=True, notify_admins=True):
         self.ticket = ticket
         self.ticket_id = ticket.id
 
@@ -118,7 +118,7 @@ class Reply(db.Model):
         db.session.commit()
 
         if fire_reply_signal is True:
-            ticket_reply_signal.send(app, ticket=self.ticket, reply=self)
+            ticket_reply_signal.send(app, ticket=self.ticket, reply=self, notify_admins=notify_admins)
 
     def __repr__(self):
         return "<Reply for Ticket %d, '%s...'>" % (self.ticket.id, self.message[0:50])

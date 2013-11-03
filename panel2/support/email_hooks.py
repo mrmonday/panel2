@@ -21,11 +21,15 @@ from panel2.support.models import Ticket, Reply, ticket_create_signal, ticket_re
 def send_ticket_create_message(*args, **kwargs):
     ticket = kwargs.pop('ticket', None)
     reply = kwargs.pop('reply', None)
+    notify_admins = kwargs.pop('notify_admins', True)
 
     subject = "[#%d] %s" % (ticket.id, ticket.subject)
 
     # First send a message to the user.
     ticket.user.send_email(subject, 'support/email/ticket-new.txt', ticket=ticket, reply=reply)
+
+    if not notify_admins:
+        return
 
     # Then to any admins.
     admins = User.query.filter_by(is_admin=True)
@@ -37,11 +41,15 @@ def send_ticket_create_message(*args, **kwargs):
 def send_ticket_reply_message(*args, **kwargs):
     ticket = kwargs.pop('ticket', None)
     reply = kwargs.pop('reply', None)
+    notify_admins = kwargs.pop('notify_admins', True)
 
     subject = "[#%d] %s" % (ticket.id, ticket.subject)
 
     # First send a message to the user.
     ticket.user.send_email(subject, 'support/email/ticket-body.txt', ticket=ticket, reply=reply)
+
+    if not notify_admins:
+        return
 
     # Then to any admins.
     admins = User.query.filter_by(is_admin=True)
