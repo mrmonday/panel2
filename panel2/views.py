@@ -15,7 +15,7 @@ from the use of this software.
 
 from panel2 import app
 from panel2.user import get_session_user
-from flask import render_template, session, redirect, url_for
+from flask import render_template, session, redirect, url_for, jsonify
 
 @app.route('/', subdomain=app.config['DEFAULT_SUBDOMAIN'])
 def index():
@@ -25,6 +25,13 @@ def index():
         return redirect(url_for('vps.list'))
 
     return redirect(url_for('login'))
+
+@app.route('/api/validate', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+def validate():
+    if get_session_user():
+        return jsonify({'username': get_session_user().username})
+
+    return jsonify({})
 
 @app.errorhandler(403)
 def error_forbidden(e):
