@@ -31,6 +31,8 @@ function logdata_fetch(url, target, header) {
 					td.append($('<i class="icon-time"></i>'));
 				} else if (!json_data[i].rsp_env) {
 					td.append($('<i class="icon-spinner"></i>'));
+				} else if (!json_data[i].rsp_env.params) {
+					td.append($('<i class="icon-remove-sign text-error" title="No error message provided"></i>'));
 				} else if (json_data[i].rsp_env.params.success) {
 					td.append($('<i class="icon-ok-sign text-success"></i>'));
 				} else if (json_data[i].rsp_env.params.error) {
