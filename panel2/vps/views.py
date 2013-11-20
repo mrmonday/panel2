@@ -17,6 +17,7 @@ import json
 import time
 import random
 
+from collections import OrderedDict
 from flask import redirect, url_for, abort, flash, jsonify, make_response, request, session, escape
 from panel2 import db
 from panel2.job import Job
@@ -37,7 +38,7 @@ template_map = {
     'ubuntu12.04_login.xml': 'Ubuntu Server 12.04 LTS (minimal)',
     'alpine2.5_login.xml': 'Alpine 2.5 (minimal)',
     'centos6_login.xml': 'CentOS 6 (minimal)',
-    'arch_login.xml': 'Arch Linux (minimal)',
+#    'arch_login.xml': 'Arch Linux (minimal)',
     'gentoo_login.xml': 'Gentoo (minimal)',
 }
 
@@ -69,6 +70,28 @@ def list_all():
 def list_user(user):
     u = User.query.filter_by(username=user).first()
     return render_template_or_json('vps/list.html', vpslist=filter(lambda x: x.type == 'xenvps', u.services))
+
+@vps.route('/stock')
+def stock():
+    regions = Region.query.filter_by(hidden=False).all()
+    plans = ResourcePlan.query.order_by(ResourcePlan.memory).all()
+    stock = dict()
+
+    for region in regions:
+        stock[region.name] = OrderedDict([(plan.name, plan.calculate_stock(region)) for plan in plans])
+
+    return render_template_or_json('vps/stock.html', stock=stock)
+
+@vps.route('/stock.json')
+def stock_json():
+    regions = Region.query.filter_by(hidden=False).all()
+    plans = ResourcePlan.query.order_by(ResourcePlan.memory).all()
+    stock = dict()
+
+    for region in regions:
+        stock[region.name] = OrderedDict([(plan.name, plan.calculate_stock(region)) for plan in plans])
+
+    return jsonify(stock)
 
 @vps.route('/signup', methods=['GET', 'POST'])
 def signup():

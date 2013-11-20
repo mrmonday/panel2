@@ -62,7 +62,10 @@ def update_cpu_usage(nodename, vpsinfo):
     if not os.access(path, os.F_OK):
         make_cpu_rrd(path)
     cputime_msec = int(float(vpsinfo['cputime_sec'])*1000)
-    rrdtool.update(str(path), '%s:%d' % (now, cputime_msec))
+    try:
+        rrdtool.update(str(path), '%s:%d' % (now, cputime_msec))
+    except rrdtool.error as e:
+        pass
 
 def update_net_usage(nodename, vpsinfo):
     if vpsinfo['netif'] is None:
@@ -71,7 +74,10 @@ def update_net_usage(nodename, vpsinfo):
     if not os.access(path, os.F_OK):
         make_net_rrd(path)
     netif = vpsinfo['netif']
-    rrdtool.update(str(path), str("%s:%s:%s:%s:%s" % (now, netif['trans_bytes'], netif['recv_bytes'], netif['trans_packets'], netif['recv_packets'])))
+    try:
+        rrdtool.update(str(path), str("%s:%s:%s:%s:%s" % (now, netif['trans_bytes'], netif['recv_bytes'], netif['trans_packets'], netif['recv_packets'])))
+    except rrdtool.error as e:
+        pass
 
 def update_vbd_usage(nodename, vpsinfo):
     if vpsinfo['blkif'].has_key('rd_req') is False:
@@ -80,13 +86,17 @@ def update_vbd_usage(nodename, vpsinfo):
     if not os.access(path, os.F_OK):
         make_vbd_rrd(path)
     blkif = vpsinfo['blkif']
-    rrdtool.update(str(path), str("%s:%s:%s:%s" % (now, blkif['rd_req'], blkif['wr_req'], blkif['oo_req'])))
+    try:
+        rrdtool.update(str(path), str("%s:%s:%s:%s" % (now, blkif['rd_req'], blkif['wr_req'], blkif['oo_req'])))
+    except rrdtool.error as e:
+        pass
 
 @cron.task(MINUTELY)
 def rrdcrawl():
     print 'rrdcrawl!'
     nodes = Node.query.all()
     for node in nodes:
+        print 'crawling', node.name
         api = node.api(ServerProxy)
         dl = api.domain_list()
 

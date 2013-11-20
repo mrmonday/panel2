@@ -131,6 +131,9 @@ class Region(db.Model):
             return None
         return random.choice(list)
 
+    def available_shares(self, divisor):
+        return sum([node.available_shares(divisor) for node in self.nodes])
+
     def _serialize(self):
         return dict(id=self.id, name=escape(self.name))
 
@@ -146,7 +149,9 @@ class Node(db.Model):
     region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
     region = db.relationship('Region', backref='nodes')
 
-    def __init__(self, name, ipaddr, secret, region):
+    dnsname = db.Column(db.String(255))
+
+    def __init__(self, name, ipaddr, secret, region, dnsname=None):
         self.name = name
 
         self.ipaddr = ipaddr
@@ -154,6 +159,10 @@ class Node(db.Model):
 
         self.region_id = region.id
         self.region = region
+
+        if not dnsname:
+            dnsname = app.config['VPS_DNSNAME_FORMAT'].format(self.name, app.config['SERVER_NAME'])
+        self.dnsname = dnsname
 
         db.session.add(self)
         db.session.commit()
@@ -186,6 +195,13 @@ class Node(db.Model):
         ips_free = len(self.available_ips(ipv4_only=True))
 
         return (memory <= memory_free and disk <= disk_free and ips <= ips_free)
+
+    def available_shares(self, divisor):
+        memory_free = self.memorycap - self.memory_allocated()
+        disk_free = self.diskcap - self.disk_allocated()
+        ips_free = len(self.available_ips(ipv4_only=True))
+
+        return (memory_free / divisor, disk_free / divisor, ips_free / divisor)
 
     def gen_keypair(self):
         api = self.api(ServerProxy)
@@ -586,7 +602,23 @@ class ResourcePlan(db.Model):
     def order_is_allowed(self, region, discount):
         if len(self.rules) == 0:
             return True
-        return False not in [rule.eval(region, discount) for rule in self.rules]
+        return True in [rule.eval(region, discount) for rule in self.rules]
+
+    def calculate_stock(self, region):
+        if not self.order_is_allowed(region, DummyDiscountCode()):
+            return 0
+        lst = filter(lambda x: x.locked != True, region.nodes)
+        count = 0
+        for node in lst:
+            memory_free = node.memorycap - node.memory_allocated()
+            disk_free = node.diskcap - node.disk_allocated()
+
+            memory_shares = memory_free / self.memory
+            disk_shares = disk_free / self.disk
+
+            count += memory_shares if memory_shares < disk_shares else disk_shares
+
+        return count
 
 OPERATION_TRUE = 0
 OPERATION_NOT  = 1
