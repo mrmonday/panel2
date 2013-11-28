@@ -14,8 +14,9 @@ from the use of this software.
 """
 
 from panel2.service import IPRange, IPAddress
+import sys
 
-ipr = IPRange.query
+ipr = IPRange.query.filter_by(id=sys.argv[1]).all()
 for ip in ipr:
 	print "Range: {}".format(ip.network)
 	print "================================================"
