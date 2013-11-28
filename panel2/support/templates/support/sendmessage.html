@@ -1,0 +1,27 @@
+{% extends "support/ticketbase.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<form method="POST">
+<h3>Send message to {{ username }}</h3>
+
+<div class="row-fluid ticket-row">
+	<div class="span2">
+		<div class="pull-right ticket-reply-source">
+			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
+			<strong>{{ user.username }}</strong>
+		</div>
+	</div>
+	<div class="span10">
+		<input type="text" name="subject" placeholder="Subject" class="span12">
+		<textarea name="message" placeholder="Message" class="ticket-reply-textarea span12"></textarea><br>
+		<div class="btn-group pull-right">
+			<button type="submit" class="btn btn-primary">Create Ticket</button>
+		</div>
+	</div>
+</div>
+</form>
+
+{% endblock %}

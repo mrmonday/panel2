@@ -1,0 +1,34 @@
+{% extends "vps/base.html" %}
+{% set subtitle = 'Stock' %}
+{% block title %}Stock{% endblock %}
+
+{% block subcontent %}
+
+<h1>Current Stock</h1>
+
+{% set counter=0 %}
+{% for region in stock.keys() %}
+{% if counter == 0 %}
+<div class="row-fluid">
+{% endif %}
+<div class="span4">
+<h4>{{ region }}</h4>
+<ul>
+{% for plan in stock[region].keys() %}
+{% if stock[region][plan] > 0 %}
+<li>{{ stock[region][plan] }} {{ plan }} available</li>
+{% endif %}
+{% endfor %}
+</li>
+</div>
+{% set counter = counter + 1 %}
+{% if counter == 3 %}
+</div>
+{% set counter = 0 %}
+{% endif %}
+{% endfor %}
+{% if counter != 0 %}
+</div>
+{% endif %}
+
+{% endblock %}

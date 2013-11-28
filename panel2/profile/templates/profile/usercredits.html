@@ -1,0 +1,31 @@
+{% extends "profile/userviewbase.html" %}
+{% set subtitle='Credits' %}
+
+{% block subcontent %}
+
+<table class="table table-striped">
+<tr>
+	<th>Transaction ID</th>
+	<th>Description</th>
+	<th>Amount</th>
+	<th>
+		<span class="pull-right">Balance</span>
+	</th>
+</tr>
+{% set balance=0 %}
+{% for credit in user.credits %}
+{% set balance=round(balance + credit.amount, 3) %}
+<tr>
+	<td>{{ credit.id }}</td>
+	<td>{{ credit.description }}</td>
+	<td>{{ credit.amount }}</td>
+	<td>
+		<span class="pull-right">
+			${{ balance | strf("{0:.2f}") }}
+		</span>
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
