@@ -1,0 +1,100 @@
+{% extends "base-empty.html" %}
+{% block title %} Login {% endblock %}
+{% block head %}
+{{ super() }}
+
+<style type="text/css"><!--
+	body {
+		background: #444 url('/static/dark-noise.png');
+		padding-top: 40px;
+		padding-bottom: 40px;
+	}
+
+	#signin {
+		max-width: 300px;
+		padding: 19px 29px 29px;
+		margin: 0 auto 20px;
+	}
+
+	#signin h2 {
+		margin-bottom: 10px;
+	}
+
+	.pushdown {
+		margin-bottom: 1em;
+	}
+
+	.fields {
+		border: 1px solid #999;
+		background: #eee;
+		padding: 0;
+		margin: 0;
+
+		-webkit-border-radius: 5px;
+		   -moz-border-radius: 5px;
+			border-radius: 5px;
+
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+			box-shadow: 0 1px 2px rgba(0,0,0,.05);
+
+		margin-bottom: 15px;
+	}
+
+	#signin .btn {
+	}
+
+	#signin input[type="text"],
+	#signin input[type="password"] {
+		font-size: 16px;
+		height: auto;
+		border: none;
+		margin: 0;
+	}
+
+	.error {
+		-webkit-border-radius: 5px;
+		   -moz-border-radius: 5px;
+			border-radius: 5px;
+		margin-bottom: 15px;
+		background-color: #fee;
+		padding: 7px 9px;
+	}
+
+//--></style>
+
+{% endblock %}
+{% block body %}
+
+<div class="container">
+	<form id="signin" method="POST" action="{{ url_for('.login') }}">
+		<div style="text-align: center" class="pushdown">
+			<img src="/branding/static/logo.png" alt="Please log in">
+		</div>
+		{% if error %}
+		<div class="error">
+			{{ error }}
+		</div>
+		{% endif %}
+		<div class="fields">
+			<input type="text" class="input-block-level" placeholder="Username" name="username" required="required">
+			<input type="password" class="input-block-level" placeholder="Password" name="password" required="required">
+		</div>
+		<button class="btn btn-large btn-primary btn-block" type="submit">Log in</button>
+		<a href="{{ url_for('create') }}" class="btn btn-large btn-danger btn-block">Create account</a>
+		<a href="{{ url_for('reset_ui') }}" class="btn btn-large btn-warning btn-block">Reset password</a>
+	</form>
+</div>
+
+<script>
+	$(document).ready(function() {
+		function fix_height() {
+			var eh = ($("#signin").height() / 2) + 50;
+			var wh = $(window).height() / 2;
+			$("#signin").css("marginTop", (wh - eh) + "px");
+		}
+		$(window).resize(function(){ fix_height(); }).resize();
+	});
+</script>        
+
+{% endblock %}

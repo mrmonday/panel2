@@ -1,0 +1,73 @@
+{% if not notifications and notifications != False %}
+{% set notifications=True %}
+{% endif %}
+{% extends "base-empty.html" %}
+{% block title %} Welcome {% endblock %}
+{% block head %}
+{{ super() }}
+		<script src="/static/jquery.dataTables.min.js"></script>
+		<script src="/static/bootstrap-datatables.js"></script>
+		<script src="/static/jquery.flot.js"></script>
+		<script src="/static/jquery.flot.time.js"></script>
+		<script src="/static/jquery.flot.stack.js"></script>
+		<script src="/static/sidebar.js"></script>
+		{% if notifications %}
+		<script src="/static/bootstrap-notify.js"></script>
+		<script src="/static/notifications.js"></script>
+		{% endif %}
+{% endblock %}
+
+{% block body %}
+
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="brand" href="/"><img src="/branding/static/logo-textonly.png" alt="{{ config['SITE_TITLE'] }}" id="logo"></a>
+				<ul class="nav">
+				{% if user %}
+				{% for navitem in nav.items() %}
+					<li{% if section == navitem.title %} class="active"{% endif %}><a href="{{ url_for(navitem.endpoint) }}"><i class="bigicon {{ navitem.icon }}"></i> {{ navitem.title }}</a></li>
+				{% endfor %}
+				{% if 0 %}
+				<li class="dropdown pull-right">
+					<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+						<img class="loginavatar" src="{{ user.email | gravatar(24) }}"> {{ user.username }}
+						<b class="caret logincaret"></b>
+					</a>
+					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel" style="font-size: 80%;">
+						<li><a href="#"><strong>{{ user.username }}</strong></a></li>
+						<li class="divider"></li>
+						<li><a href="{{ url_for('profile_index') }}">Profile</a></li>
+						<li><a href="#">Account Sessions</a></li>
+						<li class="divider"></li>
+						<li><a href="{{ url_for('logout') }}">Log out</a></li>
+					</ul>
+				</li>
+				{% endif %}
+				{% endif %}
+				</ul>
+			</div>
+			</div>
+		</div>
+
+	<section class="container-fluid" id="{% block containertype %}container-base-type{% endblock %}" style="padding-top: 3.5em">
+	<div class="row-fluid">
+		<div class="span3 well">	
+			{% block subnav %}{% endblock %}
+		</div>
+		<div class="span9">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+	</section>
+
+	{% if notifications %}
+	<div class="row-fluid">
+		<div class='notifications top-right'></div>
+		<div class='notifications bottom-right'></div>
+		<div class='notifications top-left'></div>
+		<div class='notifications bottom-left'></div>
+	</div>
+	{% endif %}
+
+{% endblock body %}

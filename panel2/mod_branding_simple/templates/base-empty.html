@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+	<head>
+		{% block head %}
+		<meta charset="UTF-8">
+		<title>{% block title %}{% endblock title %} - {{ config['SITE_TITLE'] }}</title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="/static/bootstrap.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap-responsive.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap-notify.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<style type="text/css"><!--
+		.bigicon { display: none }
+		//--></style>
+		{% endblock head %}
+	</head>
+
+	{% block base %}
+	<body>
+		{% block body %}
+		{% block content %}{% endblock content %}
+		{% endblock body %}
+	</body>
+	{% endblock base %}
+</html>
