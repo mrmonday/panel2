@@ -58,7 +58,7 @@ def validate_login(username, password):
     login_signal.send(app, user=u)
     return True
 
-@app.route('/totp-challenge', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/totp-challenge', methods=['GET', 'POST'])
 @login_required_soft
 def totp_challenge():
     if request.method == 'POST':
@@ -74,7 +74,7 @@ def totp_challenge():
 
     return render_template_or_json('challenge.html')
 
-@app.route('/login', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = validate_login(request.form['username'], request.form['password'])
@@ -91,7 +91,7 @@ def login():
 
     return render_template_or_json('login.html')
 
-@app.route('/logout', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/logout')
 def logout():
     _user = get_session_user()
     if _user is not None:
@@ -99,7 +99,7 @@ def logout():
 
     return redirect(url_for('index'))
 
-@app.route('/create', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
         try:
@@ -128,7 +128,7 @@ def create():
 
     return render_template_or_json('create.html')
 
-@app.route('/reset', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/reset', methods=['GET', 'POST'])
 def reset_ui():
     if request.method == 'POST':
         username = request.form.get('username', '').strip().rstrip()
@@ -145,7 +145,7 @@ def reset_ui():
 
     return render_template_or_json('lost-password.html')
 
-@app.route('/reset-confirm/<pwreset_key>', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/reset-confirm/<pwreset_key>', methods=['GET', 'POST'])
 def reset_confirm(pwreset_key):
     user = User.query.filter_by(pwreset_key=pwreset_key).first_or_404()
 
@@ -158,7 +158,7 @@ def reset_confirm(pwreset_key):
 
     return render_template_or_json('lost-password-confirm.html', user=user)
 
-@app.route('/notifications.json', methods=['GET', 'POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/notifications.json', methods=['GET', 'POST'])
 def notifications():
     messages = get_flashed_messages(with_categories=True)
     return jsonify({'messages': [{'type': type, 'message': escape(message)} for type, message in messages]})

@@ -19,13 +19,13 @@ from panel2.utils import render_template_or_json
 
 from flask import redirect, url_for, flash, request
 
-@app.route('/profile', subdomain=app.config['DEFAULT_SUBDOMAIN'])
-@app.route('/profile/index', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile')
+@app.route('/profile/index')
 @login_required
 def profile_index():
     return render_template_or_json('profile.html')
 
-@app.route('/profile/password', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/password', methods=['POST'])
 @login_required
 def profile_change_pw():
     user = get_session_user()
@@ -37,7 +37,7 @@ def profile_change_pw():
     flash('Your password has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/webhook-uri', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/webhook-uri', methods=['POST'])
 @login_required
 def profile_webhook_uri():
     uri = request.form.get('webhook_uri', None)
@@ -52,7 +52,7 @@ def profile_webhook_uri():
     flash('Your webhook URI has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/email', methods=['POST'], subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/email', methods=['POST'])
 @login_required
 def profile_change_email():
     user = get_session_user()
@@ -60,7 +60,7 @@ def profile_change_email():
     flash('Your e-mail address has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/new-apikey', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/new-apikey')
 @login_required
 def profile_new_key():
     user = get_session_user()
@@ -68,7 +68,7 @@ def profile_new_key():
     flash('Your API key has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/new-totpkey', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/new-totpkey')
 @login_required
 def profile_new_totp_key():
     user = get_session_user()
@@ -76,7 +76,7 @@ def profile_new_totp_key():
     flash('Your TOTP key has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/totp/enable', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/totp/enable')
 @login_required
 def profile_totp_enable():
     user = get_session_user()
@@ -85,7 +85,7 @@ def profile_totp_enable():
     db.session.commit()
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/totp/disable', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/profile/totp/disable')
 @login_required
 def profile_totp_disable():
     user = get_session_user()

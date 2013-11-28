@@ -17,7 +17,7 @@ from panel2 import app
 from panel2.user import get_session_user
 from flask import render_template, session, redirect, url_for, jsonify
 
-@app.route('/', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/')
 def index():
     if get_session_user():
         # For right now, lets just redirect to VPS.
@@ -26,7 +26,7 @@ def index():
 
     return redirect(url_for('login'))
 
-@app.route('/api/validate', subdomain=app.config['DEFAULT_SUBDOMAIN'])
+@app.route('/api/validate')
 def validate():
     if get_session_user():
         return jsonify({'username': get_session_user().username})
