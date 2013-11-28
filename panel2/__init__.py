@@ -78,6 +78,12 @@ from panel2.mod_invoice import invoice
 from panel2.status import status
 from panel2.profile import profile
 
+# branding module
+from panel2.mod_branding_tortoiselabs import branding
+
+# register the branding module as a blueprint
+app.register_blueprint(branding, subdomain='manage', url_prefix='/branding')
+
 app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
                  subdomain='manage',
@@ -95,3 +101,4 @@ app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
                  subdomain='status',
                  view_func=app.send_static_file)
+
