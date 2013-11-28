@@ -15,18 +15,6 @@ from the use of this software.
 
 from panel2 import app as application
 
-# base components
-import panel2.user
-import panel2.views
-import panel2.session
-import panel2.auth_hooks
-import panel2.preferences
-import panel2.service
-import panel2.filters
-import panel2.job
-import panel2.job_hooks
-import panel2.invoice
-
 # plugins!
 from panel2.dns import dns
 from panel2.support import support

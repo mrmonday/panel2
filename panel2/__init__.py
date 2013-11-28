@@ -58,3 +58,14 @@ app.jinja_env.globals.update(round=round)
 import panel2.cron
 cron = panel2.cron.CronManager()
 
+# base components
+import panel2.user
+import panel2.views
+import panel2.session
+import panel2.auth_hooks
+import panel2.preferences
+import panel2.service
+import panel2.filters
+import panel2.job
+import panel2.job_hooks
+import panel2.invoice
