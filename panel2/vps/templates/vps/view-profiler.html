@@ -272,7 +272,7 @@ $(function() {
 		/* fall back to v1 profiler api if websocket is unavailable */
 		if ('WebSocket' in window) {
 			try { 
-				sock = new WebSocket("wss://{{ service.node.name }}.cloud.tortois.es:9393/stats/{{ service.name }}/{{ service.console_key() }}");
+				sock = new WebSocket("wss://{{ service.node.dnsname }}:9393/stats/{{ service.name }}/{{ service.console_key() }}");
 			} catch (err) {
 				alert('Error: ' + err);
 				return;
