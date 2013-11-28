@@ -56,13 +56,9 @@
 		{% block sidebar %}
 		<ul class="nav nav-list">
 		{% if user %}
-		<li{% if section == 'dns' %} class="active"{% endif %}><a href="{{ url_for('dns.list') }}"><i class="bigicon icon-globe"></i>DNS</a></li>
-		<li{% if section == 'vps' %} class="active"{% endif %}><a href="{{ url_for('vps.list') }}"><i class="bigicon icon-cloud"></i>vServers</a></li>
-		<li{% if section == 'support' %} class="active"{% endif %}><a href="{{ url_for('support.list') }}"><i class="bigicon icon-phone"></i>Support</a></li>
-		<li{% if section == 'invoice' %} class="active"{% endif %}><a href="{{ url_for('invoice.index') }}"><i class="bigicon icon-usd"></i>Billing</a></li>
-		{% if user.is_admin %}
-		<li{% if section == 'admin' %} class="active"{% endif %}><a href="{{ url_for('profile.list') }}"><i class="bigicon icon-dashboard"></i>Admin</a></li>
-		{% endif %}
+		{% for navitem in nav.items() %}
+			<li{% if section == navitem.title %} class="active"{% endif %}><a href="{{ url_for(navitem.endpoint) }}"><i class="bigicon {{ navitem.icon }}"></i>{{ navitem.title }}</a></li>
+		{% endfor %}
 		{% endif %}
 		</ul>
 		{% endblock %}

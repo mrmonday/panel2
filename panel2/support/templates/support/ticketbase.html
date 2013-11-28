@@ -1,6 +1,6 @@
 {% extends "base-scaffolding.html" %}
 {% block title %}Tickets{% endblock %}
-{% set section = 'support' %}
+{% set section = 'Support' %}
 
 {% block containertype %}{% if user.is_admin %}container-subnav-type{% else %}{{ super() }}{% endif %}{% endblock %}
 

@@ -58,6 +58,11 @@ app.jinja_env.globals.update(round=round)
 import panel2.cron
 cron = panel2.cron.CronManager()
 
+# navigation system
+import panel2.navigation
+nav = panel2.navigation.NavigationManager()
+app.jinja_env.globals.update(nav=nav)
+
 # base components
 import panel2.user
 import panel2.views

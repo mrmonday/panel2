@@ -14,6 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app as application
+from panel2 import nav
 
 # plugins!
 from panel2.dns import dns
@@ -28,7 +29,6 @@ from panel2.mod_branding_tortoiselabs import branding
 
 # register the branding module as a blueprint
 application.register_blueprint(branding, subdomain='manage', url_prefix='/branding')
-application.register_blueprint(branding, subdomain='status', url_prefix='/branding')
 
 application.add_url_rule('/static/<path:filename>',
 			endpoint='static',
@@ -40,10 +40,12 @@ application.register_blueprint(support, subdomain='manage', url_prefix='/support
 application.register_blueprint(vps, subdomain='manage', url_prefix='/vps')
 application.register_blueprint(invoice, subdomain='manage', url_prefix='/invoice')
 
-application.register_blueprint(status, subdomain='status')
+application.register_blueprint(status, subdomain='manage', url_prefix='/status')
 application.register_blueprint(profile, subdomain='manage', url_prefix='/account')
 
-application.add_url_rule('/static/<path:filename>',
-			endpoint='static',
-			subdomain='status',
-			view_func=application.send_static_file)
+nav.register('DNS', 'icon-globe', 'dns.list')
+nav.register('vServers', 'icon-cloud', 'vps.list')
+nav.register('Support', 'icon-phone', 'support.list')
+nav.register('Status', 'icon-wrench', 'status.list')
+nav.register('Billing', 'icon-usd', 'invoice.index')
+nav.register('Admin', 'icon-dashboard', 'profile.list', True)
