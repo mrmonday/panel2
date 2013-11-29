@@ -43,3 +43,13 @@ Contact our sales team for more information.
 At this point your installation is complete.  Individual modules may need manual configuration
 (such as setting up the DNS servers and replication for the DNS module).
 
+## Running the Jobserver
+
+Cloudware has a Jobserver for running tasks using the Edia framework.  We simply recommend running the
+Jobserver in `screen`, like so:
+
+```
+$ screen python jobserver.py
+```
+
+This will provide a screen session where you may monitor the performance of the Jobserver.
