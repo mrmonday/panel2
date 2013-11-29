@@ -1,0 +1,35 @@
+.bigicon { display: none }
+.minigraph { height: 16em; }
+.pushdown { margin-bottom: 1em; }
+.well {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	padding-top: 0.25em;
+	padding-bottom: 0.25em;
+}
+.largeicon { font-size: 2.0vw; }
+.navbar .nav > li > a {
+	padding-top: 15px;
+}
+
+.gravatar {
+	border-radius: 5px;
+	box-shadow: 0.5px 0.5px #999;
+}
+
+.table tr td {
+	vertical-align: middle;
+}
+
+.ticket-reply-source {
+	text-align: right;
+}
+
+.ticket-reply-textarea {
+	height: 16em;
+}
+
+.ticket-row {
+	margin-bottom: 1em;
+}
+
