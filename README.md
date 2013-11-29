@@ -1,43 +1,45 @@
-# panel2
+# Cloudware
 
-Copyright (c) 2012, 2013 TortoiseLabs LLC.
+Copyright (c) 2012, 2013, 2014 TortoiseLabs LLC.
 
-This software is free but copyrighted.  See COPYING.md for exact terms and conditions.
+Many components of this software are free but copyrighted.
+See COPYING.md for exact terms and conditions.
 
-## what is it?
+## What is it?
 
-This is the highest level component of our platform.  Various other components are also
-open-source.  We are working on open-sourcing the remainder, as they are written or vetted
-to be release-able.
+Cloudware is a modular framework for building and facilitating customer management and
+interactions.
 
-Specifically, panel2 is the code which runs on the user-facing part of manage.tortois.es.
-
-It covers:
+The open-source release includes the following modules:
 
 * DNS management
-* High-level VPS management
+* High-level VPS management (using the TortoiseLabs Edia framework)
 * Account lifecycle management
+* Invoicing (including generic recurring services and crediting)
 * Technical support
+* Service status
+* Generic bootstrap-based branding module
 
-It can be plugged with support for other products by splicing into the application using
-a wrapper.  It is therefore well-behaved (as far as these sorts of apps go).
+Additional modules and custom integrations are available, with a fast turn-around time.
+Contact our sales team for more information.
 
-There are other components in the platform, such as:
+## Installation
 
-* Edia, which is the virtualization management agent running on each host.
-* ApplianceKit, which is used to build new installation images.
-* PowerDNS, which is used to serve DNS entries.  This is not original code, however, and you
-  may find it at powerdns.org.
+1. Copy panel2_environment.example.py to panel2_environment.py and edit it.
+2. Run create-all.py.
+3. Modify start-uwsgi.sh to fit your needs, or use panel2_environment.py as a config file
+   for Apache mod_wsgi.  Specific deployment instructions are not covered here.
+4. Create an account on the application instance after it is deployed on your webserver.
+5. Run promote-to-admin.py <username> to give them admin access.
+6. Add cron.py to your crontab like so:
 
-## why?
+```
+*       *       *       *       *       (cd /home/cloudware/panel2; python cron.py minutely) &>/dev/null
+*       *       *       *       *       (cd /home/cloudware/panel2; python cron.py monitoring) &>/dev/null
+0       *       *       *       *       (cd /home/cloudware/panel2; python cron.py hourly) &>/dev/null
+0       0       *       *       *       (cd /home/cloudware/panel2; python cron.py daily) &>/dev/null
+```
 
-We decided that there is basically no value in hiding our development.  So we're developing
-our new platform right out there in the open.  Also, by making the code available it allows us
-to later pay people outside the company to develop on the code with them already being familiar
-with it.  Really, there's a lot of reasons to do it this way, but the main one is that there's
-really no good reason *not* to do it this way.
-
-The panel is not really useful to competitors because you still have to assemble the platform
-yourself, and the average hosting provider does not know enough about Python and RabbitMQ and
-other such nonsense to do it.
+At this point your installation is complete.  Individual modules may need manual configuration
+(such as setting up the DNS servers and replication for the DNS module).
 
