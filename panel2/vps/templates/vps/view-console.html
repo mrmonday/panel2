@@ -34,7 +34,7 @@
 	var rdb;
 
 	$(document).ready(function () {
-		var host = '{{ service.node.name }}.cloud.tortois.es';
+		var host = '{{ service.node.dnsname }}';
 		var port = '{{ 5700 + service.id }}';
 		var path = '{{ service.name }}';
 		var password = '{{ service.name }}';
