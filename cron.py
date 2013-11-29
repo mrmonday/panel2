@@ -14,6 +14,7 @@ from the use of this software.
 """
 
 import sys
+import panel2_environment
 from panel2 import cron
 
 cron.dispatch(sys.argv[1])
