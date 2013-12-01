@@ -85,6 +85,7 @@ class Service(db.Model):
             self.user.send_email('ACTIVATION: {}'.format(self.name), 'email/service-activated.txt', service=self)
 
         self.is_entitled = True
+        self.disable_renew = False
 
         db.session.add(self)
         db.session.commit()
