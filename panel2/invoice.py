@@ -171,6 +171,9 @@ class Invoice(db.Model):
         return urllib.quote_plus(urlbase)
 
     def bitcoin_address(self):
+        if 'BITCOIN_ADDRESS' not in app.config:
+            return None
+
         if self.btc_adr:
             return self.btc_adr
 
