@@ -13,5 +13,6 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+import panel2_environment
 from panel2 import db
 db.drop_all()
