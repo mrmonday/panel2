@@ -1,7 +1,7 @@
 {% extends "profile/userviewbase.html" %}
 {% set subtitle='Tickets' %}
 
-{% block subcontent %}
+{% block subcomponent %}
 
 <table class="table table-striped">
 	<tr>
@@ -18,7 +18,7 @@
 		<td class="span8">{{ ticket.subject }}</td>
 		<td class="span1">{{ ticket.user.username }}</td>
 		<td class="span2">
-			<div class="btn-group pull-right">
+			<div class="pull-right">
 				<a href="{{ url_for('support.view', ticket_id=ticket.id) }}" class="btn btn-primary">View</a>
 				<a href="{{ url_for('support.close', ticket_id=ticket.id) }}" class="btn">Close</a>
 			</div>
