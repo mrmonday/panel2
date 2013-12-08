@@ -1,11 +1,7 @@
 {% extends "status/incidentbase.html" %}
 {% block title %}Service Status{% endblock %}
 
-{% block content %}
-{{ super() }}
-
-<h3>Incidents</h3>
-
+{% block component %}
 <table class="table table-striped">
 	<tr>
 		<th>ID</th>
@@ -33,5 +29,4 @@
 	</tr>
 	{% endfor %}
 </table>
-
 {% endblock %}

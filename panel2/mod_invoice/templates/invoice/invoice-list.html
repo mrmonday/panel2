@@ -1,8 +1,6 @@
 {% extends "invoice/invoice-base.html" %}
 {% block title %}Billing{% endblock %}
-{% block content %}
-{{ super() }}
-
+{% block component %}
 {% if user %}
 <div id="addCredit" class="modal hide fade" tabindex="-1" role="dialog">
 	<form method="POST" action="{{ url_for('.creditamt') }}" class="form-horizontal">
@@ -108,5 +106,4 @@
 </table>
 </div>
 </div>
-
 {% endblock %}

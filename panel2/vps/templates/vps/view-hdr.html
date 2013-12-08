@@ -9,13 +9,24 @@
 
 {% block title %}{{ service.nickname | default(service.name, true) }} - Servers{% endblock %}
 
-{% block subcontent %}
-
-<h3>
+{% block subcontentprologue %}
+<script>
+$(document).ready(function() {
+	status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vpsstatus"));
+	renamewidget("{{ url_for('.setnickname', vps=service.id) }}", "{{ service.nickname | default(service.name, true) }}", $("#vpsrename"));
+});
+</script>
+{% endblock %}
+{% block headerbarbuttons %}{% endblock %}
+{% block headerbarcontent %}
+{% if submoduledesc %}
+	<span id="vpssubmodule">{{ submoduledesc }} &mdash;</span>
+{% endif %}
 	<span id="vpsrename"></span>
 	<span id="vpsstatus"></span>
 	<span class="pull-right">
 		<div class="dropdown">
+			{{ self.headerbarbuttons() }}
 			<button class="btn btn-primary" data-toggle="dropdown" role="button"><i class="icon-cloud"></i> Manage <i class="caret"></i></button>
 			<ul class="dropdown-menu pull-right" style="font-size: 50%" role="menu">
 			<li>
@@ -60,15 +71,4 @@
 			</ul>
 		</div>
 	</span>
-</h3>
-
-{% block component %}{% endblock %}
-
-<script>
-$(document).ready(function() {
-	status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vpsstatus"));
-	renamewidget("{{ url_for('.setnickname', vps=service.id) }}", "{{ service.nickname | default(service.name, true) }}", $("#vpsrename"));
-});
-</script>
-
 {% endblock %}

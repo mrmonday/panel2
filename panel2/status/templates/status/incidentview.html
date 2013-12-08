@@ -1,11 +1,12 @@
 {% extends "status/incidentbase.html" %}
 {% block title %}Incidents{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+#{{ incident.id }} - {{ incident.subject }}
+{{ self.headerbarbuttons() }}
+{% endblock %}
 
-<h3>#{{ incident.id }} - {{ incident.subject }}</h3>
-
+{% block component %}
 <div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">
@@ -70,7 +71,7 @@
 	</div>
 	<div class="span10">
 		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span12"></textarea><br>
-		<div class="btn-group pull-right">
+		<div class="pull-right">
 			<button type="submit" class="btn btn-primary">Add Reply</button>
 			<a href="{{ url_for('.close', incident_id=incident.id) }}" class="btn">Close Ticket</a>
 		</div>

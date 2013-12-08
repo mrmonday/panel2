@@ -1,8 +1,6 @@
 {% extends "dns/zone-base.html" %}
 
-{% block content %}
-{{ super() }}
-
+{% block component %}
 <h3>New Record</h3>
 
 <form method="POST">
@@ -39,5 +37,4 @@
 	</tr>
 	</table>
 </form>
-
 {% endblock %}

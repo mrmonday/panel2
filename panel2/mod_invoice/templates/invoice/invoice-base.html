@@ -2,15 +2,11 @@
 
 {% set section = 'Billing' %}
 
-{% block content %}
-
-<h2>
-	Billing
+{% block headerbarcontent %}
+Billing
 {% if user.is_admin %}
 	<span class="pull-right">
 		<a href="{{ url_for('.list_unpaid') }}" class="btn btn-warning"><i class="icon-lock"></i> Unpaid Invoices</a>
 	</span>
 {% endif %}
-</h2>
-
 {% endblock %}

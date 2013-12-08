@@ -1,11 +1,11 @@
 {% extends "dns/base.html" %}
 {% block title %}DNS Zones{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+DNS Zones
+{% endblock %}
 
-<h3>DNS Zones</h3>
-
+{% block component %}
 <table class="table table-striped">
 	<tr>
 		<th>Zone</th>
@@ -31,5 +31,4 @@
 	</tr>
 	{% endfor %}
 </table>
-
 {% endblock %}

@@ -1,8 +1,6 @@
 {% extends "dns/zone-base.html" %}
 
-{% block content %}
-{{ super() }}
-
+{% block component %}
 <table class="table table-striped">
 	<tr>
 		<th>Name</th>
@@ -30,5 +28,4 @@
 	</tr>
 	{% endfor %}
 </table>
-
 {% endblock %}

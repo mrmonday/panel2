@@ -1,6 +1,7 @@
 {% extends "vps/view-hdr.html" %}
 {% block title %}{{ service.name }} - Servers{% endblock %}
 {% set subtitle='IP Admin' %}
+{% set submoduledesc='IP Management' %}
 
 {% block component %}
 
@@ -36,8 +37,6 @@
 	{% endif %}
 </div>
 {% endfor %}
-
-<h3>IP Allocation / Planning [eth0: {{ service.mac }}]</h3>
 
 <table class="table table-striped">
 <tr>

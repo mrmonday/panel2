@@ -1,11 +1,11 @@
 {% extends "support/ticketbase.html" %}
 {% block title %}Tickets{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+#{{ ticket.id }} - {{ ticket.subject }}
+{% endblock %}
 
-<h3>#{{ ticket.id }} - {{ ticket.subject }}</h3>
-
+{% block component %}
 <table class="table table-striped">
 	<tr>
 		<th>Status</th>

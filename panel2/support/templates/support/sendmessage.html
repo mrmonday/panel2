@@ -1,12 +1,12 @@
 {% extends "support/ticketbase.html" %}
 {% block title %}Tickets{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+Send message to {{ username }}
+{% endblock %}
 
+{% block component %}
 <form method="POST">
-<h3>Send message to {{ username }}</h3>
-
 <div class="row-fluid ticket-row">
 	<div class="span2">
 		<div class="pull-right ticket-reply-source">

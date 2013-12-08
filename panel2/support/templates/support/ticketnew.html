@@ -1,11 +1,12 @@
 {% extends "support/ticketbase.html" %}
 {% block title %}Tickets{% endblock %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+New Ticket
+{% endblock %}
 
+{% block component %}
 <form method="POST">
-<h3>New Ticket</h3>
 
 <div class="row-fluid ticket-row">
 	<div class="span2">

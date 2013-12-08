@@ -1,9 +1,6 @@
 {% extends "invoice/invoice-base.html" %}
 {% block title %}Invoices{% endblock %}
-{% block content %}
-{{ super() }}
-
-<h3>
+{% block headerbarcontent %}
 Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-success" style="font-size: 0.75em">Paid</span>{% endif %}
 	<span class="pull-right">
 		<a href="{{ url_for('.credit_invoice', invoice_id=invoice.id) }}" class="btn btn-primary">Apply Credit</a>
@@ -14,8 +11,8 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 		<a href="{{ url_for('.delete', invoice_id=invoice.id) }}" class="btn btn-inverse">Delete</a>
 {% endif %}
 	</span>
-</h3>
-
+{% endblock %}
+{% block component %}
 <table class="table table-striped">
 <tr>
 	<th>Line Item #</th>
