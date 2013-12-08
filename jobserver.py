@@ -33,7 +33,10 @@ def wait(server_ip='127.0.0.1', timeout=5):
 def run(node, job):
     job.checkout()
 
-    sock = socket.create_connection((job.target_ip, int(job.target_port)))
+    if not node._sock:
+        node._sock = socket.create_connection((job.target_ip, int(job.target_port)))
+        print '[{0}] opened connection'.format(node.name)
+
     print '[{0}] running job {1}'.format(node.name, job.id)
 
     def read_loop(sock):
@@ -58,13 +61,13 @@ def run(node, job):
                 break
         return ''.join(data).strip() + '}'
 
-    sock.sendall(job.request_envelope)
-    response = read_loop(sock)
+    node._sock.sendall(job.request_envelope)
+    response = read_loop(node._sock)
     print '[{0}] finished job {1}'.format(node.name, job.id)
     job.checkin(response)
-    sock.close()
 
 def loop(node):
+    node._sock = None
     while True:
        jobs = wait(server_ip=node.ipaddr)
        for job in jobs:
@@ -72,7 +75,13 @@ def loop(node):
                run(node, job)
            except socket.error as e:
                job.backout()
+               node._sock = None
+               print '[{0}] closed connection due to error {1}'.format(node.name, repr(e))
                break
+       if node._sock:
+           node._sock.close()
+           node._sock = None
+           print '[{0}] closed connection due to idle'.format(node.name)
 
 already_running = list()
 
