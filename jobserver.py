@@ -31,10 +31,11 @@ def wait(server_ip='127.0.0.1', timeout=5):
         return lst
 
 def run(node, job):
-    print '[{0}] running job {1}'.format(node.name, job.id)
     job.checkout()
 
     sock = socket.create_connection((job.target_ip, int(job.target_port)))
+    print '[{0}] running job {1}'.format(node.name, job.id)
+
     def read_loop(sock):
         data = []
         end = '}\r\n'
@@ -59,9 +60,9 @@ def run(node, job):
 
     sock.sendall(job.request_envelope)
     response = read_loop(sock)
+    print '[{0}] finished job {1}'.format(node.name, job.id)
     job.checkin(response)
     sock.close()
-    print '[{0}] finished job {1}'.format(node.name, job.id)
 
 def loop(node):
     while True:
