@@ -7,6 +7,8 @@ function logdata_fetch(url, target, header) {
 		create: "Start VPS",
 		destroy: "Forcefully Shutdown VPS",
 		shutdown: "Gracefully Shutdown VPS",
+		confupdate: "Update VPS Configuration",
+		schedupdate: "Update CPU SLA Class",
 	}
 
 	function on_log_data_received(json_data, target) {

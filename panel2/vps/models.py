@@ -350,6 +350,15 @@ class XenVPS(Service):
         bootargs = profile.render_config(self)
         return self.api(constructor).create(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
 
+    def confupdate(self, profile=None, constructor=QueueingProxy):
+        if not profile:
+            profile = self.profile
+        bootargs = profile.render_config(self)
+        return self.api(constructor).confupdate(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
+
+    def schedupdate(self, constructor=QueueingProxy):
+        return self.api(constructor).schedupdate(domname=escape(self.name), weight=self.calculate_weight())
+
     def format(self):
         return self.api().vps_format(domname=escape(self.name))
 
