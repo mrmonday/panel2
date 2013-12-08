@@ -56,7 +56,7 @@
 			{% block subnav %}{% endblock %}
 		</div>
 		<div class="span9">
-			{% block content %}{% endblock %}
+			{{ self.content() }}
 		</div>
 	</div>
 	</section>
@@ -71,3 +71,31 @@
 	{% endif %}
 
 {% endblock body %}
+
+{% block subcontent %}
+
+{{ self.component() }}
+
+{{ self.subcontentprologue() }}
+
+{% endblock subcontent %}
+
+{% block headerbarcontent %}{% endblock headerbarcontent %}
+
+{% block subcontentprologue %}{% endblock subcontentprologue %}
+
+{% block headerbar %}
+<h3 class="headerbar">
+{{ self.headerbarcontent() }}
+</h3>
+{% endblock headerbar %}
+
+{% block content %}
+{{ self.headerbar() }}
+
+<div class="row-fluid">
+<div class="span12">
+        {{ self.subcontent() }}
+</div>
+</div>
+{% endblock %}
