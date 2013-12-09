@@ -1,9 +1,10 @@
 {% extends "profile/base.html" %}
 
-{% block content %}
-{{ super() }}
+{% block headerbarcontent %}
+{{ node.name }} ({{ node.vps | count }})
+{% endblock %}
 
-<h2>{{ node.name }} ({{ node.vps | count }})</h2>
+{% block component %}
 
 <h3>Networks</h3>
 
