@@ -256,6 +256,8 @@ class XenVPS(Service):
 
     cpu_sla = db.Column(db.Enum('guaranteed', 'standard', 'bulk'), default='standard')
 
+    tor_whitelisted = db.Column(db.Boolean, default=False)
+
     def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32):
         self.name = name
 

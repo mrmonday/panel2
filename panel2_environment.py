@@ -24,6 +24,9 @@ from panel2.mod_invoice import invoice
 from panel2.status import status
 from panel2.profile import profile
 
+# anti-tor plugin
+from panel2.contrib import antitor
+
 # branding module
 from panel2.mod_branding_tortoiselabs import branding
 
