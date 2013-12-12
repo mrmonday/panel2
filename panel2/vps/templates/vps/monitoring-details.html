@@ -2,15 +2,7 @@
 {% block title %}{{ service.name }} - Servers{% endblock %}
 {% set subtitle='Monitoring' %}
 
-{% block subcontent %}
-
-<h3 class="service-hdr">
-	{{ monitor.nickname }} ({{ service.name }})
-	<span class="pull-right">
-		<a href="{{ url_for('.monitor_new', vps=service.id) }}" class="btn btn-success">New Monitor</a>
-	</span>
-</h3>
-
+{% block component %}
 <table class="table table-striped">
 <tr>
 	<th>Status</th>

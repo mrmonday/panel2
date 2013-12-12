@@ -32,7 +32,11 @@
 	<td>{{ service.name }} {% if service.nickname %}({{ service.nickname }}){% endif %}</td>
 	<td>{{ service.memory }} MB</td>
 	<td>{{ service.disk }} GB</td>
+	{% if service.ips[0] %}
 	<td>{{ service.ips[0].ip }}</td>
+	{% else %}
+	<td>&mdash;</td>
+	{% endif %}
 	<td>
 	{% if service.is_entitled %}
 		 <span class="label label-success">Active</span>

@@ -1,4 +1,3 @@
-import panel2_environment
 import requests
 
 from panel2 import app, cron

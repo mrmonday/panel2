@@ -2,9 +2,7 @@
 {% block title %}{{ service.name }} - Servers{% endblock %}
 {% set subtitle='Monitoring' %}
 
-{% block subcontent %}
-{{ super() }}
-
+{% block component %}
 <form method="POST">
 	<table class="table table-striped">
 	<tr>
@@ -28,5 +26,4 @@
 	</tr>
 	</table>
 </form>
-
 {% endblock %}
