@@ -553,6 +553,19 @@ class XenVPS(Service):
 
         return [rxbytes, txbytes, oobytes]
 
+    def get_average_cpu(self, period=86400, step=60):
+        data = self.get_cpu_stats(period, step)['data']
+
+        total_cpu = 0.0
+        records = 0
+        for record in data:
+            if not record[1]:
+                continue
+            total_cpu += record[1]
+            records += 1
+
+        return total_cpu / records
+
 class ResourcePlan(db.Model):
     __tablename__ = 'vps_resource_plan'
     id = db.Column(db.Integer, primary_key=True)
