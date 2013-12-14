@@ -50,6 +50,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	<input type="hidden" name="notify_url" value="https://manage.tortois.es/invoice/{{ invoice.id }}/ipn-post">
 	<input type="hidden" name="currency_code" value="USD">
 	<input type="hidden" name="charset" value="utf-8">
+	<input type="hidden" name="cpp_header_image" value="https://manage.tortois.es/branding/static/logo.png">
 	<button type="submit" class="pull-right btn btn-large btn-primary">Pay in USD with PayPal</button>
 </form>
 
