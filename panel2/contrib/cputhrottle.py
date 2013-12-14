@@ -17,3 +17,17 @@ def throttle_bulk_users():
         vps.schedupdate()
 
         print 'Throttling:', vps.id, vps.name, vps.nickname, vps.get_average_cpu()
+
+@cron.task(HOURLY)
+def unthrottle_good_users():
+    vpslist = filter(lambda x: x.get_average_cpu() < 20, XenVPS.query.filter_by(is_entitled=True).filter_by(cpu_sla, 'bulk'))
+
+    for vps in vpslist:
+        vps.cpu_sla = 'standard'
+        db.session.add(vps)
+        db.session.commit()
+
+        vps.confupdate()
+        vps.schedupdate()
+
+        print 'Unthrottling:', vps.id, vps.name, vps.nickname, vps.get_average_cpu()
