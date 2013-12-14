@@ -554,7 +554,7 @@ class XenVPS(Service):
         return [rxbytes, txbytes, oobytes]
 
     def get_average_cpu(self, period=86400, step=60):
-        data = self.get_cpu_stats(period, step)['data']
+        data = self.get_cpu_stats(period, step).get('data', [])
 
         total_cpu = 0.0
         records = 0
@@ -563,6 +563,9 @@ class XenVPS(Service):
                 continue
             total_cpu += record[1]
             records += 1
+
+        if not records:
+            return 0.0
 
         return total_cpu / records
 

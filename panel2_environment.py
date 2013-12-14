@@ -26,6 +26,7 @@ from panel2.profile import profile
 
 # anti-tor plugin
 import panel2.contrib.antitor
+import panel2.contrib.cputhrottle
 
 # branding module
 from panel2.mod_branding_tortoiselabs import branding
