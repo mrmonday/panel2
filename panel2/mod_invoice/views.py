@@ -36,6 +36,12 @@ def can_access_invoice(invoice, user=None):
 def index():
     return render_template_or_json("invoice/invoice-list.html", invoices=get_session_user().invoices)
 
+@invoice.route('/service_credit.json')
+@login_required
+def service_credit():
+    user = get_session_user()
+    return jsonify({'username': user.username, 'total': user.total_credit()})
+
 @invoice.route('/user/<uid>')
 @admin_required
 def user_index(uid):
