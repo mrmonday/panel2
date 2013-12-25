@@ -22,7 +22,7 @@ from ediarpc.rpc_client import ServerProxy
 @cron.task(MONITORING)
 def watchdog():
     print 'watchdog monitoring'
-    nodes = Node.query.all()
+    nodes = Node.query.filter_by(skip_crons=False).all()
     for node in nodes:
         api = node.api(ServerProxy)
         dl = api.domain_list()

@@ -94,7 +94,7 @@ def update_vbd_usage(nodename, vpsinfo):
 @cron.task(MINUTELY)
 def rrdcrawl():
     print 'rrdcrawl!'
-    nodes = Node.query.all()
+    nodes = Node.query.filter_by(skip_crons=False).all()
     for node in nodes:
         print 'crawling', node.name
         api = node.api(ServerProxy)

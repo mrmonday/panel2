@@ -151,6 +151,8 @@ class Node(db.Model):
 
     dnsname = db.Column(db.String(255))
 
+    skip_crons = db.Column(db.Boolean, default=False)
+
     def __init__(self, name, ipaddr, secret, region, dnsname=None):
         self.name = name
 
