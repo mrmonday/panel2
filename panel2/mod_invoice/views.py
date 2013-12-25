@@ -13,6 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+import re
 from flask import redirect, url_for, abort, flash, jsonify, make_response, request, render_template
 from flask_weasyprint import HTML, render_pdf
 from panel2 import app, db
@@ -117,14 +118,22 @@ def list_unpaid():
 @login_required
 def creditamt():
     user = get_session_user()
-    invoice = Invoice(user)
-    creditamt = round(float(request.form.get('creditamt', 0)), 2)
-    if creditamt < 1.00:
+    amt = request.form.get('creditamt', "0.0")
+    # make sure it's a number
+    if not re.match(r"^\$?([\d]+(\.[\d]+)?|\.[\d]+)$", amt):  # match optional dollar sign, either "1", ".1", or "1.1"
+        flash("Service credit amount must be a number.")
         return redirect(url_for('.index'))
+    amt = amt.replace("$", "")
+    creditamt = round(float(amt), 2)
+    if creditamt < 1.00:
+        flash("Service credit amount must be more than $1.00.")
+        return redirect(url_for('.index'))
+    invoice = Invoice(user)
     InvoiceItem(None, invoice, creditamt, 'Add Service Credit')
     PendingCreditItem(invoice)
     invoice.mark_ready(apply_credit=False)
     return redirect(url_for('.view', invoice_id=invoice.id))
+
 
 @invoice.route('/<invoice_id>/svccredit')
 @login_required
