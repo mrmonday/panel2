@@ -1,5 +1,3 @@
-import panel2_environment
-
 from panel2.vps.models import XenVPS
 from panel2 import db, cron
 from panel2.cron import HOURLY
