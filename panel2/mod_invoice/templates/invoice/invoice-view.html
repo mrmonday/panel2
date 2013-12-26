@@ -53,6 +53,8 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	<input type="hidden" name="cpp_header_image" value="https://manage.tortois.es/branding/static/logo.png">
 	<button type="submit" class="pull-right btn btn-large btn-primary">Pay in USD with PayPal</button>
 </form>
+
+{% if config['STRIPE_PUBLIC_KEY'] %}
 <!-- Stripe payment -->
 <form action="/invoice/{{ invoice.id }}/stripe_pay" method="POST">
   <input type="hidden" name="amount" value="{{ invoice.total_due() | strf("{0:.2f}") | replace(".", "") }}">  <!-- stripe wants to know the amount of cents, not dollars -->
@@ -68,6 +70,8 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
     data-currency="USD">
   </script>
 </form>
+{% endif %}
+
 <h4 style="clear: left;">
 	{% set btc_adr = invoice.bitcoin_address() %}
 	{% if btc_adr %}
