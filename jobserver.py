@@ -14,8 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app, db
-from panel2.job import Job
-from panel2.vps.models import Node
+from panel2.job import Job, collect_targets
 from gevent import sleep, spawn
 import gevent.socket as socket
 
@@ -86,7 +85,7 @@ def loop(node):
 already_running = list()
 
 def launch():
-    nodes = Node.query.all()
+    nodes = collect_targets()
     for node in nodes:
         if node in already_running:
             continue

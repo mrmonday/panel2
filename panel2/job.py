@@ -188,3 +188,20 @@ def schedule_deferred_jobs():
     """
     deferred_list = DeferredJob.query.all()
     [deferred_job.maybe_enqueue() for deferred_job in deferred_list]
+
+class JobTarget(object):
+    """
+    A duck type which represents a target for the job runner.
+
+    The `Node` object in the VPS class, for example, implements the JobTarget type interface.
+    Anything may be a JobTarget as long as the `name` and `ipaddr` members are readable.
+    """
+    def __init__(self, name, ipaddr):
+        self.name = name
+        self.ipaddr = ipaddr
+
+job_collect_targets = blinker.Signal('A signal which is fired by the job server to collect targets to run jobs for.')
+
+def collect_targets():
+    results = job_collect_targets.send(app)
+    return reduce(lambda x, y: x + y, results)
