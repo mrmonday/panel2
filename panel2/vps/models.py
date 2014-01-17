@@ -212,7 +212,7 @@ class Node(db.Model):
         return ' '.join(data)
 
 @job_collect_targets.connect_via(app)
-def collect_nodes():
+def collect_nodes(*args, **kwargs):
     return Node.query.filter_by(skip_crons=False).all()
 
 class NodeIPRange(IPRange):

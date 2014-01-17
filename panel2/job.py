@@ -204,4 +204,4 @@ job_collect_targets = blinker.Signal('A signal which is fired by the job server 
 
 def collect_targets():
     results = job_collect_targets.send(app)
-    return reduce(lambda x, y: x + y, results)
+    return reduce(lambda x, y: x + y, [x[1] for x in results])

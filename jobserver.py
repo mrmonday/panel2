@@ -13,6 +13,8 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
+import panel2_environment
+
 from panel2 import app, db
 from panel2.job import Job, collect_targets
 from gevent import sleep, spawn
