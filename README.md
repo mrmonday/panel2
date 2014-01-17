@@ -1,6 +1,6 @@
 # Cloudware
 
-Copyright (c) 2012, 2013, 2014 TortoiseLabs LLC.
+Copyright (c) 2012, 2013, 2014 Centarra Networks, Inc.
 
 Many components of this software are free but copyrighted.
 See COPYING.md for exact terms and conditions.
