@@ -260,6 +260,8 @@ class XenVPS(Service):
 
     tor_whitelisted = db.Column(db.Boolean, default=False)
 
+    vps_user = db.relationship('User', backref='vps')
+
     def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32):
         self.name = name
 
