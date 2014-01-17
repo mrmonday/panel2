@@ -118,9 +118,10 @@ def to_json(obj):
 
 def request_wants_json():
     best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
-    return best == 'application/json' and \
+    xhr = request.headers.get('X-Requested-With', '') == 'XMLHttpRequest'
+    return xhr or (best == 'application/json' and \
         request.accept_mimetypes[best] > \
-        request.accept_mimetypes['text/html']
+        request.accept_mimetypes['text/html'])
 
 def render_template_or_json(template, **kwargs):
     if request.authorization or request_wants_json():
