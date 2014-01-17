@@ -23,7 +23,7 @@ from flask import escape
 from panel2 import app, db
 from panel2.service import Service, IPRange
 from panel2.invoice import ExchangeRate, DummyDiscountCode
-from panel2.job import QueueingProxy, Job
+from panel2.job import QueueingProxy, Job, job_collect_targets
 from ediarpc.rpc_client import ServerProxy
 
 from collections import OrderedDict
@@ -210,6 +210,10 @@ class Node(db.Model):
         res = api.tmp_keypair_gen()
         data = res['pubkey'].split(' ')[0:2]
         return ' '.join(data)
+
+@job_collect_targets.connect_via(app)
+def collect_nodes():
+    return Node.query.filter_by(skip_crons=False).all()
 
 class NodeIPRange(IPRange):
     __mapper_args__ = {'polymorphic_identity': 'node'}
