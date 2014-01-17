@@ -333,7 +333,7 @@ class XenVPS(Service):
         db.session.commit()
 
     def api(self, constructor=QueueingProxy):
-        return self.node.api(constructor, self.id)
+        return self.node.api(constructor, self.service_id)
 
     def console_key(self):
         payload = '{0}:{1}'.format(self.name, self.node.secret)
@@ -344,7 +344,7 @@ class XenVPS(Service):
         Service.suspend(self, disable_renew)
 
     def jobs(self):
-        return Job.query.filter_by(refid=self.id)
+        return Job.query.filter_by(refid=self.service_id)
 
     def has_pending_work(self):
         lastjob = self.jobs().order_by(Job.id.desc()).first()
