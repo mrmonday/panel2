@@ -292,6 +292,8 @@ class XenVPS(Service):
 
         self.cpu_sla = 'standard'
 
+        self.created = time.time()
+
         db.session.add(self)
         db.session.commit()
 

@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from panel2 import app, db, cron
-from panel2.cron import DAILY
+from panel2.cron import DAILY, HOURLY
 from panel2.invoice import InvoiceItem, ServiceCreditItem, invoice_item_paid_signal
 import ipaddress
 import time
@@ -26,6 +26,7 @@ class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(255))
     type = db.Column(db.String(50))
+    created = db.Column(db.Integer)
     expiry = db.Column(db.Integer)
     price = db.Column(db.Float)
     is_entitled = db.Column(db.Boolean, default=False)
@@ -173,6 +174,12 @@ def expiry_autodelete():
             svc.delete()
 
     ctx.pop()
+
+@cron.task(HOURLY)
+def expire_reservations():
+    deadline = int(time.time() - (3600 * 3))
+    delinquent = Service.query.filter_by(is_entitled=False).filter_by(expiry=None).filter(Service.created < deadline)
+    [svs.delete() for svs in delinquent]
 
 class IPAddress(db.Model):
     __tablename__ = 'ips'
