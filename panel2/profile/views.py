@@ -21,6 +21,7 @@ from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node
 from panel2.service import Service
+from panel2.invoice import Invoice
 
 import time
 
@@ -98,6 +99,13 @@ def view_base(username):
 def view_invoices(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/userinvoices.html', user=user)
+
+@profile.route('/<username>/invoices/new')
+@admin_required
+def new_invoice(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    inv = Invoice(user)
+    return redirect(url_for('invoice.view', invoice_id=inv.id))
 
 @profile.route('/<username>/services')
 @admin_required
