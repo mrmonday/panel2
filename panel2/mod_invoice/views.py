@@ -130,6 +130,15 @@ def lineitem_new(invoice_id):
     InvoiceItem(None, invoice, amt, desc)
     return redirect(url_for('.view', invoice_id=invoice.id))
 
+@invoice.route('/<invoice_id>/item/<item_id>/delete')
+@admin_required
+def lineitem_delete(invoice_id, item_id):
+    user = get_session_user()
+    item = InvoiceItem.query.filter_by(invoice_id=invoice_id, id=item_id).first_or_404()
+    db.session.delete(item)
+    db.session.commit()
+    return redirect(url_for('.view', invoice_id=invoice_id))
+
 @invoice.route('/unpaid')
 @admin_required
 def list_unpaid():

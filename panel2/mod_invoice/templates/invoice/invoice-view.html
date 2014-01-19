@@ -29,6 +29,9 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	<th>Amount (BTC)</th>
 {% endif %}
 	<th>Amount (USD)</th>
+{% if not invoice.is_finalized %}
+	<th></th>
+{% endif %}
 </tr>
 {% for item in invoice.items %}
 <tr>
@@ -38,13 +41,19 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	<td>{{ item.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
 {% endif %}
 	<td>${{ item.price | strf("{0:.2f}") }}</td>
+{% if not invoice.is_finalized %}
+	<td><a href="{{ url_for('.lineitem_delete', invoice_id=invoice.id, item_id=item.id) }}" class="btn btn-danger input-block-level"><i class="icon-minus"></i></a></td>
+{% endif %}
 </tr>
 {% endfor %}
 {% if not invoice.is_finalized %}
 <tr>
 	<td></td>
 	<td><input type="text" class="input-block-level" name="desc" placeholder="Item Description"></td>
-	<td><input type="text" class="input-block-level" name="amt" placeholder="Price"></td>
+	<td><input type="text" class="input-block-level" name="price" placeholder="Price"></td>
+{% if not invoice.is_finalized %}
+	<td><button type="submit" class="input-block-level btn btn-success"><i class="icon-plus"></i></button></td>
+{% endif %}
 </tr>
 {% endif %}
 {% if invoice.is_finalized %}
