@@ -108,6 +108,14 @@ def delete(invoice_id):
     invoice.delete()
     return redirect(url_for('.index'))
 
+@invoice.route('/<invoice_id>/finalize')
+@admin_required
+def finalize(invoice_id):
+    user = get_session_user()
+    invoice = Invoice.query.filter_by(id=invoice_id).first_or_404()
+    invoice.mark_ready()
+    return redirect(url_for('.view', invoice_id=invoice.id))
+
 @invoice.route('/unpaid')
 @admin_required
 def list_unpaid():

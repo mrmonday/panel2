@@ -102,6 +102,8 @@ class Invoice(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='invoices')
 
+    is_finalized = db.Column(db.Boolean)
+
     def __repr__(self):
         return "<Invoice {}>".format(self.id)
 
@@ -123,6 +125,10 @@ class Invoice(db.Model):
         db.session.commit()
 
     def mark_ready(self, apply_credit=True):
+        self.is_finalized = True
+        db.session.add(self)
+        db.session.commit()
+
         invoice_create_signal.send(app, invoice=self, apply_credit=apply_credit)
         if round(self.total_due(), 2) == 0:
             self.mark_paid()
