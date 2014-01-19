@@ -18,33 +18,53 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	</span>
 {% endblock %}
 {% block component %}
+{% if not invoice.is_finalized %}
+<form action="{{ url_for('.lineitem_new', invoice_id=invoice.id) }}" method="POST">
+{% endif %}
 <table class="table table-striped">
 <tr>
 	<th>Line Item #</th>
 	<th>Description</th>
+{% if invoice.is_finalized %}
 	<th>Amount (BTC)</th>
+{% endif %}
 	<th>Amount (USD)</th>
 </tr>
 {% for item in invoice.items %}
 <tr>
 	<td>{{ item.id }}</td>
 	<td>{{ item.description }}</td>
+{% if invoice.is_finalized %}
 	<td>{{ item.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
+{% endif %}
 	<td>${{ item.price | strf("{0:.2f}") }}</td>
 </tr>
 {% endfor %}
+{% if not invoice.is_finalized %}
+<tr>
+	<td></td>
+	<td><input type="text" class="input-block-level" name="desc" placeholder="Item Description"></td>
+	<td><input type="text" class="input-block-level" name="amt" placeholder="Price"></td>
+</tr>
+{% endif %}
+{% if invoice.is_finalized %}
 <tr>
 	<td colspan="2"></td>
 	<td><strong class="pull-right">Total (BTC):</strong></td>
 	<td>{{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC</td>
 </tr>
+{% endif %}
 <tr>
 	<td colspan="2"></td>
 	<td><strong class="pull-right">Total (USD):</strong></td>
 	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
 </tr>
 </table>
+{% if not invoice.is_finalized %}
+</form>
+{% endif %}
 
+{% if invoice.is_finalized %}
 {% if not invoice.payment_ts %}
 <!-- PayPal button -->
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -84,6 +104,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 		<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
 	{% endif %}
 </h4>
+{% endif %}
 {% endif %}
 
 {% endblock %}

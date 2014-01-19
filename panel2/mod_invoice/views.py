@@ -116,6 +116,20 @@ def finalize(invoice_id):
     invoice.mark_ready()
     return redirect(url_for('.view', invoice_id=invoice.id))
 
+@invoice.route('/<invoice_id>/item/new', methods=['POST'])
+@admin_required
+def lineitem_new(invoice_id):
+    user = get_session_user()
+    invoice = Invoice.query.filter_by(id=invoice_id).first_or_404()
+    desc = request.form.get('desc', 'No description given')
+    amt = request.form.get('price', "0.0")
+    # make sure it's a number
+    if not re.match(r"^\$?([\d]+(\.[\d]+)?|\.[\d]+)$", amt):  # match optional dollar sign, either "1", ".1", or "1.1"
+        flash("Line item price must be a number.")
+        return redirect(url_for('.view', invoice_id=invoice.id))
+    InvoiceItem(None, invoice, amt, desc)
+    return redirect(url_for('.view', invoice_id=invoice.id))
+
 @invoice.route('/unpaid')
 @admin_required
 def list_unpaid():
