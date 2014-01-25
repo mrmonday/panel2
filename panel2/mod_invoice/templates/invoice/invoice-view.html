@@ -23,7 +23,6 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 {% endif %}
 <table class="table table-striped">
 <tr>
-	<th>Line Item #</th>
 	<th>Description</th>
 {% if invoice.is_finalized %}
 	<th>Amount (BTC)</th>
@@ -35,8 +34,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 </tr>
 {% for item in invoice.items %}
 <tr>
-	<td>{{ item.id }}</td>
-	<td>{{ item.description }}</td>
+	<td>{{ item.id }}. {{ item.description }}</td>
 {% if invoice.is_finalized %}
 	<td>{{ item.bitcoin_cost() | strf("{0:.4f}") }} BTC</td>
 {% endif %}
@@ -48,7 +46,6 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 {% endfor %}
 {% if not invoice.is_finalized %}
 <tr>
-	<td></td>
 	<td><input type="text" class="input-block-level" name="desc" placeholder="Item Description"></td>
 	<td><input type="text" class="input-block-level" name="price" placeholder="Price"></td>
 {% if not invoice.is_finalized %}
@@ -58,13 +55,13 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 {% endif %}
 {% if invoice.is_finalized %}
 <tr>
-	<td colspan="2"></td>
+	<td></td>
 	<td><strong class="pull-right">Total (BTC):</strong></td>
 	<td>{{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC</td>
 </tr>
 {% endif %}
 <tr>
-	<td colspan="2"></td>
+	<td></td>
 	<td><strong class="pull-right">Total (USD):</strong></td>
 	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
 </tr>
