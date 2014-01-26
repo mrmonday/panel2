@@ -62,12 +62,12 @@ class Service(db.Model):
     def create(self):
         pass
 
-    def suspend(self, disable_renew=False):
+    def suspend(self, disable_renew=False, template='email/service-suspended.txt'):
         self.is_entitled = False
         self.disable_renew = disable_renew
 
         delete_ts = self.expiry + (86400 * 7)
-        self.user.send_email('SUSPENSION: {}'.format(self.name), 'email/service-suspended.txt', service=self, delete_ts=delete_ts)
+        self.user.send_email('SUSPENSION: {}'.format(self.name), template, service=self, delete_ts=delete_ts)
 
         db.session.add(self)
         db.session.commit()
