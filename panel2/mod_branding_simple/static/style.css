@@ -33,3 +33,14 @@
 	margin-bottom: 1em;
 }
 
+.box-option {
+	display: none;
+}
+
+.box-select {
+	cursor: default;
+}
+
+.box-selected {
+	background: url("/static/gray-noise.png") #ccc;
+}

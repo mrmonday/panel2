@@ -37,47 +37,57 @@
 
 <h3>Resource Plan</h3>
 
-<table class="table table-striped">
-<tr>
-	<th></th>
-	<th>Plan</th>
-	<th>Memory</th>
-	<th>Swap</th>
-	<th>Disk</th>
-	<th>Bandwidth</th>
-	<th>Max IPv4</th>
-	<th>Price (USD)</th>
-	<th>Price (BTC)</th>
-</tr>
+<div class="select-option-group">
+{% set ctr=0 %}
 {% for plan in resource_plans %}
-<tr>
-	<td><input type="radio" name="plan" value="{{ plan.id }}" {{ 'checked="checked"' if plan.id == 1 }}></td>
-	<td>{{ plan.name }}</td>
-	<td>{{ plan.memory }} MB</td>
-	<td>{{ plan.swap }} MB</td>
-	<td>{{ plan.disk }} GB</td>
-	<td>{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed<sup>1</sup></td>
-	<td>{{ plan.ipv4_limit }}<sup>2</sup></td>
-	<td>${{ discount.translate_price(plan.price) | strf("{0:.2f}") }}</td>
-	<td>{{ plan.bitcoin_cost(discount) | strf("{0:.4f}") }} BTC</td>
-</tr>
+{% if ctr == 0 %}
+<div class="row-fluid">
+{% endif %}
+<div class="span3 text-center box box-select">
+	<input type="radio" name="plan" value="{{ plan.id }}" {{ 'checked="checked"'|safe if plan.id == 1 }} class="box-option">
+	{{ plan.memory }} MB RAM<br>
+	{{ plan.disk }} GB SSD Cached Disk<br>
+	{{ '60' if plan.memory > 2048 else '20' }}mbps guaranteed (gigabit)<br>
+	{{ plan.ipv4_limit }} IPv4 included<br>
+	${{ discount.translate_price(plan.price) | strf("{0:.2f}") }} per month<br>
+	({{ plan.bitcoin_cost(discount) | strf("{0:.4f}") }} BTC)
+</div>
+{% set ctr = ctr + 1 %}
+{% if ctr == 4 %}
+{% set ctr = 0 %}
+</div>
+{% endif %}
 {% endfor %}
-</table>
-
-<p><sup>1</sup>: QoS guidelines: 20mbps guaranteed to be available to each individual VPS at any time, 1000mbps to each network segment.</p>
-
-<p><sup>2</sup>: All plans start with 1 IP by default, but more may be requested free of charge with proper justification, and at our discretion.</p>
+{% if ctr != 4 %}
+</div>
+{% endif %}
+</div>
 
 <h3>Region</h3>
 
-<p>
-	<input type="radio" name="region" value="-1" checked="checked"> Pick any region where stock is available.<br>
+<div class="select-option-group">
+{% set ctr = 1 %}
+<div class="row-fluid">
+<div class="span3 text-center box box-select">
+	<input class="box-option" type="radio" name="region" value="-1" checked="checked">
+	Anywhere
+</div>
 {% for region in regions %}
 {% if not region.hidden %}
-	<input type="radio" name="region" value="{{ region.id }}"> {{ region.name }}<br>
+<div class="span3 text-center box box-select">
+	<input class="box-option" type="radio" name="region" value="{{ region.id }}"> {{ region.name }}
+</div>
+{% set ctr = ctr + 1 %}
+{% if ctr == 4 %}
+</div>
+<div class="row-fluid">
+{% endif %}
 {% endif %}
 {% endfor %}
-</p>
+{% if ctr != 4 %}
+</div>
+{% endif %}
+</div>
 
 {% if not discount.is_valid() %}
 <h3>Promotional Code</h3>
@@ -105,5 +115,7 @@
 {% endif %}
 
 </form>
+
+<script type="text/javascript" src="/static/widget-selectbox.js"></script>
 
 {% endblock %}
