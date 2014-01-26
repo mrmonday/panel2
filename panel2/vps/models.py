@@ -302,10 +302,14 @@ class XenVPS(Service):
     def calculate_weight(self):
         multiplier = 1
 
-        if self.cpu_sla == 'bulk': return 1
         if self.cpu_sla == 'guaranteed': multiplier = 4
 
         return self.memory * multiplier
+
+    def get_pool(self):
+        if self.cpu_sla == 'bulk': return 'Pool-Bulk'
+
+        return 'Pool-Customers'
 
     def _serialize(self):
         return dict(id=self.id, name=escape(self.name), memory=self.memory, swap=self.swap, disk=self.disk, node=escape(self.node.name),
@@ -360,16 +364,16 @@ class XenVPS(Service):
         if not profile:
             profile = self.profile
         bootargs = profile.render_config(self)
-        return self.api(constructor).create(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
+        return self.api(constructor).create(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, pool=self.get_pool(), **bootargs)
 
     def confupdate(self, profile=None, constructor=QueueingProxy):
         if not profile:
             profile = self.profile
         bootargs = profile.render_config(self)
-        return self.api(constructor).confupdate(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, **bootargs)
+        return self.api(constructor).confupdate(domname=escape(self.name), memory=self.memory, ips=[ipaddr.ip for ipaddr in self.ips], mac=self.mac, pool=self.get_pool(), **bootargs)
 
     def schedupdate(self, constructor=QueueingProxy):
-        return self.api(constructor).schedupdate(domname=escape(self.name), weight=self.calculate_weight())
+        return self.api(constructor).schedupdate(domname=escape(self.name), weight=self.calculate_weight(), pool=self.get_pool())
 
     def format(self):
         return self.api().vps_format(domname=escape(self.name))
