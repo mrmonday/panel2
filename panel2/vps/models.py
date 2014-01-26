@@ -266,7 +266,7 @@ class XenVPS(Service):
 
     vps_user = db.relationship('User', backref='vps')
 
-    def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32):
+    def __init__(self, name, memory, swap, disk, price, node, user, ipv4_limit=1, ipv6_limit=32, nickname=None):
         self.name = name
 
         self.memory = memory
@@ -291,6 +291,8 @@ class XenVPS(Service):
         self.ipv6_limit = ipv6_limit
 
         self.cpu_sla = 'standard'
+
+        self.nickname = nickname
 
         self.created = time.time()
 
@@ -621,14 +623,14 @@ class ResourcePlan(db.Model):
         btc = ExchangeRate.query.filter_by(currency_name='BTC').first()
         return btc.convert_to(discount.translate_price(self.price))
 
-    def create_vps(self, user, region, name, discount):
+    def create_vps(self, user, region, name, discount, nickname):
         if not self.order_is_allowed(region, discount):
             return None
         node = region.available_node(self.memory, self.disk)
         if not node:
             return None
         vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
-                     ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit)
+                     ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit, nickname=nickname)
         ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
             return vps

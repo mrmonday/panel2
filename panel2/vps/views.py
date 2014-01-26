@@ -130,6 +130,9 @@ def signup():
                 session['session_challenge'] = sess.challenge
 
         vpsname = user.next_service_name()
+        nickname = request.form.get('nickname', vpsname).strip().rstrip()
+        if nickname = '':
+            nickname = vpsname
 
         resource_plan = ResourcePlan.query.filter_by(id=int(request.form['plan'])).first()
         if not resource_plan:
@@ -137,7 +140,7 @@ def signup():
 
         def create_vps(regionlist):
             for region in regionlist:
-                vps = resource_plan.create_vps(user, region, vpsname, discount)
+                vps = resource_plan.create_vps(user, region, vpsname, discount, nickname)
                 if vps:
                     return vps
             return None
