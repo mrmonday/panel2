@@ -1,0 +1,34 @@
+{% extends "email/base-message.txt" %}
+{% block message %}{% if service.nickname %}This is a notification about {{ service.name }} ({{ service.nickname }}).{% else %}This is a notification about {{ service.name }}.{% endif %}
+
+We have detected that your instance is running an unauthorised Tor exit node.
+While we can allow some forms of Tor exit nodes on the network, they need to be
+authorised with our support staff ahead of time.
+
+To protect our network from potential abuse, we have suspended your instance.
+To unsuspend your service, you must open a ticket requesting unsuspension and immediately
+remove the unauthorised exit node.
+
+We do allow Tor exit nodes on our network which are configured in a way that
+removes any potential for abuse.
+
+Specifically, configuring the exit policy to deny access to the following ports
+will allow us to whitelist your Tor exit node:
+
+- 25
+- 194
+- 465
+- 587
+- 994
+- 6657
+- 6660 through 6670
+- 6697
+- 7000 through 7005
+- 7070
+- 8000 through 8004
+- 9000
+- 9001
+- 9998
+- 9999
+
+Thank you for your attention to this matter.{% endblock %}

@@ -21,6 +21,6 @@ def antitor_suspend():
         if not ipa.service.is_entitled:
             ipa.service.destroy()
             continue
-        ipa.service.suspend(disable_renew=True)
+        ipa.service.suspend(disable_renew=True, template='email/service-suspended-tor.txt')
 
     ctx.pop()
