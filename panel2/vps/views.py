@@ -131,7 +131,7 @@ def signup():
 
         vpsname = user.next_service_name()
         nickname = request.form.get('nickname', vpsname).strip().rstrip()
-        if nickname = '':
+        if nickname == '':
             nickname = vpsname
 
         resource_plan = ResourcePlan.query.filter_by(id=int(request.form['plan'])).first()

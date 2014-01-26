@@ -4,7 +4,7 @@
 
 {% block subcontent %}
 
-<form method="POST">
+<form method="POST" class="form-horizontal">
 
 {% if not user %}
 
@@ -35,9 +35,17 @@
 
 {% endif %}
 
+<h3>Hostname</h3>
+
+<div class="control-group">
+	<label for="nickname" class="control-label required"><strong>Hostname:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="text" name="nickname" {% if user %}placeholder="{{ user.next_service_name() }}"{% endif %}>
+	</div>
+</div>
+
 <h3>Resource Plan</h3>
 
-<div class="select-option-group">
 {% set ctr=0 %}
 {% for plan in resource_plans %}
 {% if ctr == 0 %}
@@ -58,14 +66,13 @@
 </div>
 {% endif %}
 {% endfor %}
-{% if ctr != 4 %}
+{% if ctr != 4 and ctr != 0 %}
+<!-- ctr {{ ctr }} -->
 </div>
 {% endif %}
-</div>
 
 <h3>Region</h3>
 
-<div class="select-option-group">
 {% set ctr = 1 %}
 <div class="row-fluid">
 <div class="span3 text-center box box-select">
@@ -79,24 +86,25 @@
 </div>
 {% set ctr = ctr + 1 %}
 {% if ctr == 4 %}
+{% set ctr = 0 %}
 </div>
 <div class="row-fluid">
 {% endif %}
 {% endif %}
 {% endfor %}
 {% if ctr != 4 %}
+<!-- ctr {{ ctr }} -->
 </div>
 {% endif %}
-</div>
 
 {% if not discount.is_valid() %}
 <h3>Promotional Code</h3>
 
-<p>If you have a valid promotional code, you can apply it to receive a discount.</p>
-
-<div class="row-fluid">
-	<div class="span3"><strong>Promo code:</strong></div>
-	<div class="span9"><input class="input-block-level" type="text" name="c"></div>
+<div class="control-group">
+	<label for="c" class="control-label required"><strong>Promo code:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="text" name="c">
+	</div>
 </div>
 {% else %}
 <h3>Congratulations!</h3>
