@@ -18,23 +18,32 @@
 </div>
 {% endif %}
 
-<div class="row-fluid">
-	<div class="span3"><strong>Username:</strong></div>
-	<div class="span9"><input class="input-block-level" type="text" name="username" required="required"></div>
+<div class="control-group">
+	<label for="email" class="control-label required"><strong>Username:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="text" name="username" required="required">
+	</div>
 </div>
 
-<div class="row-fluid">
-	<div class="span3"><strong>Password:</strong></div>
-	<div class="span9"><input class="input-block-level" type="password" name="password" required="required"></div>
+<div class="control-group">
+	<label for="password" class="control-label required"><strong>Password:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="password" name="password" required="required">
+	</div>
 </div>
 
-<div class="row-fluid">
-	<div class="span3"><strong>E-Mail Address:</strong></div>
-	<div class="span9"><input class="input-block-level" type="text" name="email" required="required"></div>
+<div class="control-group">
+	<label for="email" class="control-label required"><strong>E-Mail Address:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="text" name="email" required="required">
+	</div>
 </div>
 
 {% endif %}
 
+<div class="row-fluid">
+
+<div class="span6">
 <h3>Hostname</h3>
 
 <div class="control-group">
@@ -42,6 +51,30 @@
 	<div class="controls">
 		<input class="input-block-level" type="text" name="nickname" {% if user %}placeholder="{{ user.next_service_name() }}"{% endif %}>
 	</div>
+</div>
+</div>
+
+<div class="span6">
+{% if not discount.is_valid() %}
+<h3>Promotional Code</h3>
+
+<div class="control-group">
+	<label for="c" class="control-label required"><strong>Promo code:</strong></label>
+	<div class="controls">
+		<input class="input-block-level" type="text" name="c">
+	</div>
+</div>
+{% else %}
+<h3>Congratulations!</h3>
+
+<p>You will be receiving a <strong>{% if discount.type == 'percent' %}{{ discount.amount | strf("{0:.0f}") }}%{% else %}${{ discount.amount | strf("{0:.2f}") }}{% endif %} discount</strong> on your order with us today!</p>
+
+<p>We look forward to serving you as a valued customer.</p>
+
+<input type="hidden" name="c" value="{{ discount.name }}">
+{% endif %}
+</div>
+
 </div>
 
 <h3>Resource Plan</h3>
@@ -95,25 +128,6 @@
 {% if ctr != 4 %}
 <!-- ctr {{ ctr }} -->
 </div>
-{% endif %}
-
-{% if not discount.is_valid() %}
-<h3>Promotional Code</h3>
-
-<div class="control-group">
-	<label for="c" class="control-label required"><strong>Promo code:</strong></label>
-	<div class="controls">
-		<input class="input-block-level" type="text" name="c">
-	</div>
-</div>
-{% else %}
-<h3>Congratulations!</h3>
-
-<p>You will be receiving a <strong>{% if discount.type == 'percent' %}{{ discount.amount | strf("{0:.0f}") }}%{% else %}${{ discount.amount | strf("{0:.2f}") }}{% endif %} discount</strong> on your order with us today!</p>
-
-<p>We look forward to serving you as a valued customer.</p>
-
-<input type="hidden" name="c" value="{{ discount.name }}">
 {% endif %}
 
 {% if user %}
