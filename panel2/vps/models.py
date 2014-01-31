@@ -79,11 +79,16 @@ class KernelProfile(db.Model):
             'eth0_gateway': domain.ips[0].ipnet.gateway(),
             'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
             'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
-            'isopath': domain.hvmiso.file,
             'bootorder': domain.hvm_bootorder,
             'hvm_nictype': domain.hvm_nictype,
             'cpu_weight': domain.calculate_weight(),
         }
+
+        if domain.hvmiso:
+            keys['isopath'] = domain.hvmiso.file
+        else:
+            keys['isopath'] = '/dev/null'
+
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
     def _serialize(self):
