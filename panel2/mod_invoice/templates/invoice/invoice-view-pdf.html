@@ -52,8 +52,19 @@
 <body>
 
 <div class="pushdown">
-	<img src="/branding/static/logo.png">
-	<h1 class="pull-right">Invoice</h3>
+	<span class="pull-right">
+		<h1>Invoice</h1>
+	</span>
+	<img src="/branding/static/logo.png"><br>
+	{% if config.has_key('INVOICE_ADDRESS1') %}
+	{{ config['INVOICE_ADDRESS1'] }}<br>
+	{% endif %}
+	{% if config.has_key('INVOICE_ADDRESS2') %}
+	{{ config['INVOICE_ADDRESS2'] }}<br>
+	{% endif %}
+	{% if config.has_key('INVOICE_ADDRESS3') %}
+	{{ config['INVOICE_ADDRESS3'] }}
+	{% endif %}
 </div>
 
 <div class="pushdown">
