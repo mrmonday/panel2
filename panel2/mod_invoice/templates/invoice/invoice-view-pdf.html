@@ -89,6 +89,27 @@
 		</tr>
 {% endif %}
 	</table>
+	<span>
+		{% if invoice.user.organization %}
+		{{ invoice.user.organization }}<br>
+		{% if invoice.user.contact_name %}
+		ATTN: {{ invoice.user.contact_name }}<br>
+		{% endif %}
+		{% elif invoice.user.contact_name %}
+		{{ invoice.user.contact_name }}<br>
+		{% endif %}
+		{{ invoice.user.address1 }}<br>
+		{% if invoice.user.address2 %}
+		{{ invoice.user.address2 }}<br>
+		{% endif %}
+		{% if invoice.user.city %}{{ invoice.user.city }}, {% endif %}
+		{% if invoice.user.state %}{{ invoice.user.state }} {% endif %}
+		{% if invoice.user.zip %}{{ invoice.user.zip }}{% endif %}
+		{% if invoice.user.country %}
+		{% if invoice.user.city or invoice.user.state or invoice.user.zip %}<br>{% endif %}
+		{{ invoice.user.country }}
+		{% endif %}
+	</span>
 </div>
 
 <div class="pushup">
