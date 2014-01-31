@@ -79,6 +79,8 @@ class User(db.Model):
     require_totp = db.Column(db.Boolean)
     job_webhook_uri = db.Column(db.Text)
     pwreset_key = db.Column(db.String(128))
+    organization = db.Column(db.String(255))
+    contact_name = db.Column(db.String(255))
 
     def __init__(self, username, password, email):
         self.username = username

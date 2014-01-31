@@ -56,8 +56,22 @@ def profile_webhook_uri():
 @login_required
 def profile_change_email():
     user = get_session_user()
-    user.assign_email(request.form['new_email'])
-    flash('Your e-mail address has been changed', 'success')
+
+    user.email = request.form['new_email']
+    user.organization = request.form['organization']
+    user.contact_name = request.form['contact_name']
+    user.address1 = request.form['address1']
+    user.address2 = request.form['address2']
+    user.city = request.form['city']
+    user.state = request.form['state']
+    user.country = request.form['country']
+    user.phone = request.form['phone']
+    user.zip = request.form['zip']
+
+    db.session.add(user)
+    db.session.commit()
+
+    flash('Your contact information has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
 @app.route('/profile/new-apikey')

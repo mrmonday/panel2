@@ -14,6 +14,86 @@
 
 <div class="row-fluid pushdown">
 	<div class="span3 text-right">
+		<h3>Contact Information</h3>
+		<p>
+			It is important to keep your contact information up to date so that you can receive important notifications from us.
+			Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
+			address on file for the account.
+		</p>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+		<form action="{{ url_for('.profile_change_email') }}" method="POST" class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="new_email">Contact Name</label>
+			<div class="controls">
+				<input type="text" value="{{ user.contact_name | default("", True) }}" name="contact_name" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Organization</label>
+			<div class="controls">
+				<input type="text" value="{{ user.organization | default("", True) }}" name="organization" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Address 1</label>
+			<div class="controls">
+				<input type="text" value="{{ user.address1 | default("", True) }}" name="address1" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Address 2</label>
+			<div class="controls">
+				<input type="text" value="{{ user.address2 | default("", True) }}" name="address2" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">City</label>
+			<div class="controls">
+				<input type="text" value="{{ user.city | default("", True) }}" name="city" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">State / Province</label>
+			<div class="controls">
+				<input type="text" value="{{ user.state | default("", True) }}" name="state" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Postcode</label>
+			<div class="controls">
+				<input type="text" value="{{ user.zip | default("", True) }}" name="zip" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Country</label>
+			<div class="controls">
+				<input type="text" value="{{ user.country | default("", True) }}" name="country" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Email</label>
+			<div class="controls">
+				<input type="text" value="{{ user.email }}" name="new_email" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="new_email">Telephone</label>
+			<div class="controls">
+				<input type="text" value="{{ user.phone | default("", True) }}" name="phone" class="input-block-level">
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button class="btn btn-primary" type="submit">Update Profile</button>
+			</div>
+		</div>
+		</form>
+	</div>
+</div>
+
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
 		<h3>Change Password</h3>
 	</div>
 	<div class="span9" style="margin-top: 1.5em">
@@ -30,27 +110,6 @@
 		</div>
 		<button class="btn btn-primary" type="submit">Change Password</button>
 	</form>
-	</div>
-</div>
-
-<div class="row-fluid pushdown">
-	<div class="span3 text-right">
-		<h3>Change E-Mail Address</h3>
-		<p>
-			It is important to keep your e-mail address up to date so that you can receive important notifications from us.
-			Also, in the event that you need to recover your account password, the replacement password will be sent to the e-mail
-			address on file for the account.
-		</p>
-	</div>
-	<div class="span9" style="margin-top: 1.5em">
-		<form action="{{ url_for('.profile_change_email') }}" method="POST">
-		<div class="row-fluid">
-			<div class="span12">
-				<input type="text" placeholder="E-Mail Address" value="{{ user.email }}" name="new_email" class="input-block-level">
-			</div>
-		</div>
-		<button class="btn btn-primary" type="submit">Change E-Mail Address</button>
-		</form>
 	</div>
 </div>
 
