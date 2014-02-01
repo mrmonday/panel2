@@ -20,11 +20,12 @@ from flask import request
 @login_signal.connect_via(app)
 def send_login_notice(*args, **kwargs):
     user = kwargs.pop('user', None)
-    user.send_email('Authentication successful for %s from %s' % (user.username, request.environ['REMOTE_ADDR']), 'email/auth-message.txt')
+    if user.login_success_notice:
+        user.send_email('Authentication successful for %s from %s' % (user.username, request.environ['REMOTE_ADDR']), 'email/auth-message.txt')
 
 @authfail_signal.connect_via(app)
 def send_authfail_notice(*args, **kwargs):
     user = kwargs.pop('user', None)
-    if user is not None:
+    if user is not None and user.login_failed_notice:
         user.send_email('Authentication failed for %s from %s' % (user.username, request.environ['REMOTE_ADDR']), 'email/authfail-message.txt')
 
