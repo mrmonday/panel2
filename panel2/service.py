@@ -16,6 +16,9 @@ from the use of this software.
 from panel2 import app, db, cron
 from panel2.cron import DAILY, HOURLY
 from panel2.invoice import InvoiceItem, ServiceCreditItem, invoice_item_paid_signal
+
+from sqlalchemy import func
+
 import ipaddress
 import time
 import random
@@ -336,6 +339,20 @@ class IPRange(db.Model):
 
     def broadcast(self):
         return str(self.ipnet().broadcast_address)
+
+    def usable_size(self):
+        if self.ipnet().version == 6:
+            return 2**16
+        gateway = int(self.ipnet().network_address) + 1
+        broadcast = int(self.ipnet().broadcast_address) - 1
+        return broadcast - gateway
+
+    def count_free_ips(self):
+        if self.ipnet().version == 6:
+            return 32
+        used_ips = db.session.query(func.count(IPAddress.id)).filter_by(ipnet_id=self.id).filter(IPAddress.service_id).first()[0]
+        reserved_ips = db.session.query(func.count(IPAddress.id)).filter_by(ipnet_id=self.id).filter_by(reserved=True).first()[0]
+        return self.usable_size() - used_ips - reserved_ips
 
     def available_ips(self):
         iplist = []
