@@ -25,7 +25,7 @@
 	<td>{{ network.network }}</td>
 	<td>IPv{{ network.ipnet().version }}</td>
 	<td>{{ network.type }}</td>
-	<td>{{ network.available_ips() | count }}</td>
+	<td>{{ network.count_free_ips() }}</td>
 	<td>
 		<span class="pull-right">
 			<a href="#" class="btn btn-primary">View</a>

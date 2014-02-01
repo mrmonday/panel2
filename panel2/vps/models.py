@@ -197,6 +197,14 @@ class Node(db.Model):
             return constructor(self.ipaddr, 5959, self.secret, iterations=15)
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
 
+    def count_free_ips(self, ipv4_only=False):
+        ipranges = self.ipranges + self.region.ipranges
+
+        if ipv4_only:
+            return sum([iprange.count_free_ips() for iprange in filter(lambda x: x.is_ipv6() == False, ipranges)])
+
+        return sum([iprange.count_free_ips() for iprange in ipranges])
+
     def available_ips(self, ipv4_only=False):
         ipranges = self.ipranges + self.region.ipranges
 
@@ -214,14 +222,14 @@ class Node(db.Model):
     def allocatable(self, memory, disk, ips):
         memory_free = self.memorycap - self.memory_allocated()
         disk_free = self.diskcap - self.disk_allocated()
-        ips_free = len(self.available_ips(ipv4_only=True))
+        ips_free = self.count_free_ips(ipv4_only=True)
 
         return (memory <= memory_free and disk <= disk_free and ips <= ips_free)
 
     def available_shares(self, divisor):
         memory_free = self.memorycap - self.memory_allocated()
         disk_free = self.diskcap - self.disk_allocated()
-        ips_free = len(self.available_ips(ipv4_only=True))
+        ips_free = self.count_free_ips(ipv4_only=True)
 
         return (memory_free / divisor, disk_free / divisor, ips_free / divisor)
 
@@ -652,13 +660,13 @@ class ResourcePlan(db.Model):
         vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
                      ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit, nickname=nickname)
         ipranges = node.ipranges + node.region.ipranges
-        ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, ipranges)
+        ipv4_rs = filter(lambda x: x.count_free_ips() > 0 and x.is_ipv6() == False, ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
             return vps
         ipv4_range = random.choice(ipv4_rs)
         ipv4_range.assign_first_available(user, vps)
         vps.init()
-        ipv6_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == True, ipranges)
+        ipv6_rs = filter(lambda x: x.count_free_ips() > 0 and x.is_ipv6() == True, ipranges)
         if not ipv6_rs or len(ipv6_rs) == 0:
             return vps
         ipv6_range = random.choice(ipv6_rs)

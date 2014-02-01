@@ -29,7 +29,7 @@ Node Administration
 <td>{{ node.vps | count }}</td>
 <td>{{ node.locked }}</td>
 <td>{{ node.region.name }}</td>
-<td>{{ node.available_ips(ipv4_only=True) | count }}</td>
+<td>{{ node.count_free_ips(ipv4_only=True) }}</td>
 <td>{{ node.memory_allocated() }} MB</td>
 <td>{{ node.disk_allocated() }} GB</td>
 <td>{{ node.memorycap - node.memory_allocated() }} MB</td>
