@@ -142,6 +142,19 @@ class Region(db.Model):
     def _serialize(self):
         return dict(id=self.id, name=escape(self.name))
 
+class RegionIPRange(IPRange):
+    __mapper_args__ = {'polymorphic_identity': 'region'}
+    region_id = db.Column(db.Integer, db.ForeignKey('region.id'))
+    region = db.relationship('Region', backref='ipranges')
+
+    def __init__(self, network, region):
+        self.region = region
+        self.region_id = region.id
+        self.network = network
+
+        db.session.add(self)
+        db.session.commit()
+
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -185,10 +198,12 @@ class Node(db.Model):
         return constructor(self.ipaddr, 5959, self.secret, iterations=15, refid=refid)
 
     def available_ips(self, ipv4_only=False):
-        if ipv4_only:
-            return [ip for iprange in filter(lambda x: x.is_ipv6() == False, self.ipranges) for ip in iprange.available_ips()]
+        ipranges = self.ipranges + self.region.ipranges
 
-        return [ip for iprange in self.ipranges for ip in iprange.available_ips()]
+        if ipv4_only:
+            return [ip for iprange in filter(lambda x: x.is_ipv6() == False, ipranges) for ip in iprange.available_ips()]
+
+        return [ip for iprange in ipranges for ip in iprange.available_ips()]
 
     def disk_allocated(self):
         return sum([(x.swap / 1024) for x in self.vps]) + sum([x.disk for x in self.vps])
@@ -636,15 +651,18 @@ class ResourcePlan(db.Model):
             return None
         vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
                      ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit, nickname=nickname)
-        ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, node.ipranges)
+        ipranges = node.ipranges + node.region.ipranges
+        ipv4_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == False, ipranges)
         if not ipv4_rs or len(ipv4_rs) == 0:
             return vps
-        ipv4_rs[0].assign_first_available(user, vps)
+        ipv4_range = random.choice(ipv4_rs)
+        ipv4_range.assign_first_available(user, vps)
         vps.init()
-        ipv6_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == True, node.ipranges)
+        ipv6_rs = filter(lambda x: len(x.available_ips()) > 0 and x.is_ipv6() == True, ipranges)
         if not ipv6_rs or len(ipv6_rs) == 0:
             return vps
-        ipv6_rs[0].assign_first_available(user, vps)
+        ipv6_range = random.choice(ipv6_rs)
+        ipv6_range.assign_first_available(user, vps)
         return vps
 
     def order_is_allowed(self, region, discount):

@@ -83,7 +83,7 @@
 
 <form method="POST" action="{{ url_for('.adm_add_ip', vps=service.id) }}">
 <select name="ipbox">
-{% for iprange in service.node.ipranges %}
+{% for iprange in service.node.ipranges + service.node.region.ipranges %}
 {% for host in iprange.available_ips() %}
 {% if not iprange.is_ipv6() and service.ipv4_quota() > 0 %}
 	<option value="{{ iprange.id }}!{{ host }}">{{ host }}</option>

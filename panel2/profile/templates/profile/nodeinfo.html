@@ -19,7 +19,7 @@
 		<span class="pull-right">Options</span>
 	</th>
 </tr>
-{% for network in node.ipranges %}
+{% for network in node.ipranges + node.region.ipranges %}
 <tr>
 	<td>{{ network.id }}</td>
 	<td>{{ network.network }}</td>
