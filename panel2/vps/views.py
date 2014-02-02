@@ -284,6 +284,20 @@ def suspend(vps):
     vps.suspend(disable_renew=True)
     return redirect(url_for('.view', vps=vps.id))
 
+@vps.route('/<vps>/tor-whitelist')
+@admin_required
+def tor_whitelist(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.tor_whitelist = True
+    db.session.add(vps)
+    db.session.commit()
+    vps.entitle()
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/entitle')
 @admin_required
 def entitle(vps):
