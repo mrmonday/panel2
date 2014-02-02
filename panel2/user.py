@@ -60,6 +60,28 @@ class Session(db.Model):
         db.session.add(self)
         db.session.commit()
 
+class UserMetadata(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='metadata')
+
+    key = db.Column(db.String(255))
+    value = db.Column(db.Text)
+
+    def __init__(self, user, key, value):
+        self.user = user
+        self.user_id = user.id
+
+        self.key = key
+        self.value = value
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<UserMetadata: {0} == '{1}' for {2}>".format(self.key, self.value, self.user.username)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
@@ -169,6 +191,20 @@ class User(db.Model):
                     services=[service._serialize() for service in self.services],
                     invoices=[invoice._serialize() for invoice in self.invoices],
                     tickets=[ticket._serialize() for ticket in self.tickets])
+
+    def metadata_get(self, key, default=None):
+        md = UserMetadata.query.filter_by(user_id=self.id).filter_by(key=key).first()
+        if not md:
+            return default
+        return md.value
+
+    def metadata_put(self, key, value):
+        md = UserMetadata(self, key, value)
+        return md
+
+    def metadata_delete(self, key):
+        UserMetadata.query.filter_by(user_id=self.id).filter_by(key=key).delete()
+        db.session.commit()
 
 def is_api_session():
     return True if request.authorization else False
