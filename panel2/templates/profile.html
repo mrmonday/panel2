@@ -176,4 +176,26 @@
 	</div>
 </div>
 
+<div class="row-fluid pushdown">
+	<div class="span3 text-right">
+		<h3>Login Notice Preferences</h3>
+		<p>Upon successful or failed logins, we can send you notifications letting you know if your account
+			has been accessed.</p>
+	</div>
+	<div class="span9" style="margin-top: 1.5em">
+		<form action="{{ url_for('.profile_login_preferences') }}" method="POST">
+		<div class="row-fluid">
+			<div class="span12" style="padding-bottom: 7px;">
+				<label for="notify-success" style="display: inline;">Successful log-in</label>
+				<input id="notify-success" type="checkbox" {% if user.login_success_notice %}checked{% endif %} name="success" value="1">
+				<br/>
+				<label for="notify-failed" style="display: inline;">Failed log-in</label>
+				<input id="notify-failed" type="checkbox" {% if user.login_failed_notice %}checked{% endif %} name="fail" value="1">
+			</div>
+		</div>
+		<button class="btn btn-primary" type="submit">Save Preferences</button>
+		</form>
+	</div>
+</div>
+
 {% endblock %}

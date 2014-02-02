@@ -81,6 +81,8 @@ class User(db.Model):
     pwreset_key = db.Column(db.String(128))
     organization = db.Column(db.String(255))
     contact_name = db.Column(db.String(255))
+    login_success_notice = db.Column(db.Boolean, default=1)
+    login_failed_notice = db.Column(db.Boolean, default=1)
 
     def __init__(self, username, password, email):
         self.username = username
@@ -154,6 +156,13 @@ class User(db.Model):
 
     def total_credit(self):
         return round(sum([cred.amount for cred in self.credits]), 2)
+
+    def set_login_preferences(self, success_notice, fail_notice):
+        self.login_success_notice = success_notice
+        self.login_failed_notice = fail_notice
+
+        db.session.add(self)
+        db.session.commit()
 
     def _serialize(self):
         return dict(username=escape(self.username), email=escape(self.email),

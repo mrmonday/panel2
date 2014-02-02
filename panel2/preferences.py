@@ -108,3 +108,11 @@ def profile_totp_disable():
     db.session.commit()
     return redirect(url_for('.profile_index'))
 
+
+@app.route('/profile/login-preferences', methods=['POST'])
+@login_required
+def profile_login_preferences():
+    user = get_session_user()
+    user.set_login_preferences(request.form.get('success', 0), request.form.get('fail', 0))
+    flash('Your login notice preferences have been updated', 'success')
+    return redirect(url_for('.profile_index'))
