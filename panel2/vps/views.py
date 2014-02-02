@@ -295,6 +295,17 @@ def entitle(vps):
     vps.entitle()
     return redirect(url_for('.view', vps=vps.id))
 
+@vps.route('/<vps>/reinitialize')
+@admin_required
+def reinitialize(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+    vps.init()
+    return redirect(url_for('.view', vps=vps.id))
+
 @vps.route('/<vps>/renew')
 @login_required
 def renew(vps):
