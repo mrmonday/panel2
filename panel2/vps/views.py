@@ -292,7 +292,7 @@ def tor_whitelist(vps):
         abort(404)
     if can_access_vps(vps) is False:
         abort(403)
-    vps.tor_whitelist = True
+    vps.tor_whitelisted = True
     db.session.add(vps)
     db.session.commit()
     vps.entitle()
