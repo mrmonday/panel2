@@ -318,7 +318,7 @@ class XenVPS(Service):
         self.ipv4_limit = ipv4_limit
         self.ipv6_limit = ipv6_limit
 
-        self.cpu_sla = 'standard'
+        self.cpu_sla = self.user.metadata_get('force_cpu_sla', 'standard')
 
         self.nickname = nickname
 
