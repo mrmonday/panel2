@@ -71,6 +71,9 @@ $(document).ready(function() {
 				<a href="{{ url_for('.tor_whitelist', vps=service.id) }}">Whitelist Tor Node</a>
 			</li>
 			<li>
+				<a href="{{ url_for('.properties', vps=service.id) }}">Properties</a>
+			</li>
+			<li>
 				<a class="jsonify" href="{{ url_for('.reinitialize', vps=service.id) }}"><i class="icon-wand"></i> Reinitialize</a>
 			</li>
 			{% endif %}

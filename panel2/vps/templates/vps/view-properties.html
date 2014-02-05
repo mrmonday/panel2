@@ -1,0 +1,63 @@
+{% extends "vps/view-hdr.html" %}
+{% block title %}{{ service.name }} - Servers{% endblock %}
+
+{% block component %}
+
+<h2>Properties</h2>
+
+<form class="form-horizontal" method="POST">
+	<div class="control-group">
+		<label for="memory" class="control-label">Memory (MB)</label>
+		<div class="controls">
+			<input type="text" value="{{ service.memory }}" name="memory" id="memory" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="swap" class="control-label">Swap (MB)</label>
+		<div class="controls">
+			<input type="text" value="{{ service.swap }}" name="swap" id="swap" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="disk" class="control-label">Disk (GB)</label>
+		<div class="controls">
+			<input type="text" value="{{ service.disk }}" name="disk" id="disk" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="ipv4_limit" class="control-label">IPv4 Limit</label>
+		<div class="controls">
+			<input type="text" value="{{ service.ipv4_limit }}" name="ipv4_limit" id="ipv4_limit" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="ipv6_limit" class="control-label">IPv6 Limit</label>
+		<div class="controls">
+			<input type="text" value="{{ service.ipv6_limit }}" name="ipv6_limit" id="ipv6_limit" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="price" class="control-label">Price ($)</label>
+		<div class="controls">
+			<input type="text" value="{{ service.price }}" name="price" id="price" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="cpu_sla" class="control-label">CPU SLA</label>
+		<div class="controls">
+			<select name="cpu_sla" class="input-block-level">
+				<option>{{ service.cpu_sla }}</option>
+				<option>guaranteed</option>
+				<option>standard</option>
+				<option>bulk</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn btn-primary">Update Properties</button>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

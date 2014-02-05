@@ -284,6 +284,35 @@ def suspend(vps):
     vps.suspend(disable_renew=True)
     return redirect(url_for('.view', vps=vps.id))
 
+@vps.route('/<vps>/properties', methods=['GET', 'POST'])
+@admin_required
+def properties(vps):
+    vps = XenVPS.query.filter_by(id=vps).first()
+    if vps is None:
+        abort(404)
+    if can_access_vps(vps) is False:
+        abort(403)
+
+    if request.method == 'POST':
+        vps.memory = int(request.form.get('memory', vps.memory))
+        vps.swap = int(request.form.get('swap', vps.swap))
+        vps.disk = int(request.form.get('disk', vps.disk))
+        vps.ipv4_limit = int(request.form.get('ipv4_limit', vps.ipv4_limit))
+        vps.ipv6_limit = int(request.form.get('ipv6_limit', vps.ipv6_limit))
+        vps.price = float(request.form.get('price', vps.price))
+        vps.cpu_sla = request.form.get('cpu_sla', 'standard')
+
+        db.session.add(vps)
+        db.session.commit()
+
+        vps.confupdate()
+        vps.schedupdate()
+
+        flash('Properties updated.')
+        return redirect(url_for('.view', vps=vps.id))
+
+    return render_template_or_json('vps/view-properties.html', service=vps)
+
 @vps.route('/<vps>/tor-whitelist')
 @admin_required
 def tor_whitelist(vps):
