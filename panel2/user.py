@@ -206,6 +206,10 @@ class User(db.Model):
         UserMetadata.query.filter_by(user_id=self.id).filter_by(key=key).delete()
         db.session.commit()
 
+    def owns_ip(self, ip):
+        ipset = filter(lambda x: x.ip == ip, self.ips)
+        return len(ipset) > 0
+
 def is_api_session():
     return True if request.authorization else False
 
