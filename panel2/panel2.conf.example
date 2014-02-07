@@ -1,5 +1,9 @@
 SECRET_KEY = 'loldongs'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+MAIL_SERVER = ''
+MAIL_PORT = ''
 NOREPLY_MAIL = 'noreply@domain.com'
 DEBUG_EMAIL_TARGETS = ['admin@domain.com']
 SERVER_NAME = 'tortois.es'
+SEND_DEBUG_EMAILS = True
+RRDPATH = '/path/to/rrd'
