@@ -44,7 +44,7 @@ class HVMISOImage(db.Model):
 
         self.user = user
         self.user_id = user.id
-	
+
         db.session.add(self)
         db.session.commit()
 
@@ -498,7 +498,7 @@ class XenVPS(Service):
         data = rdata[2]
 
         step = rdata[0][2]
-	begin_ts = rdata[0][0]
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -526,10 +526,10 @@ class XenVPS(Service):
         except:
             return {}
 
-	data = rdata[2]
+        data = rdata[2]
         step = rdata[0][2]
 
-	begin_ts = rdata[0][0]
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -538,7 +538,7 @@ class XenVPS(Service):
 
         rxbytes = {'label': 'Bytes received', 'data': set, 'color': "#336633"}
 
-	begin_ts = rdata[0][0]
+        begin_ts = rdata[0][0]
         set = []
         for i in data:
             if i[0] is None: continue
@@ -569,7 +569,7 @@ class XenVPS(Service):
         except:
             return {}
 
-	data = rdata[2]
+        data = rdata[2]
         step = rdata[0][2]
 
         begin_ts = rdata[0][0]
