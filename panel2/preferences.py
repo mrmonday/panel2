@@ -90,13 +90,19 @@ def profile_new_totp_key():
     flash('Your TOTP key has been changed', 'success')
     return redirect(url_for('.profile_index'))
 
-@app.route('/profile/totp/enable')
+@app.route('/profile/totp/enable', methods=['POST'])
 @login_required
 def profile_totp_enable():
     user = get_session_user()
+    response = request.form['response']
+    if response.isdigit() is not True or user.validate_totp(int(response)) is not True:
+        flash('Incorrect TOTP code', 'error')
+        return redirect(url_for('.profile_index'))
+
     user.require_totp = True
     db.session.add(user)
     db.session.commit()
+    flash('Two-factor authentication enabled', 'success')
     return redirect(url_for('.profile_index'))
 
 @app.route('/profile/totp/disable')
