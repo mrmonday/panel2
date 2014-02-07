@@ -5,8 +5,9 @@ function show_notifications(data) {
 }
 
 function update() {
+	randval = Math.floor((Math.random()*100000)+1);
 	$.ajax({
-		url: '/notifications.json',
+		url: '/notifications.json?random=' + randval,
 		type: 'GET',
 		dataType: 'json',
 		success: show_notifications
