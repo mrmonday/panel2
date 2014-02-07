@@ -75,10 +75,6 @@ class KernelProfile(db.Model):
             'domid': domain.id,
             'vncport': domain.id,
             'wsport': 5700 + domain.id,
-            'eth0_ip': domain.ips[0].ip,
-            'eth0_gateway': domain.ips[0].ipnet.gateway(),
-            'eth0_netmask': domain.ips[0].ipnet.ipnet().netmask,
-            'eth0_broadcast': domain.ips[0].ipnet.broadcast(),
             'bootorder': domain.hvm_bootorder,
             'hvm_nictype': domain.hvm_nictype,
             'cpu_weight': domain.calculate_weight(),
@@ -88,6 +84,14 @@ class KernelProfile(db.Model):
             keys['isopath'] = domain.hvmiso.file
         else:
             keys['isopath'] = '/dev/null'
+
+        if domain.ips[0]:
+            keys['eth0_ip'] = domain.ips[0].ip
+
+            if domain.ips[0].ipnet:
+                keys['eth0_gateway'] = domain.ips[0].ipnet.gateway()
+                keys['eth0_netmask'] = domain.ips[0].ipnet.ipnet().netmask
+                keys['eth0_broadcast'] = domain.ips[0].ipnet.broadcast()
 
         return {s.key: s.value.format(**keys) for s in self.arguments}
 
