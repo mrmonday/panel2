@@ -63,8 +63,8 @@ def validate_login(username, password):
 def totp_challenge():
     if request.method == 'POST':
         user = get_session_user()
-        response = int(request.form.get('response', 0))
-        if not user.validate_totp(response):
+        response = request.form.get('response', 0)
+        if not response.isdigit() or not user.validate_totp(int(response)):
             return redirect(url_for('totp_challenge'))
         sess = Session.query.filter_by(id=session['session_id']).first()
         if not sess:
