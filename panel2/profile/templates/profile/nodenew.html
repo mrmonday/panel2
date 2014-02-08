@@ -1,0 +1,63 @@
+{% extends "profile/base.html" %}
+
+{% block headerbarcontent %}
+Add Node
+{% endblock %}
+
+{% block component %}
+
+<form class="form-horizontal" method="POST">
+	<div class="control-group">
+		<label for="name" class="control-label">Name</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="name">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="dnsname" class="control-label">DNS Name</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="dnsname">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="ipaddr" class="control-label">IP Address</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="ipaddr">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="secret" class="control-label">Secret</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="secret">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="region_id" class="control-label">Region</label>
+		<div class="controls">
+			<select class="input-block-level" name="region_id">
+			{% for region in regions %}
+				<option value="{{ region.id }}">{{ region.name }}</option>
+			{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="memorycap" class="control-label">Memory Cap (MiB)</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="memorycap" value="60000">
+		</div>
+	</div>
+	<div class="control-group">
+		<label for="diskcap" class="control-label">Disk Cap (GiB)</label>
+		<div class="controls">
+			<input type="text" class="input-block-level" name="diskcap" value="3500">
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn btn-success"><i class="icon-plus"></i> Add Node</button>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

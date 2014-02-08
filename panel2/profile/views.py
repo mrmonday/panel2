@@ -13,13 +13,13 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import redirect, url_for
+from flask import request, redirect, url_for, render_template
 
 from panel2 import db
 from panel2.profile import profile
 from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
-from panel2.vps.models import Node
+from panel2.vps.models import Node, Region
 from panel2.service import Service
 from panel2.invoice import Invoice
 
@@ -52,6 +52,17 @@ def list_active():
     users = filter(lambda x: len(x.services) > 0, User.query)
     return render_template_or_json('profile/userlist.html', users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
+
+@profile.route('/_statistics/node/_new', methods=['GET', 'POST'])
+@admin_required
+def node_new():
+    if request.method == 'POST':
+        region = Region.query.filter_by(id=int(request.form['region_id'])).first()
+        node = Node(request.form['name'], request.form['ipaddr'], request.form['secret'], region, dnsname=request.form['dnsname'],
+                    memorycap=int(request.form['memorycap']), diskcap=int(request.form['diskcap']))
+        return redirect(url_for('.node_info', node=node.id))
+
+    return render_template('profile/nodenew.html', regions=Region.query.filter_by(hidden=False).all())
 
 @profile.route('/_statistics/node')
 @admin_required

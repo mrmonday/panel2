@@ -175,8 +175,11 @@ class Node(db.Model):
 
     skip_crons = db.Column(db.Boolean, default=False)
 
-    def __init__(self, name, ipaddr, secret, region, dnsname=None):
+    def __init__(self, name, ipaddr, secret, region, dnsname=None, memorycap=60000, diskcap=3500):
         self.name = name
+
+        self.memorycap = memorycap
+        self.diskcap = diskcap
 
         self.ipaddr = ipaddr
         self.secret = secret
