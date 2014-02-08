@@ -666,18 +666,20 @@ class ResourcePlan(db.Model):
             return None
         vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
                      ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit, nickname=nickname)
+
         ipranges = node.ipranges + node.region.ipranges
         ipv4_rs = filter(lambda x: x.count_free_ips() > 0 and x.is_ipv6() == False, ipranges)
-        if not ipv4_rs or len(ipv4_rs) == 0:
-            return vps
-        ipv4_range = random.choice(ipv4_rs)
-        ipv4_range.assign_first_available(user, vps)
-        vps.init()
+        if ipv4_rs and len(ipv4_rs) > 0:
+            ipv4_range = random.choice(ipv4_rs)
+            ipv4_range.assign_first_available(user, vps)
         ipv6_rs = filter(lambda x: x.count_free_ips() > 0 and x.is_ipv6() == True, ipranges)
-        if not ipv6_rs or len(ipv6_rs) == 0:
-            return vps
-        ipv6_range = random.choice(ipv6_rs)
-        ipv6_range.assign_first_available(user, vps)
+        if ipv6_rs and len(ipv6_rs) > 0:
+            ipv6_range = random.choice(ipv6_rs)
+            ipv6_range.assign_first_available(user, vps)
+
+        if len(vps.ips) > 0:
+            vps.init()
+
         return vps
 
     def order_is_allowed(self, region, discount):
