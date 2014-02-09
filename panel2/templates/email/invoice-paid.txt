@@ -9,7 +9,7 @@ Invoice #{{ invoice.id }}:
 {% endfor %}
 Total due (USD): ${{ invoice.total_due() | strf("{0:.02f}") }}
 
-You may view the invoice at https://manage.tortois.es/invoice/{{ invoice.id }}.
+You may view the invoice at {{ config['MANAGEMENT_URL'] }}/invoice/{{ invoice.id }}.
 
 You may pay with PayPal, Bitcoins or a credit or debit card as a guest
 through PayPal.  Alternate payment arrangements can be made for large

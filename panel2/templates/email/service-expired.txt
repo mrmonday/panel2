@@ -11,14 +11,14 @@ the service will be deleted.
 
 To renew your service:
 
-1. Connect to the management portal at https://manage.tortois.es/
+1. Connect to the management portal at {{ config['MANAGEMENT_URL'] }}
 2. Select the service.
 3. Click "Renew" on the service dashboard.
 4. Pay the resulting invoice.
 
 If you do not want your service anymore:
 
-1. Connect to the management portal at https://manage.tortois.es/
+1. Connect to the management portal at {{ config['MANAGEMENT_URL'] }}
 2. Select the service.
 3. Click "Delete" on the service dashboard.
 4. Confirm that you wish to delete the service.

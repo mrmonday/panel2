@@ -15,6 +15,9 @@ from the use of this software.
 
 from panel2 import app as application
 
+# configure the application
+application.config.from_object(__name__)
+
 # plugins!
 from panel2.dns import dns
 from panel2.support import support
@@ -34,3 +37,6 @@ application.register_blueprint(vps, url_prefix='/vps')
 application.register_blueprint(invoice, url_prefix='/invoice')
 application.register_blueprint(status, url_prefix='/status')
 application.register_blueprint(profile, url_prefix='/account')
+
+application.config['COMPANY_NAME'] = 'YourCompany'
+application.config['MANAGEMENT_URL'] = 'https://manage.yourcompany.com'

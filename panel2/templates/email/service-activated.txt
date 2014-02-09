@@ -2,7 +2,6 @@
 {% block message %}This is a notification concerning the service {{ service.name }}.
 
 Your service is now active and available for use.  To manage this service,
-you can use our management platform, located at https://manage.tortois.es/
+you can use our management platform, located at {{ config['MANAGEMENT_URL'] }}
 
-Thank you for being a customer of TortoiseLabs.{% endblock %}
-
+Thank you for being a customer of {{ config['COMPANY_NAME'] }}.{% endblock %}
