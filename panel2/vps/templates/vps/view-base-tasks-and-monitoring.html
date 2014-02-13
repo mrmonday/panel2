@@ -1,17 +1,18 @@
-	<div class="span6 well">
-		<h4 class="pushdown">
-			Recent Tasks
-			<span class="pull-right">
+	<div class="span8 panel panel-warning">
+		<div class="panel-heading">
+			<span class="pull-right panel-btn">
 				<a href="{{ url_for('.jobs', vps=service.id) }}" class="btn btn-warning"><i class="icon-refresh"></i> Task Log</a>
 			</span>
-		</h4>
-		<div id="tasklog"></div>
+			<h4>Recent Tasks</h4>
+		</div>
+		<div class="panel-body" id="tasklog"></div>
 	</div>
 
-	<div class="span6 well">
-		<h4 class="pushdown">
-			Monitor Status
-		</h4>
+	<div class="span4 panel panel-danger">
+		<div class="panel-heading">
+			<h4>Monitor Status</h4>
+		</div>
+		<div class="panel-body">
 <table class="table table-striped">
 {% for monitor in service.probes %}
 <tr>
@@ -39,4 +40,5 @@
 </tr>
 {% endfor %}
 </table>
+		</div>
 	</div>
