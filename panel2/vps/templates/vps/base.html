@@ -1,10 +1,10 @@
 {% extends "base-scaffolding.html" %}
 {% set section = 'vServers' %}
 {% if service %}
-	{% set svclist = service.user.services %}
+	{% set svclist = service.user.vps %}
 {% else %}
 	{% if user %}
-		{% set svclist = user.services %}
+		{% set svclist = user.vps %}
 	{% endif %}
 {% endif %}
 
