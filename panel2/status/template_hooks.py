@@ -13,10 +13,15 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import Blueprint
+from jinja2 import environmentfunction
 
-status = Blueprint('status', __name__, template_folder='templates')
+from panel2 import app, db
+from panel2.status.models import Incident
 
-import panel2.status.models
-import panel2.status.views
-import panel2.status.template_hooks
+def incident_count(all=False):
+    if not all:
+        return Incident.query.filter_by(is_open=True).count()
+    return Incident.query.count()
+
+print "UPDATE SHIT"
+app.jinja_env.globals.update(incident_count=incident_count)
