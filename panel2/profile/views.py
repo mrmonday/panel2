@@ -13,7 +13,7 @@ implied.  In no event shall the authors be liable for any damages arising
 from the use of this software.
 """
 
-from flask import request, redirect, url_for, render_template
+from flask import request, redirect, url_for, render_template, jsonify
 
 from panel2 import db
 from panel2.profile import profile
@@ -21,7 +21,7 @@ from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node, Region
 from panel2.service import Service
-from panel2.invoice import Invoice
+from panel2.invoice import Invoice, DiscountCode
 
 import time
 
@@ -135,3 +135,23 @@ def view_tickets(username):
 def view_credits(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usercredits.html', user=user)
+
+@profile.route('/_couponcodes')
+@admin_required
+def coupons_list():
+    return render_template_or_json('profile/couponcodes.html', codes=DiscountCode.query.all())
+
+@profile.route('/_couponcodes/<code_id>/delete')
+@admin_required
+def coupon_delete(code_id):
+    code = DiscountCode.query.filter_by(id=code_id).first()
+    db.session.delete(code)
+    db.session.commit()
+
+    return redirect(url_for('.coupons_list'))
+
+@profile.route('/_couponcodes/_new', methods=['POST'])
+@admin_required
+def coupon_new():
+    code = DiscountCode(request.form['name'], float(request.form['amount']), request.form['type'])
+    return redirect(url_for('.coupons_list'))

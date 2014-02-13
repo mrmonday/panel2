@@ -1,0 +1,68 @@
+{% extends "profile/base.html" %}
+
+{% block headerbarcontent %}
+Coupon Codes
+<span class="pull-right">
+	<a href="#newCode" data-toggle="modal" class="btn btn-success"><i class="icon-plus"></i> Add Code</a>
+</span>
+{% endblock %}
+
+{% block component %}
+<div id="newCode" class="modal hide" tabindex="-1" role="dialog">
+	<form method="POST" action="{{ url_for('.coupon_new') }}">
+	<div class="modal-header">
+		<a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+		<h3>New Coupon Code</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-horizontal">
+			<div class="control-group">
+				<label for="name" class="control-label">Code</label>
+				<div class="controls">
+					<input type="text" name="name" id="name" class="input-block-level">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="amount" class="control-label">Value</label>
+				<div class="controls">
+					<input type="text" name="amount" id="amount" class="input-block-level">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="type" class="control-label">Classification</label>
+				<div class="controls">
+					<select name="type" id="type" class="input-block-level">
+						<option>percent</option>
+						<option>amount</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-success"><i class="icon-plus"></i> Add Code</button>
+	</div>
+	</form>
+</div>
+
+<table class="table table-striped">
+	<tr>
+		<th>Code</th>
+		<th>Value</th>
+		<th>Classification</th>
+		<th></th>
+	</tr>
+{% for code in codes %}
+	<tr>
+		<td>{{ code.name }}</td>
+		<td>{{ code.amount }}</td>
+		<td>{{ code.type }}</td>
+		<td>
+			<span class="pull-right">
+				<a href="{{ url_for('.coupon_delete', code_id=code.id) }}" class="btn btn-danger"><i class="icon-trash"></i></a>
+			</span>
+		</td>
+	</tr>
+{% endfor %}
+</table>
+{% endblock %}
