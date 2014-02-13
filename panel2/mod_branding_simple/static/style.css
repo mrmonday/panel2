@@ -44,3 +44,33 @@
 .box-selected {
 	background: url("/static/gray-noise.png") #ccc;
 }
+
+.panel {
+	margin: 0px 0px 1em;
+	box-shadow: none;
+	background: url('/static/gray-noise.png') repeat scroll 0% 0% #FFF;
+	border: 1px solid #DDD;
+	border-radius: 3px;
+	padding: 1em;
+	height: auto;
+}
+
+.panel-heading {
+	padding: 0 0.5em 0;
+	margin-top: -0.15em;
+	margin-bottom: 0.75em;
+}
+
+.panel-body {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+.panel-heading > .panel-btn {
+	margin-top: -0.25em;
+}
+
+.panel-noheader {
+	padding-top: 0.75em;
+	padding-bottom: 0.75em;
+}
