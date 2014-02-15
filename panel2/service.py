@@ -225,6 +225,20 @@ class IPAddress(db.Model):
         base = base + ">"
         return base
 
+    def update_ipnet(self, ipnet):
+        if self.ipnet == ipnet:
+            return
+
+        if ipnet:
+            self.ipnet_id = ipnet.id
+            self.ipnet = ipnet
+        else:
+            self.ipnet_id = None
+            self.ipnet = None
+
+        db.session.add(self)
+        db.session.commit()
+
     def update_service(self, service):
         if self.service == service:
             return
@@ -314,6 +328,8 @@ def IPAddressRef(ip, ipnet=None, user=None, service=None):
        creation of IP address records.'''
     ip_obj = IPAddress.query.filter_by(ip=ip).first()
     if ip_obj is not None:
+        if ipnet is not None:
+            ip_obj.update_ipnet(ipnet)
         if user is not None:
             ip_obj.update_user(user)
         if service is not None:
@@ -334,6 +350,10 @@ class IPRange(db.Model):
 
     def __repr__(self):
         return "<IPRange: {}>".format(self.network)
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def ipnet(self):
         return ipaddress.ip_network(self.network)
@@ -417,5 +437,10 @@ class ServiceIPRange(IPRange):
 
     def disassociate_child_ips(self):
         for ip in self.assigned_ips:
+            ip.update_ipnet(None)
             ip.update_user(None)
             ip.update_service(None)
+
+    def delete(self):
+        self.disassociate_child_ips()
+        IPRange.delete(self)
