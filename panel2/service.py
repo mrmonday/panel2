@@ -60,7 +60,6 @@ class Service(db.Model):
 
         db.session.delete(self)
         db.session.commit()
-        del self
 
     def create(self):
         pass
