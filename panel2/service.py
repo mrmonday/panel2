@@ -229,8 +229,12 @@ class IPAddress(db.Model):
         if self.service == service:
             return
 
-        self.service_id = service.id
-        self.service = service
+        if service:
+            self.service_id = service.id
+            self.service = service
+        else:
+            self.service_id = None
+            self.service = None
 
         db.session.add(self)
         db.session.commit()
@@ -239,8 +243,12 @@ class IPAddress(db.Model):
         if self.user == user:
             return
 
-        self.user_id = user.id
-        self.user = user
+        if user:
+            self.user_id = user.id
+            self.user = user
+        else:
+            self.user_id = None
+            self.user = None
 
         db.session.add(self)
         db.session.commit()
@@ -386,3 +394,28 @@ class IPRange(db.Model):
         return dict(network=self.network, version=self.ipnet().version,
                     gateway=self.gateway(), broadcast=self.broadcast(),
                     netmask=str(self.ipnet().netmask))
+
+class ServiceIPRange(IPRange):
+    __mapper_args__ = {'polymorphic_identity': 'service'}
+    service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
+    service = db.relationship('Service', backref='ipranges')
+
+    def __init__(self, network, service):
+        self.service = service
+        self.service_id = service.id
+        self.network = network
+
+        db.session.add(self)
+        db.session.commit()
+
+        self.associate_child_ips()
+
+    def associate_child_ips(self):
+        if not self.is_ipv6():
+            for ip in self.available_ips():
+                IPAddressRef(ip, self, self.service.user, self.service)
+
+    def disassociate_child_ips(self):
+        for ip in self.assigned_ips:
+            ip.update_user(None)
+            ip.update_service(None)
