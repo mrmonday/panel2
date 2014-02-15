@@ -3,6 +3,9 @@
 
 {% block headerbarcontent %}
 #{{ ticket.id }} - {{ ticket.subject }}
+<span class="pull-right">
+	<a href="#reply" class="btn btn-warning"><i class="icon-pencil"></i> Reply</a>
+</span>
 {% endblock %}
 
 {% block component %}
@@ -25,37 +28,41 @@
 	</tr>
 </table>
 
-<h3>Replies</h3>
-
 {% for reply in ticket.replies %}
-<div class="row-fluid ticket-row">
-	<div class="span2">
-		<div class="pull-right ticket-reply-source">
-			<img src="{{ reply.from_user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
-			<strong>{{ reply.from_user.username }}</strong><br>
-			{{ reply.replied_at | time_ago }}
-		</div>
+<div class="pushdown">
+<div class="panel panel-{{ "danger" if reply.from_user.is_admin else "primary" }}">
+	<div class="panel-heading">
+		<span class="pull-right panel-btn">
+			<a href="#" class="ticket-btn btn btn-danger">{{ reply.replied_at | time_ago }}</a>
+		</span>
+		<h4>
+			<img src="{{ reply.from_user.email | gravatar(32) }}" alt="gravatar" class="gravatar">
+			{{ reply.from_user.contact_name | default(reply.from_user.username, true) }}
+		</h4>
 	</div>
-	<div class="span10">
+	<div class="panel-body pushdown">
 		{{ reply.message | breakln | urlize }}
 	</div>
 </div>
+</div>
 {% endfor %}
 
+<a name="reply"></a>
+
 <form method="POST">
-<div class="row-fluid ticket-row">
-	<div class="span2">
-		<div class="pull-right ticket-reply-source">
-			<img src="{{ user.email | gravatar(64) }}" alt="gravatar" class="gravatar"><br>
-			<strong>{{ user.username }}</strong>
-		</div>
+<div class="panel panel-{{ "danger" if user.is_admin else "primary" }}">
+	<div class="panel-heading">
+		<span class="pull-right panel-btn">
+			<button type="submit" class="ticket-btn btn btn-primary"><i class="icon-pencil"></i> Reply</button>
+			<a href="{{ url_for('.close', ticket_id=ticket.id) }}" class="ticket-btn btn btn-primary"><i class="icon-remove"></i> Close</a>
+		</span>
+		<h4>
+			<img src="{{ user.email | gravatar(32) }}" alt="gravatar" class="gravatar">
+			{{ user.contact_name | default(user.username, true) }}
+		</h4>
 	</div>
-	<div class="span10">
+	<div class="panel-body">
 		<textarea name="message" placeholder="Reply here" class="ticket-reply-textarea span12"></textarea><br>
-		<div class="pull-right">
-			<button type="submit" class="btn btn-primary">Add Reply</button>
-			<a href="{{ url_for('.close', ticket_id=ticket.id) }}" class="btn">Close Ticket</a>
-		</div>
 	</div>
 </div>
 </form>
