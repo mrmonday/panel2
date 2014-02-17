@@ -381,6 +381,30 @@ class IPRange(db.Model):
         reserved_ips = db.session.query(func.count(IPAddress.id)).filter_by(ipnet_id=self.id).filter_by(reserved=True).first()[0]
         return self.usable_size() - used_ips - reserved_ips
 
+    def rdns_zone_name(self):
+        network_addr = self.ipnet().network_address
+        network_addr_int = int(network_addr._ip)
+
+        octets = []
+        for octet in xrange(4):
+            octets.insert(0, str(network_addr_int & 0xFF))
+            network_addr_int >>= 8
+        octets.reverse()
+
+        return '{0}.in-addr.arpa'.format('.'.join(octets[1:4]))
+
+    def rdns_discover(self):
+        from panel2.dns.models import Domain
+
+        zone = self.rdns_zone_name()
+        dom = Domain.query.filter_by(name=zone).first()
+        if not dom:
+            return
+
+        self.rdns_zone_id = dom.id
+        db.session.add(self)
+        db.session.commit()
+
     def available_ips(self):
         iplist = []
         if self.ipnet().version == 4:
@@ -429,6 +453,7 @@ class ServiceIPRange(IPRange):
         db.session.commit()
 
         self.associate_child_ips()
+        self.rdns_discover()
 
     def associate_child_ips(self):
         if not self.is_ipv6():
