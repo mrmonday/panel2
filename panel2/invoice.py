@@ -42,6 +42,7 @@ class DiscountCode(db.Model):
     name = db.Column(db.String(255))
     amount = db.Column(db.Float)
     type = db.Column(db.Enum('percent', 'amount'))
+    counter = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<DiscountCode: {}>'.format(self.name)
@@ -50,6 +51,7 @@ class DiscountCode(db.Model):
         self.name = name
         self.amount = amount
         self.type = type
+        self.counter = 0
 
         db.session.add(self)
         db.session.commit()
@@ -64,6 +66,11 @@ class DiscountCode(db.Model):
 
     def is_valid(self):
         return True
+
+    def increment_counter(self):
+        self.counter += 1
+        db.session.add(self)
+        db.session.commit()
 
 def get_discount_code(codename):
     code = DiscountCode.query.filter_by(name=codename).first()
