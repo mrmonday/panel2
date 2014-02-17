@@ -72,6 +72,16 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 
 {% if invoice.is_finalized %}
 {% if not invoice.payment_ts %}
+<span class="pull-right">
+	<a href="#paymentBox" data-toggle="modal" class="btn btn-large btn-primary"><i class="icon-usd"></i> Pay Invoice</a>
+</span>
+{% endif %}
+
+<div class="modal hide" id="paymentBox">
+<div class="modal-header">
+	<h3>Choose a Payment Method</h3>
+</div>
+<div class="modal-body text-center">
 <!-- PayPal button -->
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 	<input type="hidden" name="business" value="{{ config['PAYPAL_EMAIL'] }}">
@@ -82,35 +92,61 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 	<input type="hidden" name="currency_code" value="USD">
 	<input type="hidden" name="charset" value="utf-8">
 	<input type="hidden" name="cpp_header_image" value="https://manage.tortois.es/branding/static/logo.png">
-	<button type="submit" class="pull-right btn btn-large btn-primary">Pay in USD with PayPal</button>
+	<button type="submit" class="btn btn-large btn-primary">Pay with PayPal</button>
 </form>
 
 {% if config['STRIPE_PUBLIC_KEY'] %}
+<hr>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
 <!-- Stripe payment -->
-<form action="/invoice/{{ invoice.id }}/stripe_pay" method="POST">
+<form action="/invoice/{{ invoice.id }}/stripe_pay" method="POST" id="stripePayment">
   <input type="hidden" name="amount" value="{{ invoice.total_due() | strf("{0:.2f}") | replace(".", "") }}">  <!-- stripe wants to know the amount of cents, not dollars -->
   <!-- https://stripe.com/docs/checkout#integration-simple-options - we collect billing addresses -->
-  <script
-    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-    data-key="{{ config['STRIPE_PUBLIC_KEY'] }}"
-    data-image="/static/favicon.ico"
-    data-name="TortoiseLabs"
-    data-description="Invoice {{ invoice.id }} Payment ({{ invoice.user.username }})"
-    data-amount="{{ invoice.total_due() | strf("{0:.2f}") | replace(".", "") }}"
-    data-billingAddress="true"
-    data-currency="USD">
+  <button id="stripeCheckoutButton" class="btn btn-large btn-success">Pay with Card (using Stripe)</button>
+  <script>
+    var handler = StripeCheckout.configure({
+      key: "{{ config['STRIPE_PUBLIC_KEY'] }}",
+      name: "{{ config['COMPANY_NAME'] }}",
+      token: function(token, args) {
+        var $form = $("#stripePayment");
+
+        $form.append($('<input type="hidden" name="stripeToken" />').val(token.id));
+        $form.get(0).submit();
+      }
+    });
+
+    $("#stripeCheckoutButton").click(function(e) {
+      handler.open({
+        name: "{{ config['COMPANY_NAME'] }}",
+        description: "Invoice {{ invoice.id }} Payment ({{ invoice.user.username }})",
+        amount: {{ invoice.total_due() * 100 }},
+        billingAddress: true,
+        email: "{{ invoice.user.email }}",
+        currency: "USD",
+      });
+
+      e.preventDefault();
+    });
   </script>
 </form>
 {% endif %}
 
-<h4 style="clear: left;">
-	{% set btc_adr = invoice.bitcoin_address() %}
-	{% if btc_adr %}
-		<img src="/static/invoice/bitcoin.png" alt="Bitcoin Address" style="float: left;">
-		<div style="padding-top: 0.4em">Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC (beta) to: {{ invoice.bitcoin_address() }}</div>
-	{% endif %}
+{% set btc_adr = invoice.bitcoin_address() %}
+{% if btc_adr %}
+<hr>
+
+<img src="/static/invoice/bitcoin.png" alt="Bitcoin Address">
+<div style="padding-top: 0.4em">
+				Pay {{ invoice.total_btc_due() | strf("{0:.4f}") }} BTC to<br>
+				{{ invoice.bitcoin_address() }}
+</div>
 </h4>
+
 {% endif %}
+</div>
+</div>
 {% endif %}
 
 {% endblock %}
