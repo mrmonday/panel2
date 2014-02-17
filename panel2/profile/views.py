@@ -21,7 +21,7 @@ from panel2.user import User, admin_required
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node, Region
 from panel2.service import Service
-from panel2.invoice import Invoice, DiscountCode
+from panel2.invoice import Invoice, DiscountCode, ServiceCreditItem
 
 import time
 
@@ -135,6 +135,13 @@ def view_tickets(username):
 def view_credits(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usercredits.html', user=user)
+
+@profile.route('/<username>/credits/new', methods=['POST'])
+@admin_required
+def add_credit(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    ServiceCreditItem(user, float(request.form['amount']), request.form['description'])
+    return redirect(url_for('.view_credits', username=username))
 
 @profile.route('/_couponcodes')
 @admin_required

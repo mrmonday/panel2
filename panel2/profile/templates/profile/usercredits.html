@@ -1,6 +1,11 @@
 {% extends "profile/userviewbase.html" %}
 {% set subtitle='Credits' %}
 
+{% block headerbarbuttons %}
+<a href="#addCredit" class="btn btn-primary" data-toggle="modal"><i class="icon-plus"></i> Add Credit</a>
+{{ super() }}
+{% endblock %}
+
 {% block subcomponent %}
 
 <table class="table table-striped">
@@ -18,7 +23,7 @@
 <tr>
 	<td>{{ credit.id }}</td>
 	<td>{{ credit.description }}</td>
-	<td>{{ credit.amount }}</td>
+	<td>${{ credit.amount | strf("{0:.2f}") }}</td>
 	<td>
 		<span class="pull-right">
 			${{ balance | strf("{0:.2f}") }}
@@ -27,5 +32,32 @@
 </tr>
 {% endfor %}
 </table>
+
+<div class="modal hide" id="addCredit">
+	<form method="POST" action="{{ url_for('.add_credit', username=user.username) }}">
+	<div class="modal-header">
+		<h3>Add Credit</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-horizontal">
+			<div class="control-group">
+				<label for="amount" class="control-label">Amount</label>
+				<div class="controls">
+					<input type="text" name="amount" id="amount" class="input-block-level">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="description" class="control-label">Description</label>
+				<div class="controls">
+					<input type="text" name="description" id="description" class="input-block-level">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary"><i class="icon-plus"></i> Add Credit</button>
+	</div>
+	</form>
+</div>
 
 {% endblock %}

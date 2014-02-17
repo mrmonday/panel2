@@ -5,8 +5,10 @@
 	<img class="gravatar" src="{{ user.email | gravatar(40) }}" alt="{{ user.username }}'s gravatar">
 	{{ user.username }}
 	<span class="pull-right">
+		{% block headerbarbuttons %}
 		<a href="{{ url_for("support.message", username=user.username) }}" class="btn btn-success"><i class="icon-envelope"></i> Message</a>
 		<a href="{{ url_for(".new_invoice", username=user.username) }}" class="btn btn-warning"><i class="icon-usd"></i> New Invoice</a>
+		{% endblock %}
 	</span>
 {% endblock %}
 
