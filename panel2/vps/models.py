@@ -664,7 +664,7 @@ class ResourcePlan(db.Model):
         node = region.available_node(self.memory, self.disk)
         if not node:
             return None
-        vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price), node, user,
+        vps = XenVPS(name, self.memory, self.swap, self.disk, discount.translate_price(self.price, True), node, user,
                      ipv4_limit=self.ipv4_limit, ipv6_limit=self.ipv6_limit, nickname=nickname)
 
         ipranges = node.ipranges + node.region.ipranges

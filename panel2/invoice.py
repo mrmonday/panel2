@@ -31,11 +31,14 @@ class DummyDiscountCode(object):
     def __repr__(self):
         return '<DummyDiscountCode>'
 
-    def translate_price(self, price):
+    def translate_price(self, price, increment=False):
         return price
 
     def is_valid(self):
         return False
+
+    def increment_counter(self):
+        pass
 
 class DiscountCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,11 +59,14 @@ class DiscountCode(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def translate_price(self, price):
+    def translate_price(self, price, increment=False):
         if self.type == 'percent':
             return price - (price * (self.amount / 100.))
         elif self.type == 'amount':
             return price - self.amount
+
+        if increment:
+            self.increment_counter()
 
         return price
 
