@@ -60,13 +60,13 @@ class DiscountCode(db.Model):
         db.session.commit()
 
     def translate_price(self, price, increment=False):
+        if increment:
+            self.increment_counter()
+
         if self.type == 'percent':
             return price - (price * (self.amount / 100.))
         elif self.type == 'amount':
             return price - self.amount
-
-        if increment:
-            self.increment_counter()
 
         return price
 
