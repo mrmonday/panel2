@@ -300,3 +300,34 @@ def require_permission(f, permission):
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
+
+core_permissions_table = {
+    'account:auspex': 'View account-specific details',
+    'account:sendmsg': 'Open a ticket for a specific account',
+
+    'invoice:create': 'Create invoices for accounts',
+    'invoice:delete': 'Delete invoices',
+    'invoice:mark_paid': 'Mark invoices as paid',
+    'invoice:push_credit': 'Push service credits',
+
+    'vps:auspex': 'View VPS owned by another account',
+    'vps:modify': 'Modify VPS owned by another account',
+    'vps:node_auspex': 'View VPS node details',
+    'vps:node_create': 'Create new VPS nodes',
+
+    'dns:auspex': 'View DNS zones owned by another account',
+    'dns:modify': 'Modify DNS zones owned by another account',
+
+    'status:create': 'Create an incident on status site',
+    'status:modify': 'Add a posting to a status site incident',
+}
+
+get_permissions_tables = blinker.Signal('A signal which is fired when we want to retrieve permissions tables')
+
+@get_permissions_tables.connect_via(app)
+def get_core_permissions_table(*args, **kwargs):
+    return core_permissions_table
+
+def get_all_permissions():
+    results = get_permissions_tables.send(app)
+    return reduce(lambda x, y: x + y, [x[1] for x in results])
