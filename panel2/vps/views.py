@@ -25,7 +25,7 @@ from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.dns.views import is_valid_host
 from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile, HVMISOImage
-from panel2.user import login_required, admin_required, get_session_user, User, Session
+from panel2.user import login_required, admin_required, get_session_user, User, Session, require_permission
 from panel2.invoice import Invoice, get_discount_code
 from panel2.utils import render_template_or_json
 from ediarpc.rpc_client import ServerProxy
@@ -42,14 +42,16 @@ template_map = {
     'gentoo_login.xml': 'Gentoo (minimal)',
 }
 
-def can_access_vps(vps, user=None):
+def can_access_vps(vps, user=None, modify=False):
     if user is None:
         user = get_session_user()
-    if user.is_admin is True:
+    if vps.user == user:
         return True
-    if vps.user != user:
-        return False
-    return True
+    if not modify and user.has_permission('vps:auspex'):
+        return True
+    if modify and user.has_permission('vps:modify'):
+        return True
+    return False
 
 @vps.route('/')
 @vps.route('/list')
@@ -59,14 +61,12 @@ def list():
     return render_template_or_json('vps/list.html', vpslist=filter(lambda x: x.type == 'xenvps', user.services))
 
 @vps.route('/list/all')
-@login_required
-@admin_required
+@require_permission('vps:auspex')
 def list_all():
     return render_template_or_json('vps/list-all.html', vpslist=XenVPS.query.order_by(XenVPS.id))
 
 @vps.route('/list/u/<user>')
-@login_required
-@admin_required
+@require_permission('vps:auspex')
 def list_user(user):
     u = User.query.filter_by(username=user).first()
     return render_template_or_json('vps/list.html', vpslist=filter(lambda x: x.type == 'xenvps', u.services))
@@ -274,7 +274,7 @@ def adm_delete(vps):
     return redirect(url_for('.list'))
 
 @vps.route('/<vps>/suspend')
-@admin_required
+@require_permission('vps:modify')
 def suspend(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
@@ -285,7 +285,7 @@ def suspend(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/properties', methods=['GET', 'POST'])
-@admin_required
+@require_permission('vps:modify')
 def properties(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
@@ -314,7 +314,7 @@ def properties(vps):
     return render_template_or_json('vps/view-properties.html', service=vps)
 
 @vps.route('/<vps>/tor-whitelist')
-@admin_required
+@require_permission('vps:modify')
 def tor_whitelist(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
@@ -328,7 +328,7 @@ def tor_whitelist(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/entitle')
-@admin_required
+@require_permission('vps:modify')
 def entitle(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
@@ -339,7 +339,7 @@ def entitle(vps):
     return redirect(url_for('.view', vps=vps.id))
 
 @vps.route('/<vps>/reinitialize')
-@admin_required
+@require_permission('vps:modify')
 def reinitialize(vps):
     vps = XenVPS.query.filter_by(id=vps).first()
     if vps is None:
