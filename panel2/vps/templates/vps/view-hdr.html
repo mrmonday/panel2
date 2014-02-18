@@ -59,7 +59,7 @@ $(document).ready(function() {
 			<li>
 				<a href="{{ url_for('.ip_admin', vps=service.id) }}">IP Management</a>
 			</li>
-			{% if user.is_admin %}
+			{% if user.has_permission('vps:modify') %}
 			<li class="divider"></li>
 			<li>
 				<a href="{{ url_for('.suspend', vps=service.id) }}">Suspend</a>

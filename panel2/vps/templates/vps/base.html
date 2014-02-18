@@ -16,7 +16,7 @@
 	<ul class="nav nav-list">
 		<li style="display: block; text-align: center;"><i class="bigicon icon-cloud text-info"></i></li>
 		<li><a href="{{ url_for('.signup') }}" class="btn btn-success" style="margin: 0; color: #fff">New Server</a></li>
-		{% if user and user.is_admin %}
+		{% if user and user.has_permission('vps:auspex') %}
 		<li><a href="{{ url_for('.list_all') }}"><i class="icon-lock"></i> View All Servers</a></li>
 		{% endif %}
 
