@@ -19,6 +19,7 @@ from panel2.invoice import InvoiceItem, ServiceCreditItem, invoice_item_paid_sig
 
 from sqlalchemy import func
 
+import math
 import ipaddress
 import time
 import random
@@ -115,7 +116,7 @@ class Service(db.Model):
         return (self.expiry - time.time()) / unit
 
     def hourly_rate(self):
-        return round(self.price / (self.reservation_length(unit=3600)), 2)
+        return round(self.price / (self.reservation_length(unit=3600)), 4)
 
     def refund_amount(self):
         if not self.expiry:
@@ -124,7 +125,7 @@ class Service(db.Model):
             return 0
         if self.expiry < time.time():
             return 0
-        return round(self.hourly_rate() * (round(self.reservation_remaining(unit=3600))), 2)
+        return round(self.hourly_rate() * (math.floor(self.reservation_remaining(unit=3600))), 2)
 
 @invoice_item_paid_signal.connect_via(app)
 def service_update_expiry(*args, **kwargs):
