@@ -21,9 +21,11 @@
 	<td>${{ invoice.total_due() | strf("{0:.2f}") }}</td>
 	<td>
 		<span class="pull-right btn-group">
+			{% if user.has_permission('account:auspex') %}
 			<a href="{{ url_for('invoice.view', invoice_id=invoice.id) }}" class="btn btn-primary">View</a>
-			{% if user.is_admin %}
-				<a href="{{ url_for('invoice.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
+			{% endif %}
+			{% if user.has_permission('invoice:mark_paid') %}
+			<a href="{{ url_for('invoice.credit', invoice_id=invoice.id) }}" class="btn btn-danger">Mark Paid</a>
 			{% endif %}
 		</span>
 	</td>

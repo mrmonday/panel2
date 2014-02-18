@@ -17,7 +17,7 @@ from flask import request, redirect, url_for, render_template, jsonify
 
 from panel2 import db
 from panel2.profile import profile
-from panel2.user import User, admin_required
+from panel2.user import User, require_permission
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node, Region
 from panel2.service import Service
@@ -38,35 +38,35 @@ profile_nav.register('Delinquent Services', 'icon-usd', 'profile.delinquent_serv
 profile_nav.register('Coupon Codes', 'icon-usd', 'profile.coupons_list', True, 'coupon:auspex')
 
 @profile.route('/')
-@admin_required
+@require_permission('account:auspex')
 def list():
     users = User.query
     return render_template_or_json('profile/userlist.html', profile_nav=profile_nav, users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
 
 @profile.route('/_list/filter/paid')
-@admin_required
+@require_permission('account:auspex')
 def list_paid():
     users = filter(lambda x: x.total_revenue() > 0, User.query)
     return render_template_or_json('profile/userlist.html', profile_nav=profile_nav, users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
 
 @profile.route('/_list/filter/free')
-@admin_required
+@require_permission('account:auspex')
 def list_free():
     users = filter(lambda x: x.total_revenue() == 0 and len(x.services) > 0, User.query)
     return render_template_or_json('profile/userlist.html', profile_nav=profile_nav, users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
 
 @profile.route('/_list/filter/active')
-@admin_required
+@require_permission('account:auspex')
 def list_active():
     users = filter(lambda x: len(x.services) > 0, User.query)
     return render_template_or_json('profile/userlist.html', profile_nav=profile_nav, users=users,
            revenue_sum=sum([user.total_revenue() for user in users]))
 
 @profile.route('/_statistics/node/_new', methods=['GET', 'POST'])
-@admin_required
+@require_permission('vps:node_create')
 def node_new():
     if request.method == 'POST':
         region = Region.query.filter_by(id=int(request.form['region_id'])).first()
@@ -77,7 +77,7 @@ def node_new():
     return render_template('profile/nodenew.html', profile_nav=profile_nav, regions=Region.query.filter_by(hidden=False).all())
 
 @profile.route('/_statistics/node')
-@admin_required
+@require_permission('vps:node_auspex')
 def node_stats():
     nodes = Node.query
     revenue = dict()
@@ -86,13 +86,13 @@ def node_stats():
     return render_template_or_json('profile/nodestats.html', profile_nav=profile_nav, nodes=nodes, revenue=revenue)
 
 @profile.route('/_statistics/node/<node>')
-@admin_required
+@require_permission('vps:node_auspex')
 def node_info(node):
     node = Node.query.filter_by(id=node).first_or_404()
     return render_template_or_json('profile/nodeinfo.html', profile_nav=profile_nav, node=node)
 
 @profile.route('/_statistics/node/<node>/_togglelock')
-@admin_required
+@require_permission('vps:node_lock')
 def node_lock(node):
     node = Node.query.filter_by(id=node).first_or_404()
     if node.locked:
@@ -104,7 +104,7 @@ def node_lock(node):
     return redirect(url_for('.node_stats'))
 
 @profile.route('/_services/delinquent')
-@admin_required
+@require_permission('account:auspex')
 def delinquent_services():
     delinquent = Service.query.filter(Service.expiry < time.time())
     return render_template_or_json('profile/servicelist.html', profile_nav=profile_nav, svslist=delinquent,
@@ -112,56 +112,56 @@ def delinquent_services():
 
 @profile.route('/<username>')
 @profile.route('/<username>/index')
-@admin_required
+@require_permission('account:auspex')
 def view_base(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/userview.html', profile_nav=profile_nav, user=user)
 
 @profile.route('/<username>/invoices')
-@admin_required
+@require_permission('account:auspex')
 def view_invoices(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/userinvoices.html', profile_nav=profile_nav, user=user)
 
 @profile.route('/<username>/invoices/new')
-@admin_required
+@require_permission('invoice:create')
 def new_invoice(username):
     user = User.query.filter_by(username=username).first_or_404()
     inv = Invoice(user)
     return redirect(url_for('invoice.view', invoice_id=inv.id))
 
 @profile.route('/<username>/services')
-@admin_required
+@require_permission('account:auspex')
 def view_services(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/userservices.html', profile_nav=profile_nav, user=user)
 
 @profile.route('/<username>/tickets')
-@admin_required
+@require_permission('account:auspex')
 def view_tickets(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usertickets.html', profile_nav=profile_nav, user=user)
 
 @profile.route('/<username>/credits')
-@admin_required
+@require_permission('account:auspex')
 def view_credits(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usercredits.html', profile_nav=profile_nav, user=user)
 
 @profile.route('/<username>/credits/new', methods=['POST'])
-@admin_required
+@require_permission('invoice:push_credit')
 def add_credit(username):
     user = User.query.filter_by(username=username).first_or_404()
     ServiceCreditItem(user, float(request.form['amount']), request.form['description'])
     return redirect(url_for('.view_credits', username=username))
 
 @profile.route('/_couponcodes')
-@admin_required
+@require_permission('coupon:auspex')
 def coupons_list():
     return render_template_or_json('profile/couponcodes.html', profile_nav=profile_nav, codes=DiscountCode.query.all())
 
 @profile.route('/_couponcodes/<code_id>/delete')
-@admin_required
+@require_permission('coupon:modify')
 def coupon_delete(code_id):
     code = DiscountCode.query.filter_by(id=code_id).first()
     db.session.delete(code)
@@ -170,7 +170,7 @@ def coupon_delete(code_id):
     return redirect(url_for('.coupons_list'))
 
 @profile.route('/_couponcodes/_new', methods=['POST'])
-@admin_required
+@require_permission('coupon:modify')
 def coupon_new():
     code = DiscountCode(request.form['name'], float(request.form['amount']), request.form['type'])
     return redirect(url_for('.coupons_list'))

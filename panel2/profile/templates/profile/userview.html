@@ -23,7 +23,7 @@
 		</div>
 	</div>
 	<div class="span9">
-		{{ 'Admin' if user.is_admin else 'User' }}
+		{{ 'Privileged' if user.has_any_permission() else 'User' }}
 	</div>
 </div>
 

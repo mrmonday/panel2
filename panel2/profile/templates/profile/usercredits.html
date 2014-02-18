@@ -2,7 +2,9 @@
 {% set subtitle='Credits' %}
 
 {% block headerbarbuttons %}
+{% if user.has_permission('invoice:push_credit') %}
 <a href="#addCredit" class="btn btn-primary" data-toggle="modal"><i class="icon-plus"></i> Add Credit</a>
+{% endif %}
 {{ super() }}
 {% endblock %}
 
@@ -33,6 +35,7 @@
 {% endfor %}
 </table>
 
+{% if user.has_permission('invoice:push_credit') %}
 <div class="modal hide" id="addCredit">
 	<form method="POST" action="{{ url_for('.add_credit', username=user.username) }}">
 	<div class="modal-header">
@@ -59,5 +62,6 @@
 	</div>
 	</form>
 </div>
+{% endif %}
 
 {% endblock %}
