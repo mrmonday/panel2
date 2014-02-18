@@ -50,6 +50,7 @@ Coupon Codes
 		<th>Code</th>
 		<th>Value</th>
 		<th>Classification</th>
+		<th>Counter</th>
 		<th></th>
 	</tr>
 {% for code in codes %}
@@ -57,6 +58,7 @@ Coupon Codes
 		<td>{{ code.name }}</td>
 		<td>{{ code.amount }}</td>
 		<td>{{ code.type }}</td>
+		<td>{{ code.counter }}</td>
 		<td>
 			<span class="pull-right">
 				<a href="{{ url_for('.coupon_delete', code_id=code.id) }}" class="btn btn-danger"><i class="icon-trash"></i></a>
