@@ -35,7 +35,7 @@ profile_nav.register('Accounts with Active Services', 'icon-user', 'profile.list
 profile_nav.register('Node Statistics', 'icon-cloud', 'profile.node_stats', True, 'vps:node_auspex')
 profile_nav.register('Delinquent Services', 'icon-usd', 'profile.delinquent_services', True, 'account:auspex')
 
-profile_nav.register('Coupon Codes', 'icon-usd', 'profile.coupon_codes', True, 'coupons:auspex')
+profile_nav.register('Coupon Codes', 'icon-usd', 'profile.coupons_list', True, 'coupon:auspex')
 
 @profile.route('/')
 @admin_required
