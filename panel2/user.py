@@ -210,6 +210,9 @@ class User(db.Model):
         ipset = filter(lambda x: x.ip == ip, self.ips)
         return len(ipset) > 0
 
+    def has_permission(self, permission):
+        return (Permission.query.filter_by(user_id=self.id).filter_by(permission=permission).count() > 0)
+
 def is_api_session():
     return True if request.authorization else False
 
@@ -262,6 +265,36 @@ def admin_required(f):
         if user is None:
             return redirect(url_for('login'))
         if user.is_admin is not True:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+class Permission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='permissions')
+
+    permission = db.Column(db.String(255))
+
+    def __init__(self, user, permission):
+        self.user_id = user.id
+        self.user = user
+        self.permission = permission
+
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Permission: {0}>".format(self.permission)
+
+def require_permission(f, permission):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user = get_session_user()
+        if user is None:
+            return redirect(url_for('login'))
+        if user.has_permission(permission) is not True:
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
