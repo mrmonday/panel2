@@ -322,6 +322,9 @@ core_permissions_table = {
 
     'status:create': 'Create an incident on status site',
     'status:modify': 'Add a posting to a status site incident',
+
+    'coupon:auspex': 'View coupon codes',
+    'coupon:modify': 'Modify coupon codes',
 }
 
 get_permissions_tables = blinker.Signal('A signal which is fired when we want to retrieve permissions tables')
