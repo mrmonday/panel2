@@ -216,7 +216,7 @@ class User(db.Model):
         return (Permission.query.filter_by(user_id=self.id).filter_by(permission=permission).count() > 0)
 
     def has_any_permission(self):
-        return (len(user.permissions) > 0)
+        return (len(self.permissions) > 0)
 
 def is_api_session():
     return True if request.authorization else False
