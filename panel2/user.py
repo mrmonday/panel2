@@ -116,7 +116,7 @@ class User(db.Model):
         createuser_signal.send(app, user=self)
 
     def __repr__(self):
-        return "<User '%s'>%s" % (self.username, (" {admin}" if self.is_admin is True else ""))
+        return "<User '%s'>%s" % (self.username, (" {admin}" if self.has_any_permission() is True else ""))
 
     def _get_pbkdf2_hash(self, password):
         return pbkdf2_hex(password, self.salt, 1000, 64, hashlib.sha512)
@@ -215,6 +215,9 @@ class User(db.Model):
             return True
         return (Permission.query.filter_by(user_id=self.id).filter_by(permission=permission).count() > 0)
 
+    def has_any_permission(self):
+        return (len(user.permissions) > 0)
+
 def is_api_session():
     return True if request.authorization else False
 
@@ -266,7 +269,7 @@ def admin_required(f):
         user = get_session_user()
         if user is None:
             return redirect(url_for('login'))
-        if user.is_admin is not True:
+        if not user.has_any_permission():
             abort(403)
         return f(*args, **kwargs)
     return decorated_function

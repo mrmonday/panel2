@@ -41,7 +41,7 @@ class NavigationManager(object):
     def items(self, is_admin=False):
         u = get_session_user()
         if not is_admin and u is not None:
-            is_admin = u.is_admin
+            is_admin = u.has_any_permission()
         lst = self.__navitems__
         if not is_admin:
             lst = filter(lambda x: x.requires_admin == False, lst)
