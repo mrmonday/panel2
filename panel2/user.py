@@ -290,16 +290,18 @@ class Permission(db.Model):
     def __repr__(self):
         return "<Permission: {0}>".format(self.permission)
 
-def require_permission(f, permission):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        user = get_session_user()
-        if user is None:
-            return redirect(url_for('login'))
-        if user.has_permission(permission) is not True:
-            abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
+def require_permission(permission):
+    def outer_decorator(f):
+        @wraps(f)
+        def inner_decorator(*args, **kwargs):
+            user = get_session_user()
+            if user is None:
+                return redirect(url_for('login'))
+            if user.has_permission(permission) is not True:
+                abort(403)
+            return f(*args, **kwargs)
+        return inner_decorator
+    return outer_decorator
 
 core_permissions_table = {
     'account:auspex': 'View account-specific details',
