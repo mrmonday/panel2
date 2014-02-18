@@ -5,13 +5,9 @@
 {% block subnav %}
 <nav id="subnav">
 <ul class="nav nav-list">
-	<li><a href="{{ url_for('.list') }}"><i class="icon-lock"></i> Account List</a></li>
-	<li><a href="{{ url_for('.list_paid') }}"><i class="icon-lock"></i> Paid Accounts</a></li>
-	<li><a href="{{ url_for('.list_free') }}"><i class="icon-lock"></i> Free Accounts</a></li>
-	<li><a href="{{ url_for('.list_active') }}"><i class="icon-lock"></i> All with Active Services</a></li>
-	<li><a href="{{ url_for('.node_stats') }}"><i class="icon-lock"></i> Node Statistics</a></li>
-	<li><a href="{{ url_for('.delinquent_services') }}"><i class="icon-lock"></i> Delinquent Services</a></li>
-	<li><a href="{{ url_for('.coupons_list') }}"><i class="icon-lock"></i> Coupon Codes</a></li>
+	{% for link in profile_nav.items() %}
+	<li><a href="{{ url_for(link.endpoint) }}"><i class="{{ link.icon }}"></i> {{ link.title }}</a></li>
+	{% endfor %}
 </ul>
 </nav>
 {% endblock %}
