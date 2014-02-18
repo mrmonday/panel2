@@ -37,14 +37,16 @@ def is_valid_host(host):
         checkhost = host[2:]
     return bool(is_valid_host._re.match(checkhost))
 
-def user_can_access_domain(domain, user=None):
+def user_can_access_domain(domain, user=None, modify=False):
     if user is None:
         user = get_session_user()
-    if user.has_permission('dns:auspex') is True:
+    if domain.user == user:
         return True
-    if domain.user != user:
-        return False
-    return True
+    if not modify and user.has_permission('dns:auspex'):
+        return True
+    if modify and user.has_permission('dns:modify'):
+        return True
+    return False
 
 @dns.route('/')
 @dns.route('/zones')
@@ -70,7 +72,7 @@ def view_domain(zone_id):
 @login_required
 def edit_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first_or_404()
-    if user_can_access_domain(domain) is False:
+    if user_can_access_domain(domain, modify=True) is False:
         abort(403)
     record_obj = Record.query.filter_by(domain_id=domain.id, id=record_id).first_or_404()
     if request.method == 'POST':
@@ -105,7 +107,7 @@ def new_domain():
 @login_required
 def new_record(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first_or_404()
-    if user_can_access_domain(domain) is False:
+    if user_can_access_domain(domain, modify=True) is False:
         abort(403)
     if request.method == 'POST':
         full_name = domain.full_name(request.form['subdomain'])
@@ -124,7 +126,7 @@ def new_record(zone_id):
 @login_required
 def delete_record(zone_id, record_id):
     domain = Domain.query.filter_by(id=zone_id).first_or_404()
-    if user_can_access_domain(domain) is False:
+    if user_can_access_domain(domain, modify=True) is False:
         abort(403)
     Record.query.filter_by(domain_id=domain.id, id=record_id).delete()
     db.session.commit()
@@ -135,7 +137,7 @@ def delete_record(zone_id, record_id):
 @login_required
 def delete_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first_or_404()
-    if user_can_access_domain(domain) is False:
+    if user_can_access_domain(domain, modify=True) is False:
         abort(403)
 
     # Surprise, surprise!  The SQLAlchemy documentation lies.
@@ -155,7 +157,7 @@ def delete_domain(zone_id):
 @login_required
 def import_domain(zone_id):
     domain = Domain.query.filter_by(id=zone_id).first_or_404()
-    if user_can_access_domain(domain) is False:
+    if user_can_access_domain(domain, modify=True) is False:
         abort(403)
     if request.method == 'POST':
         def record_callback(pname, qtype, ttl, prio, content):
