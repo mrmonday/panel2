@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div class="span9">
-		{{ user.email }}
+		{{ subject.email }}
 	</div>
 </div>
 
@@ -23,7 +23,7 @@
 		</div>
 	</div>
 	<div class="span9">
-		{{ 'Privileged' if user.has_any_permission() else 'User' }}
+		{{ 'Privileged' if subject.has_any_permission() else 'User' }}
 	</div>
 </div>
 
@@ -35,7 +35,7 @@
 	<th>IP</th>
 	<th>Session Challenge</th>
 </tr>
-{% for session in user.sessions %}
+{% for session in subject.sessions %}
 <tr>
 	<td>{{ session.id }}</td>
 	<td>{{ session.host }}</td>

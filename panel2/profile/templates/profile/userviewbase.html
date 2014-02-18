@@ -1,13 +1,17 @@
 {% extends "profile/base.html" %}
-{% block title %}{{ user.username }} - Accounts{% endblock %}
+{% block title %}{{ subject.username }} - Accounts{% endblock %}
 
 {% block headerbarcontent %}
-	<img class="gravatar" src="{{ user.email | gravatar(40) }}" alt="{{ user.username }}'s gravatar">
-	{{ user.username }}
+	<img class="gravatar" src="{{ subject.email | gravatar(40) }}" alt="{{ user.username }}'s gravatar">
+	{{ subject.username }}
 	<span class="pull-right">
 		{% block headerbarbuttons %}
-		<a href="{{ url_for("support.message", username=user.username) }}" class="btn btn-success"><i class="icon-envelope"></i> Message</a>
-		<a href="{{ url_for(".new_invoice", username=user.username) }}" class="btn btn-warning"><i class="icon-usd"></i> New Invoice</a>
+		{% if user.has_permission('account:sendmsg') %}
+		<a href="{{ url_for("support.message", username=subject.username) }}" class="btn btn-success"><i class="icon-envelope"></i> Message</a>
+		{% endif %}
+		{% if user.has_permission('invoice:create') %}
+		<a href="{{ url_for(".new_invoice", username=subject.username) }}" class="btn btn-warning"><i class="icon-usd"></i> New Invoice</a>
+		{% endif %}
 		{% endblock %}
 	</span>
 {% endblock %}
@@ -19,6 +23,9 @@
 	<li{{ ' class="active"'|safe if subtitle == 'Services' else '' }}><a href="{{ url_for('.view_services', username=user.username) }}">Services</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Tickets' else '' }}><a href="{{ url_for('.view_tickets', username=user.username) }}">Tickets</a></li>
 	<li{{ ' class="active"'|safe if subtitle == 'Credits' else '' }}><a href="{{ url_for('.view_credits', username=user.username) }}">Credits</a></li>
+	{% if user.is_admin %}
+	<li{{ ' class="active"'|safe if subtitle == 'Permissions' else '' }}><a href="#">Permissions</a></li>
+	{% endif %}
 </ul>
 
 {{ self.subcomponent() }}

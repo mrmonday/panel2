@@ -12,10 +12,10 @@
 			<span class="pull-right">Options</span>
 		</th>
 	</tr>
-	{% for ticket in user.tickets %}
+	{% for ticket in subject.tickets %}
 	<tr>
 		<td class="span1">{{ ticket.id }}</td>
-		<td class="span8">{{ ticket.subject }}</td>
+		<td class="span8">{{ ticket.user }}</td>
 		<td class="span1">{{ ticket.user.username }}</td>
 		<td class="span2">
 			<div class="pull-right">

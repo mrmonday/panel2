@@ -13,7 +13,7 @@
 		<span class="pull-right">Options</span>
 	</th>
 </tr>
-{% for invoice in user.invoices %}
+{% for invoice in subject.invoices %}
 <tr>
 	<td><a href="{{ url_for('invoice.view', invoice_id=invoice.id) }}">{{ invoice.id }}</a></td>
 	<td>{{ invoice.user.username }}</td>

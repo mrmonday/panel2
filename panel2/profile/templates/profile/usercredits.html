@@ -20,7 +20,7 @@
 	</th>
 </tr>
 {% set balance=0 %}
-{% for credit in user.credits %}
+{% for credit in subject.credits %}
 {% set balance=round(balance + credit.amount, 3) %}
 <tr>
 	<td>{{ credit.id }}</td>
@@ -37,7 +37,7 @@
 
 {% if user.has_permission('invoice:push_credit') %}
 <div class="modal hide" id="addCredit">
-	<form method="POST" action="{{ url_for('.add_credit', username=user.username) }}">
+	<form method="POST" action="{{ url_for('.add_credit', username=subject.username) }}">
 	<div class="modal-header">
 		<h3>Add Credit</h3>
 	</div>

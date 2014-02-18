@@ -115,13 +115,13 @@ def delinquent_services():
 @require_permission('account:auspex')
 def view_base(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template_or_json('profile/userview.html', profile_nav=profile_nav, user=user)
+    return render_template_or_json('profile/userview.html', profile_nav=profile_nav, subject=user)
 
 @profile.route('/<username>/invoices')
 @require_permission('account:auspex')
 def view_invoices(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template_or_json('profile/userinvoices.html', profile_nav=profile_nav, user=user)
+    return render_template_or_json('profile/userinvoices.html', profile_nav=profile_nav, subject=user)
 
 @profile.route('/<username>/invoices/new')
 @require_permission('invoice:create')
@@ -134,19 +134,19 @@ def new_invoice(username):
 @require_permission('account:auspex')
 def view_services(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template_or_json('profile/userservices.html', profile_nav=profile_nav, user=user)
+    return render_template_or_json('profile/userservices.html', profile_nav=profile_nav, subject=user)
 
 @profile.route('/<username>/tickets')
 @require_permission('account:auspex')
 def view_tickets(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template_or_json('profile/usertickets.html', profile_nav=profile_nav, user=user)
+    return render_template_or_json('profile/usertickets.html', profile_nav=profile_nav, subject=user)
 
 @profile.route('/<username>/credits')
 @require_permission('account:auspex')
 def view_credits(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template_or_json('profile/usercredits.html', profile_nav=profile_nav, user=user)
+    return render_template_or_json('profile/usercredits.html', profile_nav=profile_nav, subject=user)
 
 @profile.route('/<username>/credits/new', methods=['POST'])
 @require_permission('invoice:push_credit')
