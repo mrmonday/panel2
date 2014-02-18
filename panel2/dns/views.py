@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from flask import Markup, redirect, url_for, request, abort, flash
-from panel2.user import User, get_session_user, login_required, admin_required
+from panel2.user import User, get_session_user, login_required, require_permission
 from panel2.utils import strip_unprintable, render_template_or_json
 from panel2.dns.models import Domain, Record, valid_records
 from panel2.dns import dns
@@ -40,7 +40,7 @@ def is_valid_host(host):
 def user_can_access_domain(domain, user=None):
     if user is None:
         user = get_session_user()
-    if user.is_admin is True:
+    if user.has_permission('dns:auspex') is True:
         return True
     if domain.user != user:
         return False
@@ -54,7 +54,7 @@ def list():
     return render_template_or_json('dns/zones.html', zones=user.domains)
 
 @dns.route('/zones/all')
-@admin_required
+@require_permission('dns:auspex')
 def list_all():
     return render_template_or_json('dns/zones.html', zones=Domain.query)
 
