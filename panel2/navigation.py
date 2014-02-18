@@ -35,7 +35,8 @@ class NavigationManager(object):
         nav = NavigationManager()
         nav.register('vServers', 'icon-cloud', 'vps.list')
     """
-    __navitems__ = []
+    def __init__(self):
+        self.__navitems__ = list()
 
     def items(self, is_admin=False):
         u = get_session_user()
