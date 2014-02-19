@@ -17,7 +17,7 @@ from flask import request, redirect, url_for, render_template, jsonify
 
 from panel2 import db
 from panel2.profile import profile
-from panel2.user import User, require_permission
+from panel2.user import User, Permission, require_permission, get_all_permissions, admin_required
 from panel2.utils import render_template_or_json
 from panel2.vps.models import Node, Region
 from panel2.service import Service
@@ -147,6 +147,15 @@ def view_tickets(username):
 def view_credits(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template_or_json('profile/usercredits.html', profile_nav=profile_nav, subject=user)
+
+@profile.route('/<username>/permissions', methods=['GET', 'POST'])
+@admin_required
+def view_permissions(username):
+    ptable = get_all_permissions()
+    user = User.query.filter_by(username=username).first_or_404()
+    if request.method == 'POST' and request.form['perm'] in ptable.keys():
+        Permission(user, request.form['perm'])
+    return render_template_or_json('profile/userpermissions.html', profile_nav=profile_nav, subject=user, ptable=ptable)
 
 @profile.route('/<username>/credits/new', methods=['POST'])
 @require_permission('invoice:push_credit')

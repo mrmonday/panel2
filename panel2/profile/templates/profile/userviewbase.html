@@ -2,7 +2,7 @@
 {% block title %}{{ subject.username }} - Accounts{% endblock %}
 
 {% block headerbarcontent %}
-	<img class="gravatar" src="{{ subject.email | gravatar(40) }}" alt="{{ user.username }}'s gravatar">
+	<img class="gravatar" src="{{ subject.email | gravatar(40) }}" alt="{{ subject.username }}'s gravatar">
 	{{ subject.username }}
 	<span class="pull-right">
 		{% block headerbarbuttons %}
@@ -18,13 +18,13 @@
 
 {% block component %}
 <ul class="nav nav-tabs">
-	<li{{ ' class="active"'|safe if subtitle == 'Account' else '' }}><a href="{{ url_for('.view_base', username=user.username) }}">Account</a></li>
-	<li{{ ' class="active"'|safe if subtitle == 'Invoices' else '' }}><a href="{{ url_for('.view_invoices', username=user.username) }}">Invoices</a></li>
-	<li{{ ' class="active"'|safe if subtitle == 'Services' else '' }}><a href="{{ url_for('.view_services', username=user.username) }}">Services</a></li>
-	<li{{ ' class="active"'|safe if subtitle == 'Tickets' else '' }}><a href="{{ url_for('.view_tickets', username=user.username) }}">Tickets</a></li>
-	<li{{ ' class="active"'|safe if subtitle == 'Credits' else '' }}><a href="{{ url_for('.view_credits', username=user.username) }}">Credits</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Account' else '' }}><a href="{{ url_for('.view_base', username=subject.username) }}">Account</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Invoices' else '' }}><a href="{{ url_for('.view_invoices', username=subject.username) }}">Invoices</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Services' else '' }}><a href="{{ url_for('.view_services', username=subject.username) }}">Services</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Tickets' else '' }}><a href="{{ url_for('.view_tickets', username=subject.username) }}">Tickets</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Credits' else '' }}><a href="{{ url_for('.view_credits', username=subject.username) }}">Credits</a></li>
 	{% if user.is_admin %}
-	<li{{ ' class="active"'|safe if subtitle == 'Permissions' else '' }}><a href="#">Permissions</a></li>
+	<li{{ ' class="active"'|safe if subtitle == 'Permissions' else '' }}><a href="{{ url_for('.view_permissions', username=subject.username) }}">Permissions</a></li>
 	{% endif %}
 </ul>
 
