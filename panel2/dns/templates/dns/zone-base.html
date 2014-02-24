@@ -8,10 +8,10 @@
 		<i class="icon-plus"></i> Add Record
 	</a>
 	{% block deletedomain %}
-    <a href="{{ url_for('.delete_domain', zone_id=zone.id) }}" class="btn btn-danger">
+	<a href="{{ url_for('.delete_domain', zone_id=zone.id) }}" class="btn btn-danger">
 		<i class="icon-trash"></i> Delete
 	</a>
-    {% endblock deletedomain %}
+	{% endblock deletedomain %}
 	<a href="{{ url_for('.import_domain', zone_id=zone.id) }}" class="btn btn-warning">
 		<i class="icon-bolt"></i> Import
 	</a>

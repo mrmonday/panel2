@@ -47,7 +47,13 @@ class Service(db.Model):
             if refund_amt > 0:
                 ServiceCreditItem(self.user, refund_amt, 'Deletion - {}'.format(self.name))
 
-        InvoiceItem.query.filter_by(service_id=self.id).delete()
+        for a in InvoiceItem.query.filter_by(service_id=self.id).all():
+            if a.invoice.payment_ts is None:  # if the invoice has not been paid
+                a.invoice.delete()
+            else:  # if the invoice *has* been paid, we should keep it around.
+                a.service = None
+                a.service_id = None
+
         db.session.commit()
 
         for ip in self.ips:
