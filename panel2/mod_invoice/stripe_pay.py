@@ -33,7 +33,7 @@ def stripe_pay(invoice_id):
             amount=request.form['amount'],  # amount in cents
             currency="usd",
             card=token,
-            description="Invoice %s Payment - %s" % (invoice_id, app.config['NAME'])
+            description="Invoice %s Payment - %s" % (invoice_id, app.config['COMPANY_NAME'])
         )
     except Exception as e:
         flash("An error occurred while processing your payment: " + e.args[0])
