@@ -39,6 +39,6 @@ def stripe_pay(invoice_id):
         flash("An error occurred while processing your payment: " + e.args[0])
         return redirect(url_for('.index'))
     invoice.credit(invoice.total_due(), "Stripe Payment - %s (**** **** **** %s)" %
-                                        (request.form['stripeEmail'], charge['card']['last4']))
+                                        (request.form.get('stripeEmail', invoice.user.email), charge['card']['last4']))
     flash("Payment successfully processed: %s (for $%s)" % (invoice_id, invoice.total_due()))
     return redirect(url_for('.index'))
