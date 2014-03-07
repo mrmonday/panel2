@@ -319,6 +319,7 @@ core_permissions_table = {
     'vps:modify': 'Modify VPS owned by another account',
     'vps:node_auspex': 'View VPS node details',
     'vps:node_create': 'Create new VPS nodes',
+    'vps:node_lock': 'Lock VPS nodes',
 
     'dns:auspex': 'View DNS zones owned by another account',
     'dns:modify': 'Modify DNS zones owned by another account',
@@ -338,4 +339,8 @@ def get_core_permissions_table(*args, **kwargs):
 
 def get_all_permissions():
     results = get_permissions_tables.send(app)
-    return reduce(lambda x, y: x + y, [x[1] for x in results])
+    ret = dict()
+    for result in results:
+        for k, v in result[1].iteritems():
+            ret[k] = v
+    return ret
