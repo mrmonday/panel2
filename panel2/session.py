@@ -102,6 +102,8 @@ def logout():
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
+        redir_target = request.form.get('outmodule', 'index')
+
         try:
             username = request.form['username'].strip().rstrip()
             password = request.form['password'].strip().rstrip()
@@ -124,7 +126,7 @@ def create():
             sess = Session(user)
             session['session_id'] = sess.id
             session['session_challenge'] = sess.challenge
-            return redirect(url_for('index'))
+            return redirect(url_for(redir_target))
 
     return render_template_or_json('create.html')
 
