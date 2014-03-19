@@ -5,7 +5,6 @@
 {% block subcontent %}
 
 <form method="POST" class="form-horizontal">
-
 {% if not user %}
 
 <h3>Create an Account</h3>
@@ -39,6 +38,8 @@
 	</div>
 </div>
 
+{% else %}
+{% include 'inc-token.html' %}
 {% endif %}
 
 <div class="row-fluid">
