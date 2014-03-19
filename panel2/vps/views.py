@@ -25,7 +25,7 @@ from panel2.service import IPAddress, IPAddressRef, IPRange
 from panel2.dns.views import is_valid_host
 from panel2.vps import vps
 from panel2.vps.models import XenVPS, ResourcePlan, Region, KernelProfile, HVMISOImage
-from panel2.user import login_required, admin_required, get_session_user, User, Session, require_permission
+from panel2.user import login_required, admin_required, get_session_user, User, Session, require_permission, is_api_session
 from panel2.invoice import Invoice, get_discount_code
 from panel2.utils import render_template_or_json
 from ediarpc.rpc_client import ServerProxy
@@ -101,8 +101,12 @@ def signup():
     discount = get_discount_code(request.args.get('c', 'DEFAULT'))
 
     if request.method == 'POST':
-        discount = get_discount_code(request.form.get('c', 'DEFAULT'))
-
+        if user is not None:
+            if not is_api_session():
+                sess = Session.query.filter_by(id=session['session_id']).first()
+                if not sess or not sess.validate(request.form['session_validation_key']):
+                    flash('Your request token had expired when this request was sent, please try again.')
+                    return redirect(url_for('index'))
         if user is None:
             try:
                 username = request.form['username'].strip().rstrip()
