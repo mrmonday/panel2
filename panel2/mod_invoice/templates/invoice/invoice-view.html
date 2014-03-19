@@ -20,6 +20,7 @@ Invoice #{{ invoice.id }}{% if invoice.payment_ts %} <span class="label label-su
 {% block component %}
 {% if not invoice.is_finalized %}
 <form action="{{ url_for('.lineitem_new', invoice_id=invoice.id) }}" method="POST">
+{% include 'inc-token.html' %}
 {% endif %}
 <table class="table table-striped">
 <tr>

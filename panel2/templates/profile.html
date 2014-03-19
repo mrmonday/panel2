@@ -23,6 +23,7 @@
 	</div>
 	<div class="span9" style="margin-top: 1.5em">
 		<form action="{{ url_for('.profile_change_email') }}" method="POST" class="form-horizontal">
+		{% include 'inc-token.html' %}
 		<div class="control-group">
 			<label class="control-label" for="new_email">Contact Name</label>
 			<div class="controls">
@@ -98,6 +99,7 @@
 	</div>
 	<div class="span9" style="margin-top: 1.5em">
 	<form action="{{ url_for('.profile_change_pw') }}" method="POST">
+		{% include 'inc-token.html' %}
 		<div class="row-fluid">
 			<div class="span12">
 				<input type="password" placeholder="Old Password" class="input-block-level" name="oldpass">
@@ -136,6 +138,7 @@
 	</div>
 	<div class="span9" style="margin-top: 1.5em">
 		<form action="{{ url_for('.profile_webhook_uri') }}" method="POST">
+		{% include 'inc-token.html' %}
 		<div class="row-fluid">
 			<div class="span12">
 				<input type="text" placeholder="Callback URI" value="{% if user.job_webhook_uri %}{{ user.job_webhook_uri }}{% endif %}" name="webhook_uri" class="input-block-level">
@@ -169,6 +172,7 @@
 			<a href="{{ url_for('.profile_new_totp_key') }}" class="btn btn-primary">Change</a>
 			{% if not user.require_totp %}
 			<form action="{{ url_for('.profile_totp_enable') }}" method="POST">
+			{% include 'inc-token.html' %}
 			<div class="form-horizontal">
 				<input type="password" placeholder="TOTP Challenge" name="response" required="required">
 				<button type="submit" class="btn btn-success button-sm">Enable</button>
@@ -189,6 +193,7 @@
 	</div>
 	<div class="span9" style="margin-top: 1.5em">
 		<form action="{{ url_for('.profile_login_preferences') }}" method="POST">
+		{% include 'inc-token.html' %}
 		<div class="row-fluid">
 			<div class="span12" style="padding-bottom: 7px;">
 				<label for="notify-success" style="display: inline;">Successful log-in</label>

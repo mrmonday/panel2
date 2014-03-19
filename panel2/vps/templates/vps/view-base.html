@@ -31,11 +31,13 @@
 			</div>
 			<div class="span6">
 				<form class="pull-right" method="POST" action="{{ url_for('.setprofile', vps=service.id) }}">
+					{% include 'inc-token.html' %}
 					<input type="hidden" name="profid" value="{{ prof.id }}">
 					<button type="submit" class="btn">Set Default</button>
 				</form>
 
 				<form class="pull-right" method="POST" action="{{ url_for('.create', vps=service.id) }}">
+					{% include 'inc-token.html' %}
 					<input type="hidden" name="profid" value="{{ prof.id }}">
 					<button type="submit" class="btn btn-primary">Boot</button>&nbsp;
 				</form>
@@ -51,6 +53,7 @@
 {% if service.profile.type != 'hvm' %}
 <div id="admDeploy" class="modal hide" tabindex="-1" role="dialog">
 	<form method="POST" action="{{ url_for('.deploy', vps=service.id) }}">
+		{% include 'inc-token.html' %}
         <div class="modal-header">
                 <a href="#"  type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
                 <h3>Deploy</h3>

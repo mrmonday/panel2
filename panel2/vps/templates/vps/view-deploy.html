@@ -11,6 +11,7 @@
    as a result of installing a new OS.</p>
 
 <form method="POST" action="{{ url_for('.deploy', vps=service.id) }}">
+{% include 'inc-token.html' %}
 
 <div class="row-fluid" style="margin-bottom: 1em;">
 	<div class="span3"><strong class="pull-right">OS Image:</strong></div>

@@ -14,7 +14,7 @@ from the use of this software.
 """
 
 from functools import wraps
-from flask import session, redirect, url_for, abort, render_template, request, escape
+from flask import session, redirect, url_for, abort, render_template, request, escape, flash
 
 from panel2 import app, db
 from panel2.pbkdf2 import pbkdf2_hex
@@ -218,6 +218,15 @@ class User(db.Model):
     def has_any_permission(self):
         return (len(self.permissions) > 0)
 
+    def get_session(self):
+        if session.has_key('session_id'):
+            sess = Session.query.filter_by(id=session['session_id']).first()
+            if not sess:
+                return None
+            if sess.user is not self:
+                return None
+            return sess
+
 def is_api_session():
     return True if request.authorization else False
 
@@ -245,6 +254,12 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         u = get_session_user()
+        if request.method == 'POST':
+            if not is_api_session():
+                sess = Session.query.filter_by(id=session['session_id']).first()
+                if not sess or not sess.validate(request.form['session_validation_key']):
+                    flash('Your request token had expired when this request was sent, please try again.')
+                    return redirect(url_for('index'))
         if not u:
             return redirect(url_for('login'))
         if u.require_totp and not is_api_session():
