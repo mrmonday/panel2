@@ -1,4 +1,4 @@
-function renamewidget(posturi, name, parent) {
+function renamewidget(posturi, name, parent, token) {
 	var displayname = $("<span></span>").append(name);
 	var icon_pencil = $("<i class='icon-pencil text-warning'></i>");
 
@@ -30,6 +30,7 @@ function renamewidget(posturi, name, parent) {
 				dataType: 'json',
 				data: {
 					nickname: nm,
+                    session_validation_key: token
 				},
 				success: function(data) {
 					if (data.nickname)

@@ -13,7 +13,8 @@
 <script>
 $(document).ready(function() {
 	status_setup("{{ url_for('.status_json', vps=service.id) }}", $("#vpsstatus"));
-	renamewidget("{{ url_for('.setnickname', vps=service.id) }}", "{{ service.nickname | default(service.name, true) }}", $("#vpsrename"));
+	renamewidget("{{ url_for('.setnickname', vps=service.id) }}", "{{ service.nickname | default(service.name, true) }}",
+	        $("#vpsrename"), "{{ user.get_session().challenge }}");
 });
 </script>
 {% endblock %}
