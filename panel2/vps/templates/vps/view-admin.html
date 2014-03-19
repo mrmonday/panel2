@@ -21,6 +21,7 @@
 	</div>
 	{% else %}
 	<form method="POST" class="form-horizontal" action="{{ url_for('.adm_modify_ip_rdns', vps=service.id, ip=ipaddr.id) }}">
+	{% include 'inc-token.html' %}
 	<div class="modal-body">
 		<div class="control-group">
 			<label class="control-label" for="rdns">rDNS</label>
@@ -82,6 +83,7 @@
 <p>You may add <strong>{{ service.ipv6_quota() }}</strong> additional IPv6 addresses to this service.</p>
 
 <form method="POST" action="{{ url_for('.adm_add_ip', vps=service.id) }}">
+{% include 'inc-token.html' %}
 <select name="ipbox">
 {% for iprange in service.node.ipranges + service.node.region.ipranges %}
 {% for host in iprange.available_ips() %}

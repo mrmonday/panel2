@@ -5,6 +5,7 @@
    AXFR transfers.  Specify the nameserver's IP below to continue.</p>
 
 <form method="POST">
+	{% include 'inc-token.html' %}
 	<input type="text" name="nameserver" placeholder="Nameserver IP"><br>
 	<button class="btn btn-primary" type="submit">Import</button>
 </form>

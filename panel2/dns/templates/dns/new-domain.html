@@ -10,6 +10,7 @@ New DNS Zone
    <strong>ns2.tortois.es</strong> respectively.</p>
 
 <form method="POST">
+	{% include 'inc-token.html' %}
 	<input type="text" name="domain_name" placeholder="Domain name"><br>
 	<button class="btn btn-primary" type="submit">Create</button>
 </form>

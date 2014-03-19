@@ -65,6 +65,7 @@
 
 <div class="container">
 	<form id="signin" method="POST" action="{{ url_for('totp_challenge') }}">
+		{% include 'inc-token.html' %}
 		<div style="text-align: center" class="pushdown">
 			<img src="/branding/static/logo.png" alt="Please log in">
 		</div>
