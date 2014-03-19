@@ -50,6 +50,7 @@
 <a name="reply"></a>
 
 <form method="POST">
+{% include "inc-token.html" %}
 <div class="panel panel-{{ "danger" if user.is_admin else "primary" }}">
 	<div class="panel-heading">
 		<span class="pull-right panel-btn">
