@@ -91,7 +91,7 @@ def launch():
     for node in nodes:
         if node in already_running:
             continue
-        print "spawning thread for", node.name
+        print "spawning thread for", node.name, node.ipaddr
         spawn(loop, node)
         already_running.append(node)
 
